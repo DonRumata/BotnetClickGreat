@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BotnetClickGreat
 {
-    class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
+    abstract class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
     {
         string Data { get; set; } //Текстовое значение слова содержащегося в токене.
         int ID { get; set; } //ID конкретного токена.
@@ -40,5 +40,14 @@ namespace BotnetClickGreat
         {
             this.Number_range = (First_char_num.ToString() + "-" + Last_char_num.ToString());
         }
+
+        public abstract void Token_function_for_interpretation();
     }
+
+    class Ariphmetical:Token
+    {
+        
+    }
+
+    public MyAppWarning(int Nrow, int Ncolumn, int NID, string Nmessage, string Data_text) : base(Nrow, Ncolumn, NID, Nmessage) { Text_data = Data_text; }
 }
