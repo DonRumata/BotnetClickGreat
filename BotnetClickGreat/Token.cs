@@ -10,8 +10,8 @@ namespace BotnetClickGreat
     {
         protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
         protected int ID { get; set; } //ID конкретного токена.
-        protected string Number_range;
-        protected int Row_count { get; set; }
+        protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
+        protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
 
         public Token(string data, int First_numR, int Second_numR, int row_counter, int id) //Конструктор базового класса задающий базовые значения извне
         {
@@ -42,11 +42,18 @@ namespace BotnetClickGreat
         }
     }
 
-    class Ariphmetical:Token
+    class Ariphmetical:Token  //Дочерний класс токен, описывающий все взаимодействия с арифметическими символами
     {
-        public Ariphmetical(string ndata, int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { }
-        public Ariphmetical() : base() { }
-        public double Interpretation_function(string first_value, string second_value)
+        /*Свойства и атрибуты, наследуемые от базового класса.
+        protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
+        protected int ID { get; set; } //ID конкретного токена.
+        protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
+        protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
+        */
+
+        public Ariphmetical(string ndata, int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { } //Наследуется от базового, конструктор, вызывается при переводе первичной строки слов, в токены
+        public Ariphmetical() : base() { } //Наследуется от базового, конструктор с базовыми значениями по умолчанию
+        public double Interpretation_function(string first_value, string second_value) //Функция для исполнения интерпретатором, вшита непосредственно в токен для более быстрой интерпретации.
         {
             double FValue = Convert.ToDouble(first_value);
             double SValue = Convert.ToDouble(first_value);
@@ -73,17 +80,24 @@ namespace BotnetClickGreat
                         Result = FValue / 100;
                         break;
                     case "^":
-                        
+                    Result = Math.Round(Math.Pow(FValue, SValue),4);
                         break;
                 }
             return Result;
         }
     }
-    class Basic_ariphmetical_commands:Token
+    class Basic_ariphmetical_commands:Token //Дочерний класс токен, описывающий все арифметические команды вроде синусов, косинусов, логарифмов и интегралов ОСТОРОЖНО, СОДЕРЖИТ МАТАН!!
     {
-        public Basic_ariphmetical_commands(string ndata,int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { }
-        public Basic_ariphmetical_commands() : base() { }
-        public double interpretation_function(double first_value,double second_value)
+        /*Свойства и атрибуты, наследуемые от базового класса.
+        protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
+        protected int ID { get; set; } //ID конкретного токена.
+        protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
+        protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
+        */
+
+        public Basic_ariphmetical_commands(string ndata,int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { } //Наследуется от базового, конструктор, вызывается при переводе первичных слов в токены
+        public Basic_ariphmetical_commands() : base() { } //Наследуется от базового, конструктор для создания класса со значениями по умолчанию
+        public double interpretation_function(double first_value,double second_value) //Функция для исполнения интерпретатором, вшита непосредственно в токен для более быстрой интерпретации.
         {
             double Result = 0;
             switch (Data.ToLower())
@@ -128,7 +142,42 @@ namespace BotnetClickGreat
             }
             return Result;
         }
+
     }
 
-    //public MyAppWarning(int Nrow, int Ncolumn, int NID, string Nmessage, string Data_text) : base(Nrow, Ncolumn, NID, Nmessage) { Text_data = Data_text; }
-}
+    class Logical:Token
+    {
+        /*Свойства и атрибуты, наследуемые от базового класса.
+        protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
+        protected int ID { get; set; } //ID конкретного токена.
+        protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
+        protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
+        */
+
+        public Logical(string ndata,int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { } //Наследуется от базового, конструктор, вызывается при переводе первичных слов в токены
+        public Logical() : base() { } //Наследуется от базового, конструктор для создания класса со значениями по умолчанию
+
+        public bool interpretation_function(object first_value, object second_value) //Функция для исполнения интерпретатором, вшита непосредственно в токен для более быстрой интерпретации.
+        {
+
+        }
+    }
+
+
+
+    /*double Nth_root(double number, double power)
+    {
+        double eps = 0.000001;
+        double prev_y, next_y;
+
+        next_y = number;
+        do
+        {
+            prev_y = next_y;
+            next_y = (prev_y * (power - 1) + number / pow(prev_y, power - 1)) / power;
+        } while (fabs(next_y - prev_y) > eps);
+        return next_y;
+    } */
+
+        //public MyAppWarning(int Nrow, int Ncolumn, int NID, string Nmessage, string Data_text) : base(Nrow, Ncolumn, NID, Nmessage) { Text_data = Data_text; }
+    }
