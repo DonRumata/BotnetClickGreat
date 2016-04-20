@@ -46,66 +46,87 @@ namespace BotnetClickGreat
     {
         public Ariphmetical(string ndata, int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { }
         public Ariphmetical() : base() { }
-        public object Interpretation_function(string first_value, string second_value)
+        public double Interpretation_function(string first_value, string second_value)
         {
             double FValue = Convert.ToDouble(first_value);
             double SValue = Convert.ToDouble(first_value);
-            if (Data.Length==1)
-            {
-                switch (Data)
-                {
-                    case "+":
-                        break;
-                    case "-":
-                        break;
-                    case "*":
-                        break;
-                    case "/":
-                        break;
-                    case "%":
-                        break;
-                    case "^":
-                        break;
-                }
-            }
-            else
-            {
+            double Result = 0;
                 switch (Data)
                 {
                     case "+=":
+                    case "+":
+                        Result = FValue + SValue;
                         break;
                     case "-=":
+                    case "-":
+                        Result = FValue - SValue;
                         break;
                     case "*=":
+                    case "*":
+                        Result = FValue * SValue;
                         break;
                     case "/=":
+                    case "/":
+                        Result = FValue / SValue;
+                        break;
+                    case "%":
+                        Result = FValue / 100;
+                        break;
+                    case "^":
+                        
                         break;
                 }
-            }
-           /* switch (Data)
+            return Result;
+        }
+    }
+    class Basic_ariphmetical_commands:Token
+    {
+        public Basic_ariphmetical_commands(string ndata,int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { }
+        public Basic_ariphmetical_commands() : base() { }
+        public double interpretation_function(double first_value,double second_value)
+        {
+            double Result = 0;
+            switch (Data.ToLower())
             {
-                case "+":
+                case "mod":
+                    Result = first_value % second_value;
                     break;
-                case "-":
+                case "div":
+                    Result = (int)(first_value / second_value);
                     break;
-                case "+=":
+                case "round":
+                    Result = (int)first_value;
                     break;
-                case: "-=":
+                case "sqr":
+                    Result =(int)first_value ^ 2;
                     break;
-                case "*":
+                case "sqrt":
+                    Result = Math.Round(Math.Sqrt(first_value),4);
                     break;
-                case "/":
+                case "log":
                     break;
-                case "*=":
+                case "integr":
                     break;
-                case "/=":
+                case "acos":
+                    Result = Math.Acos(first_value);
                     break;
-                case "%":
+                case "asin":
+                    Result = Math.Asin(first_value);
                     break;
-                case "^":
+                case "atan":
+                    Result = Math.Atan(first_value);
                     break;
-            }*/
-            return "trulala";
+                case "sin":
+                    Result = Math.Sin(first_value);
+                    break;
+                case "cos":
+                    Result = Math.Cos(first_value);
+                    break;
+                case "tan":
+                    Result = Math.Tan(first_value);
+                    break;
+            }
+            return Result;
         }
     }
 
