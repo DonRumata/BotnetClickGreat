@@ -159,8 +159,25 @@ namespace BotnetClickGreat
 
         public bool interpretation_function(object first_value, object second_value) //Функция для исполнения интерпретатором, вшита непосредственно в токен для более быстрой интерпретации.
         {
-
+            /* Тут большая проблема интерпретации, для интерпретации логических элементов, необходимо определять входящий тип,
+            для более менее приемлемого кода необходим конвертер из object, в какой-либо из типов, а затем проверки на совместимость сравниваемых типов.
+            Геморой довольно большой и писать его без конвертера в object непосредственно во время трансляции, не представляется возможным.
+            */
+            return false;
         }
+
+    }
+
+    class Basic_structure_WhileCycle:Token
+    {
+        /*Свойства и атрибуты, наследуемые от базового класса.
+        protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
+        protected int ID { get; set; } //ID конкретного токена.
+        protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
+        protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
+        */
+        protected int Iterator { get; set; }
+        private bool Condition { get; set; }
     }
 
 
@@ -179,5 +196,5 @@ namespace BotnetClickGreat
         return next_y;
     } */
 
-        //public MyAppWarning(int Nrow, int Ncolumn, int NID, string Nmessage, string Data_text) : base(Nrow, Ncolumn, NID, Nmessage) { Text_data = Data_text; }
-    }
+    //public MyAppWarning(int Nrow, int Ncolumn, int NID, string Nmessage, string Data_text) : base(Nrow, Ncolumn, NID, Nmessage) { Text_data = Data_text; }
+}

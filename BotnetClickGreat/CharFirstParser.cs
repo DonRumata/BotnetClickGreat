@@ -36,61 +36,78 @@ namespace BotnetClickGreat
                     {
                         if ((Alphabet_check(nowchar)) == 0)
                         {
-                            Helper = Previous_char_ID == 0;
-                            switch (nowchar)   //Отдельно создает заготовки токенов под различные возможные значения,
+                            if ((Logical_check(nowchar))==0)
                             {
-                                case '[':
-                                    Previous_char_ID = 5;
-                                    List_of_Words.Add(new Word("[", Helper, 5, Row_Counter, i, i));
-                                    break;
-                                case ']':
-                                    Previous_char_ID = 6;
-                                    List_of_Words.Add(new Word("]", Helper, 6, Row_Counter, i, i));
-                                    break;
-                                case ';':
-                                    List_of_Words.Add(new Word(";", Helper, 7, Row_Counter, i, i));
-                                    Previous_char_ID = 7;
-                                    break;
-                                case '(':
-                                    Is_Parenthesis++;
-                                    List_of_Words.Add(new Word("(", Helper, 2, Row_Counter, i, i));
-                                    Previous_char_ID = 2;
-                                    break;
-                                case ')':
-                                    Is_Parenthesis--;
-                                    List_of_Words.Add(new Word(")", Helper, 3, Row_Counter, i, i));
-                                    Previous_char_ID = 3;
-                                    break;
-                                case ',':
-                                case '.':
-                                    List_of_Words.Add(new Word(nowchar.ToString(), Helper, 9, Row_Counter, i, i));
-                                    Previous_char_ID = 9;
-                                    break;
-                                case '\r':
-                                case '\n':
-                                    Row_Counter++;
-                                    Previous_char_ID = 10;
-                                    break;
-                                case ' ':
-                                    Previous_char_ID = 0;
-                                    break;
-                                default:
-                                    Helper1 = i;
-                                    Default_trigger = true;
-                                    help_str+=nowchar;
-                                    Previous_char_ID = -2;
-                                    break;
-                            }
-                            if (Default_trigger)   //Костыль и потенциальное БАГОДЕРЬМО, нужно придумать как легким путем, без прохождения switch лишний раз, создавать токен под id определяемое положением default.
-                            {
-                                if (Previous_char_ID!=-2)
+                                Helper = Previous_char_ID == 0;
+                                switch (nowchar)   //Отдельно создает заготовки токенов под различные возможные значения,
                                 {
-                                    Default_trigger = false;
-                                    List_of_Words.Add(new Word(help_str, false, -2, Row_Counter, Helper1, i - 1));
-                                    help_str = "";
-                                    Helper1 = -1;
+                                    case '[':
+                                        Previous_char_ID = 5;
+                                        List_of_Words.Add(new Word("[", Helper, 5, Row_Counter, i, i));
+                                        break;
+                                    case ']':
+                                        Previous_char_ID = 6;
+                                        List_of_Words.Add(new Word("]", Helper, 6, Row_Counter, i, i));
+                                        break;
+                                    case ';':
+                                        List_of_Words.Add(new Word(";", Helper, 7, Row_Counter, i, i));
+                                        Previous_char_ID = 7;
+                                        break;
+                                    case '(':
+                                        Is_Parenthesis++;
+                                        List_of_Words.Add(new Word("(", Helper, 2, Row_Counter, i, i));
+                                        Previous_char_ID = 2;
+                                        break;
+                                    case ')':
+                                        Is_Parenthesis--;
+                                        List_of_Words.Add(new Word(")", Helper, 3, Row_Counter, i, i));
+                                        Previous_char_ID = 3;
+                                        break;
+                                    case ',':
+                                    case '.':
+                                        List_of_Words.Add(new Word(nowchar.ToString(), Helper, 9, Row_Counter, i, i));
+                                        Previous_char_ID = 9;
+                                        break;
+                                    case '\r':
+                                    case '\n':
+                                        Row_Counter++;
+                                        Previous_char_ID = 10;
+                                        break;
+                                    case '{':
+                                        List_of_Words.Add(new Word(nowchar.ToString(), Helper, 12, Row_Counter, i, i));
+                                        Previous_char_ID = 12;
+                                        break;
+                                    case '}':
+                                        List_of_Words.Add(new Word(nowchar.ToString(), Helper, 13, Row_Counter, i, i));
+                                        Previous_char_ID = 13;
+                                        break;
+                                    case ' ':
+                                        Previous_char_ID = 0;
+                                        break;
+                                    default:
+                                        Helper1 = i;
+                                        Default_trigger = true;
+                                        help_str += nowchar;
+                                        Previous_char_ID = -2;
+                                        break;
+                                }
+                                if (Default_trigger)   //Костыль и потенциальное БАГОДЕРЬМО, нужно придумать как легким путем, без прохождения switch лишний раз, создавать токен под id определяемое положением default.
+                                {
+                                    if (Previous_char_ID != -2)
+                                    {
+                                        Default_trigger = false;
+                                        List_of_Words.Add(new Word(help_str, false, -2, Row_Counter, Helper1, i - 1));
+                                        help_str = "";
+                                        Helper1 = -1;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                i = While_delegate_function(Logical_check, 14, i, Previous_char_ID, List_of_Words, input_text, Row_Counter); //Формирует из символов сравнения слово, которое затем записывается как отдельный токен, даже в том случае если перед словом шел не пробел, однако это указывается отдельно
+                                Previous_char_ID = 14;
+                            }
+                            
                         }
                         else
                         {
@@ -116,8 +133,15 @@ namespace BotnetClickGreat
 
         private int Arifm_check(char nowchar_f)  //Проверяет входящий Char символ на принадлежность к арифметическим действиям|символам
         {
-            if ((nowchar_f == '*') || (nowchar_f == '/') || (nowchar_f == '+') || (nowchar_f == '-') || (nowchar_f == '^') || (nowchar_f == '=') || (nowchar_f == '%'))
+            if ((nowchar_f == '*') || (nowchar_f == '/') || (nowchar_f == '+') || (nowchar_f == '-') || (nowchar_f == '^') || (nowchar_f == '%'))
                 return 1;
+            else
+                return 0;
+        }
+        private int Logical_check(char nowchar_f) //Проверяет входящий CHar символ на принадлежность к символам сравнений
+        {
+            if ((nowchar_f == '|') || (nowchar_f == '&') || (nowchar_f == '>') || (nowchar_f == '<') || (nowchar_f == '='))
+                return 14;
             else
                 return 0;
         }
@@ -143,9 +167,9 @@ namespace BotnetClickGreat
         }
         */
 
-        private int Numeric_check(char Nowchar)   //Проверяет является ли текущий символ цифрой.
+        private int Numeric_check(char nowchar_f)   //Проверяет является ли текущий символ цифрой.
         {
-            if (char.IsDigit(Nowchar))
+            if (char.IsDigit(nowchar_f))
                 return 4;
             else
                 return 0;
@@ -172,12 +196,12 @@ namespace BotnetClickGreat
         */
 
 
-        private int Alphabet_check(char Nowchar)  //Проверяет является ли текущий символ, кириллицей или латиницей.
+        private int Alphabet_check(char nowchar_f)  //Проверяет является ли текущий символ, кириллицей или латиницей.
         {
-            if (((Nowchar > 96) && (Nowchar < 123)) || ((Nowchar > 64) && (Nowchar < 91)))
+            if (((nowchar_f > 96) && (nowchar_f < 123)) || ((nowchar_f > 64) && (nowchar_f < 91)))
                 return 8;
             else
-                if ((Nowchar > 191) && (Nowchar < 256))
+                if ((nowchar_f > 191) && (nowchar_f < 256))  //Потенциальное БАГОДЕРЬМО, не удовлетворяет значениям кириллицы в кодировке юникода, нужно сделать отдельную проверку для кириллицы
                 return 11;
             else
                 return 0;
@@ -197,12 +221,4 @@ namespace BotnetClickGreat
         }
     }
 
-    class LexicalSintaParser
-    {
-        public Hashtable Start_parse_List(List<Word> Word_List) //Функция начинающая парсинг листа слов, подготовленных первоначальным парсером
-        {
-            Hashtable trulala = new Hashtable();
-            return trulala;
-        }
-    }
 }
