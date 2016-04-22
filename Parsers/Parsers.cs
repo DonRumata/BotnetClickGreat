@@ -30,6 +30,16 @@ namespace Parsers
             this.Number_range = "Undefined";
         }
 
+        public bool get_space_check()
+        {
+            return this.Space_check;
+        }
+
+        public int Get_row_count()
+        {
+            return this.Row;
+        }
+
         public void change_data(string newdata)  //Метод для изменения поля Data
         {
             this.Data = newdata;
@@ -309,10 +319,62 @@ namespace Parsers
                 Word_data = input_list[i].get_Prime_data(out Word_ID);
                 switch (Word_ID)
                 {
-
+                    case 1:
+                        
+                        break;
                 }
             }
             return Result;
+        }
+
+        private bool Row_control_check(List<Word> input_list_word, int count)  //Проводит проверку на соответствие строк предыдущего и следующего слова.
+        {
+            if (input_list_word[count + 1].Get_row_count() != input_list_word[count].Get_row_count())
+                return false;
+            else
+                return true;
+        }
+
+        private void Ariphmetical_translation(List<Word> Input_list_word, int counter,string word_data)
+        {
+            bool row_check_result = false;
+            bool cycle_stop = false;
+            string previous_word_data= Input_list_word[counter - 1].get_data();
+            string next_word_data = Input_list_word[counter + 1].get_data();
+            while (!cycle_stop)
+            {
+                row_check_result = Row_control_check(Input_list_word, counter);
+                switch (word_data)
+                {
+                    case "==":
+
+                        break;
+                    case "=":
+
+                        break;
+                    case "+=":
+                    case "+":
+                        break;
+                    case "-=":
+                    case "-":
+                        break;
+                    case "*=":
+                    case "*":
+                        break;
+                    case "/=":
+                    case "/":
+                        break;
+                    case "^":
+                        break;
+                    case "%":
+                        break;
+                    case "--":
+                        goto case "+";
+                    default:
+                        break;
+                }
+            }
+            
         }
     }
 
