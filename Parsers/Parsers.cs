@@ -75,7 +75,7 @@ namespace Parsers
             return int.Parse(Number_range.Substring(0, help_value));
         }
     }
-    class CharFirstParser
+    class Parsers
     {
 
         public List<Word> Parse_first_text(string Input_text)
