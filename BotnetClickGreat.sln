@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotnetClickGreat", "BotnetClickGreat\BotnetClickGreat.csproj", "{B7B4319D-EE7D-47BC-B571-475E39001131}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CEFD2706-31CE-4210-BC64-3567A2011258} = {CEFD2706-31CE-4210-BC64-3567A2011258}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7982E264-A5CD-4657-BDEF-DE3DD666E7AA}"
 	ProjectSection(SolutionItems) = preProject
