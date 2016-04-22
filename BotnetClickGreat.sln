@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		BotnetClickGreat\Token.cs = BotnetClickGreat\Token.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokens Library", "..\Tokens Library\Tokens Library\Tokens Library.csproj", "{CEFD2706-31CE-4210-BC64-3567A2011258}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokens Library", "Tokens Library\Tokens Library\Tokens Library.csproj", "{CEFD2706-31CE-4210-BC64-3567A2011258}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
