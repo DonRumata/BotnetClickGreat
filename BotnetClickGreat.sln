@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokens Library", "Tokens Library\Tokens Library\Tokens Library.csproj", "{CEFD2706-31CE-4210-BC64-3567A2011258}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsers", "Parsers\Parsers.csproj", "{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsers Library", "Parsers\Parsers Library.csproj", "{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
