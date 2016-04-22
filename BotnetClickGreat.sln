@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotnetClickGreat", "BotnetClickGreat\BotnetClickGreat.csproj", "{B7B4319D-EE7D-47BC-B571-475E39001131}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CEFD2706-31CE-4210-BC64-3567A2011258} = {CEFD2706-31CE-4210-BC64-3567A2011258}
+		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44} = {5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7982E264-A5CD-4657-BDEF-DE3DD666E7AA}"
@@ -14,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokens Library", "Tokens Library\Tokens Library\Tokens Library.csproj", "{CEFD2706-31CE-4210-BC64-3567A2011258}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsers", "Parsers\Parsers.csproj", "{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +32,10 @@ Global
 		{CEFD2706-31CE-4210-BC64-3567A2011258}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEFD2706-31CE-4210-BC64-3567A2011258}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEFD2706-31CE-4210-BC64-3567A2011258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
