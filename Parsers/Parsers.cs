@@ -75,7 +75,8 @@ namespace Parsers
             return int.Parse(Number_range.Substring(0, help_value));
         }
     }
-    class Parsers
+    class First_char_parser
+        /* Первичный парсер кода превращает код введенный пользователем в список слов класса Word, выходной результата данного класса это список слов с небольшими помогающими анализаторам пометками. */
     {
 
         public List<Word> Parse_first_text(string Input_text)
@@ -275,7 +276,8 @@ namespace Parsers
                 return 0;
         }
 
-        private int While_delegate_function(Func<char, int> Cycle_condition, int second_cycle_condition, int i_counter, int previous_ID, List<Word> Word_list, string input_text, int row_count)  //Делегирует функцию, для сокращения кода похожих циклов While кода.
+        private int While_delegate_function(Func<char, int> Cycle_condition, int second_cycle_condition, int i_counter, int previous_ID, List<Word> Word_list, string input_text, int row_count)
+            /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
         {
             int helper_counter = i_counter;
             string Data_former = "";
@@ -287,5 +289,63 @@ namespace Parsers
             Word_list.Add(new Word(Data_former,previous_ID==0,second_cycle_condition,row_count,i_counter,helper_counter)); //Формирует и добавляет заготовку токена в список
             return helper_counter;
         }
+    }
+
+    class Translation_word_parser 
+    /*Основной парсер трансляции, принимает на вход список слов, подготовленных First_char_parser и превращает их в список токенов готовых к интерпретации. 
+    Семантический анализ проводится построково отдельно уже с готовыми токенами!
+    */
+    {
+        public Hashtable Begin_translating(List<Word> input_list)
+        {
+            int i = 0;
+            int Word_ID = 0;
+            string Word_data = "";
+            bool quiter = false;
+            Word Word_copyr = new Word();
+            Hashtable Result = new Hashtable();
+            while (i!=input_list.Count)
+            {
+                Word_data = input_list[i].get_Prime_data(out Word_ID);
+                switch (Word_ID)
+                {
+
+                }
+            }
+            return Result;
+        }
+    }
+
+    class MainProgram
+        /* Основной класс который хранит главные атрибуты программы
+        - Количество открытых/закрытых begin/end
+        - Местоположение последнего открытого begin
+        - Общее количество строк
+        - Номер анализируемой строки(внешне данные не нужны)
+        - Hashtable объявленных в программе переменных(string type, object value)
+        - т.д. 
+        Содержит функции вызова трансляции и интерпретации кода.
+        Содержит функции сохранения и загрузки кода из файла.
+        Содержит функции вызова шифрования.
+
+        КЛАСС И ОПИСАНИЕ НЕ ЗАКОНЧЕННО! */
+    {
+        /* Переменные и атрибуты*/
+        protected int Num_of_right_BeginEnds;
+        protected int Num_of_last_open_begin;
+        public int Num_of_rows;
+        private int Num_of_analyse_string;
+        protected Hashtable Variable_storage = new Hashtable();
+        
+        /* Функции и методы */
+
+        public void Translation(string Input_text) //Нужно подумать переносить ли сюда все из Form1.
+        {
+
+        }
+
+        public void Save_in_file() { } //Заглушка на сохранение в файлы
+
+        public void Load_from_file() { } //Заглушка на загрузку из файла
     }
 }
