@@ -8,11 +8,50 @@ using System.Threading.Tasks;
 namespace Parsers
 {
 
+    class MainProgram
+    /* Основной класс который хранит главные атрибуты программы
+    - Количество открытых/закрытых begin/end
+    - Местоположение последнего открытого begin
+    - Общее количество строк
+    - Номер анализируемой строки(внешне данные не нужны)
+    - Dictionary объявленных в программе переменных(string type, object value)
+    - т.д. 
+    Содержит функции вызова трансляции и интерпретации кода.
+    Содержит функции сохранения и загрузки кода из файла.
+    Содержит функции вызова шифрования.
+
+    КЛАСС И ОПИСАНИЕ НЕ ЗАКОНЧЕННО! */
+    {
+        /* Переменные и атрибуты*/
+        protected int Num_of_right_BeginEnds;
+        protected int Num_of_last_open_begin;
+        public int Num_of_rows;
+        private int Num_of_analyse_string;
+        protected Dictionary<string, object> Variable_storage = new Dictionary<string, object>();
+        private Dictionary<string, Func<Type>> User_function_storage = new Dictionary<string, Func<Type>>();
+
+        /* Функции и методы */
+
+        public void Translation(string Input_text) //Нужно подумать переносить ли сюда все из Form1.
+        {
+
+        }
+
+        public void Save_in_file() { } //Заглушка на сохранение в файлы
+
+        public void Load_from_file() { } //Заглушка на загрузку из файла
+
+        public Dictionary<string,object> Get_variable_storage()
+        {
+            return Variable_storage;
+        }
+    }
+
     class Word  //Класс необходимый для формирования списка токенов, представляет собой по факту описание токена.
     {
         private string Data, Number_range;
         private bool Space_check;
-        private int ID, Row;
+        private int ID,Row;
         public Word(string data, bool space, int id, int row, int FRange_value, int SRange_value) //Конструктор для создания класса Word, сразу со всеми первоначальными данными
         {
             this.Data = data;
@@ -35,11 +74,20 @@ namespace Parsers
             return this.Space_check;
         }
 
+        public int Get_ID()
+        {
+            return this.ID;
+        }
+
         public int Get_row_count()
         {
             return this.Row;
         }
-
+        public void change_data(string newdata)  //Метод для изменения поля Data
+        {
+            this.Data = newdata;
+        }
+        /* ДАННЫЕ ФУНКЦИИ НИГДЕ НЕ ИСПОЛЬЗУЮТСЯ!
         public void change_data(string newdata)  //Метод для изменения поля Data
         {
             this.Data = newdata;
@@ -56,6 +104,7 @@ namespace Parsers
         {
             this.Space_check = space;
         }
+        */
         public string get_all_data(out int id, out int row, out int FRange_value, out int SRange_value) //Позволяет получить все данные о слове.
         {
             id = this.ID;
@@ -197,6 +246,14 @@ namespace Parsers
                     else
                     {
                         i = While_delegate_function(Numeric_check, 4, i, Previous_char_ID, List_of_Words,Input_text,Row_Counter);  //Формирует из цифр число, которое затем записывается как отдельный токен, даже в том случае если перед числом шел не пробел, однако это указывается отдельно
+                        if ((Previous_char_ID==9)&&(List_of_Words[List_of_Words.Count-2].Get_ID()==4))
+                        {
+                            int help_counter = List_of_Words.Count - 2;
+                            /* По сути данная функция формирует десятичную дробь, если предыдущим символом была точка или запятая, а перед ней шло число
+                              В общем и целом позволяет избежать дальнейших исправлений списка. */
+                            List_of_Words[help_counter].change_data(List_of_Words[help_counter + 1].get_data() + List_of_Words[help_counter + 2].get_data()); 
+                            List_of_Words.RemoveRange(help_counter + 1, 1); //ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО, НУЖНО ОТТРАССИРОВАТЬ И ИСПРАВИТЬ ЗНАЧЕНИЯ!
+                        }
                         Previous_char_ID = 4;
                     }
                 }
@@ -329,16 +386,92 @@ namespace Parsers
 
         private bool Row_control_check(List<Word> input_list_word, int count)  //Проводит проверку на соответствие строк предыдущего и следующего слова.
         {
-            if (input_list_word[count + 1].Get_row_count() != input_list_word[count].Get_row_count())
-                return false;
-            else
-                return true;
+            return (input_list_word[count + 1].Get_row_count() == input_list_word[count].Get_row_count());
         }
 
-        private void Ariphmetical_translation(List<Word> Input_list_word, int counter,string word_data)
+        private int Priority_of_word(string Word_data, int Word_id)
+        {
+            switch (Word_data)
+            {
+                case "(":
+                    return 0;
+                case ")":
+                    return 1;
+                case "+=":
+                case "+":
+                    return 2;
+                case "-=":
+                case "-":
+                    return 3;
+                case "*=":
+                case "*":
+                    return 4;
+                case "/=":
+                    goto case "/";
+                case "/":
+                    return 4;
+                case "^":
+                    return 5;
+                case "%":
+                    return 6;
+                case "--":
+                    goto case "+";
+                default:
+                    return 7; //Возможно необходимо будет исправление.
+            }
+        }
+
+        private bool Is_basic_function(string word_data)
+        {
+
+        }
+
+        private bool Is_variable(string word_data)
+        {
+            
+        }
+
+        private bool Is_user_function(string word_data)
+        {
+
+        }
+
+        private bool Is_prodigy_function(string word_data)
+        {
+
+        }
+
+        private bool Is_fraction(string word_data)
+        {
+
+        }
+
+        private bool Is_delimeter(string word_data)
+        {
+
+        }
+
+        /* Небольшие эксперименты над функциями contains и функциями
+        для определения типа.
+        private bool contains (int[] input_array, int value_cont)
+        {
+            return input_array.Contains(value_cont);
+        }
+
+        private bool IsContainsOperator(int Word_ID)
+        {
+            return (new int[] {1,2,3,4 }.Contains(Word_ID))
+        }
+        */
+        private void Ariphmetical_translation(List<Word> Input_list_word, int counter, string word_data)
         {
             bool row_check_result = false;
             bool cycle_stop = false;
+            bool double_combination = false;
+            bool equality_left = false;
+            bool end_equality = false;
+            int double_minus = 0;
+            double_combination.
             string previous_word_data= Input_list_word[counter - 1].get_data();
             string next_word_data = Input_list_word[counter + 1].get_data();
             while (!cycle_stop)
@@ -350,18 +483,23 @@ namespace Parsers
 
                         break;
                     case "=":
-
+                        
                         break;
-                    case "+=":
+                    case "+=": double_combination = true;
+                        goto case "+";
                     case "+":
                         break;
                     case "-=":
+                        goto case "-";
                     case "-":
+                        double_minus++;
                         break;
                     case "*=":
+                        goto case "*";
                     case "*":
                         break;
                     case "/=":
+                        goto case "/";
                     case "/":
                         break;
                     case "^":
@@ -369,6 +507,7 @@ namespace Parsers
                     case "%":
                         break;
                     case "--":
+                        double_minus = 2;
                         goto case "+";
                     default:
                         break;
@@ -376,38 +515,5 @@ namespace Parsers
             }
             
         }
-    }
-
-    class MainProgram
-        /* Основной класс который хранит главные атрибуты программы
-        - Количество открытых/закрытых begin/end
-        - Местоположение последнего открытого begin
-        - Общее количество строк
-        - Номер анализируемой строки(внешне данные не нужны)
-        - Hashtable объявленных в программе переменных(string type, object value)
-        - т.д. 
-        Содержит функции вызова трансляции и интерпретации кода.
-        Содержит функции сохранения и загрузки кода из файла.
-        Содержит функции вызова шифрования.
-
-        КЛАСС И ОПИСАНИЕ НЕ ЗАКОНЧЕННО! */
-    {
-        /* Переменные и атрибуты*/
-        protected int Num_of_right_BeginEnds;
-        protected int Num_of_last_open_begin;
-        public int Num_of_rows;
-        private int Num_of_analyse_string;
-        protected Hashtable Variable_storage = new Hashtable();
-        
-        /* Функции и методы */
-
-        public void Translation(string Input_text) //Нужно подумать переносить ли сюда все из Form1.
-        {
-
-        }
-
-        public void Save_in_file() { } //Заглушка на сохранение в файлы
-
-        public void Load_from_file() { } //Заглушка на загрузку из файла
     }
 }
