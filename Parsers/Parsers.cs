@@ -32,9 +32,12 @@ namespace Parsers
 
         /* Функции и методы */
 
+        public delegate void Anyfunction();
+
         public void Translation(string Input_text) //Нужно подумать переносить ли сюда все из Form1.
         {
-
+            var d=Anyfunction.CreateDelegate(typeof(MainProgram).GetMethod("save_in_file").GetType(), typeof(MainProgram).GetMethod("save_in_file"));
+            Anyfunction p = new Anyfunction(Save_in_file);
         }
 
         public void Save_in_file() { } //Заглушка на сохранение в файлы
@@ -423,17 +426,17 @@ namespace Parsers
 
         private bool Is_basic_function(string word_data)
         {
-
+            return typeof(MainProgram).GetMethod("get_variable_storage", args);
         }
 
-        private bool Is_variable(string word_data)
+        private bool Is_variable(string word_data, Dictionary<string,object> Varialbe_storage) //Проверяет содержится ли строка в пространстве имен пользовательских переменных
         {
-            
+            return Varialbe_storage.ContainsKey(word_data);
         }
 
-        private bool Is_user_function(string word_data)
+        private bool Is_user_function(string word_data, Dictionary<string,Func<Type>> User_function_storage) //Проверяет содержится ли строка в пространстве имен пользовательских функций
         {
-
+            return User_function_storage.ContainsKey(word_data);
         }
 
         private bool Is_prodigy_function(string word_data)
@@ -471,7 +474,6 @@ namespace Parsers
             bool equality_left = false;
             bool end_equality = false;
             int double_minus = 0;
-            double_combination.
             string previous_word_data= Input_list_word[counter - 1].get_data();
             string next_word_data = Input_list_word[counter + 1].get_data();
             while (!cycle_stop)
