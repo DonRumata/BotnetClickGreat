@@ -43,6 +43,12 @@
     <Compile Include="Parsers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tokens Library\Tokens Library\Tokens Library.csproj">
+      <Project>{cefd2706-31ce-4210-bc64-3567a2011258}</Project>
+      <Name>Tokens Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

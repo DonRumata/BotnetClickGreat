@@ -197,4 +197,25 @@ namespace Tokens_Library
     } */
 
     //public MyAppWarning(int Nrow, int Ncolumn, int NID, string Nmessage, string Data_text) : base(Nrow, Ncolumn, NID, Nmessage) { Text_data = Data_text; }
+
+   public abstract class AnyFunction
+    {
+        public abstract void Interpretate();
+    }
+
+   public class BuiltIn_Function : AnyFunction
+    {
+        public override void Interpretate()
+        {
+            
+        }
+    }
+
+    public class User_Function : AnyFunction
+    {
+        public override void Interpretate()
+        {
+
+        }
+    }
 }

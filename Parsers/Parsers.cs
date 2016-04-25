@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace Parsers
 {
 
@@ -27,11 +29,12 @@ namespace Parsers
         protected int Num_of_last_open_begin;
         public int Num_of_rows;
         private int Num_of_analyse_string;
+        protected Dictionary<string, Tokens_Library.AnyFunction> Program_interpretation = new Dictionary<string, Tokens_Library.AnyFunction>();
         protected Dictionary<string, object> Variable_storage = new Dictionary<string, object>();
         private Dictionary<string, Func<Type>> User_function_storage = new Dictionary<string, Func<Type>>();
 
         /* Функции и методы */
-
+        /*
         public delegate void Anyfunction();
 
         public void Translation(string Input_text) //Нужно подумать переносить ли сюда все из Form1.
@@ -39,6 +42,7 @@ namespace Parsers
             var d=Anyfunction.CreateDelegate(typeof(MainProgram).GetMethod("save_in_file").GetType(), typeof(MainProgram).GetMethod("save_in_file"));
             Anyfunction p = new Anyfunction(Save_in_file);
         }
+        */
 
         public void Save_in_file() { } //Заглушка на сохранение в файлы
 
@@ -426,7 +430,8 @@ namespace Parsers
 
         private bool Is_basic_function(string word_data)
         {
-            return typeof(MainProgram).GetMethod("get_variable_storage", args);
+            return false;
+            //return typeof(MainProgram).GetMethod("get_variable_storage", args);
         }
 
         private bool Is_variable(string word_data, Dictionary<string,object> Varialbe_storage) //Проверяет содержится ли строка в пространстве имен пользовательских переменных
@@ -441,17 +446,17 @@ namespace Parsers
 
         private bool Is_prodigy_function(string word_data)
         {
-
+            return false;
         }
 
         private bool Is_fraction(string word_data)
         {
-
+            return false;
         }
 
         private bool Is_delimeter(string word_data)
         {
-
+            return false;
         }
 
         /* Небольшие эксперименты над функциями contains и функциями
@@ -518,4 +523,6 @@ namespace Parsers
             
         }
     }
+
+    
 }
