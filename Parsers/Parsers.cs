@@ -267,6 +267,8 @@ namespace Parsers
                 else
                 {
                     i = While_delegate_function(Arifm_check, 1, i, Previous_char_ID, List_of_Words,Input_text,Row_Counter);  //Формирует из арифметических символов строку, которая затем записывается как отдельный токен, даже в том случае если перед ней не шел пробел, однако это указывается отдельно
+                    if (List_of_Words.Last().get_data() == "--")  //Отдельно меняет -- на + для избежания дальнейших ошибок в компиляции.
+                        List_of_Words.Last().change_data("+");
                     Previous_char_ID = 1;
                 }
                 i++;
@@ -370,6 +372,19 @@ namespace Parsers
     Семантический анализ проводится построково отдельно уже с готовыми токенами!
     */
     {
+        //ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО, НУЖНО ПРОВЕРИТЬ ЗАДАНИЕ ЗНАЧЕНИЙ!
+        HashSet<string> Basic_types = new HashSet<string>() { "int", "float", "double", "point", "var", "picture" };
+        HashSet<string> Basic_structure_commands = new HashSet<string>() { "if", "while", "for", "function", "{", "}", "begin", "end", "program", "repeat", "until", "do" };
+        HashSet<string> Ariphmetical_strings = new HashSet<string>() { "=", "-", "+", "*", "/", "+=", "-=", "*=", "/=", "%", "^", "=+", "=-", "=*", "=/" };
+        HashSet<string> Ariphmetical_functions = new HashSet<string>() { "mod", "div", "round", "sqr", "sqrt", "log", "integr", "sin", "cos", "tan", "abs", "acos", "asin", "atan", "fabs", "pow" };
+        
+        /* Определения Hashset сверху-вниз
+        Basic_types - содержит все названия/имена типов, которые возможно применять в программе.
+        Basic_structure_commands - содержит все ключевые слова, имеющие отношение к базовой структуре программы.
+        Ariphmetical_strings - содержит все арифметические символики, которые возможно применить при рассчетах внутри программы.
+        Ariphmetical_functions - содержит все арифметические функции, которые выполняют некие арифметические расчеты и предназначены для взаимодействия с числами
+        */
+
         public Hashtable Begin_translating(List<Word> input_list)
         {
             int i = 0;
@@ -384,7 +399,7 @@ namespace Parsers
                 switch (Word_ID)
                 {
                     case 1:
-                        
+                        Ariphmetical_translation(input_list, i);
                         break;
                 }
             }
@@ -456,7 +471,12 @@ namespace Parsers
 
         private bool Is_delimeter(string word_data)
         {
-            return false;
+            return word_data == "=";
+        }
+
+        private bool Is_ariphmetical(string word_data)
+        {
+            return ((word_data == "==") || (word_data == "=") || (word_data == "+=") || (word_data == "+") || (word_data == "-=") || (word_data == "-") || (word_data == "*=") || (word_data == "*") || (word_data == "/=") || (word_data == "/") || (word_data == "^") || (word_data == "%") || (word_data == "--"));
         }
 
         /* Небольшие эксперименты над функциями contains и функциями
@@ -471,7 +491,7 @@ namespace Parsers
             return (new int[] {1,2,3,4 }.Contains(Word_ID))
         }
         */
-        private void Ariphmetical_translation(List<Word> Input_list_word, int counter, string word_data)
+        private void Ariphmetical_translation(List<Word> Input_list_word, int counter)
         {
             bool row_check_result = false;
             bool cycle_stop = false;
@@ -481,46 +501,19 @@ namespace Parsers
             int double_minus = 0;
             string previous_word_data= Input_list_word[counter - 1].get_data();
             string next_word_data = Input_list_word[counter + 1].get_data();
+
             while (!cycle_stop)
             {
                 row_check_result = Row_control_check(Input_list_word, counter);
-                switch (word_data)
+                switch ()
                 {
-                    case "==":
 
-                        break;
-                    case "=":
-                        
-                        break;
-                    case "+=": double_combination = true;
-                        goto case "+";
-                    case "+":
-                        break;
-                    case "-=":
-                        goto case "-";
-                    case "-":
-                        double_minus++;
-                        break;
-                    case "*=":
-                        goto case "*";
-                    case "*":
-                        break;
-                    case "/=":
-                        goto case "/";
-                    case "/":
-                        break;
-                    case "^":
-                        break;
-                    case "%":
-                        break;
-                    case "--":
-                        double_minus = 2;
-                        goto case "+";
-                    default:
-                        break;
                 }
             }
-            
+        }
+        private string Expression_former(List<Word> Word_list, int counter)
+        {
+            string result = "";
         }
     }
 
