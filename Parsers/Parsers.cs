@@ -377,12 +377,14 @@ namespace Parsers
         HashSet<string> Basic_structure_commands = new HashSet<string>() { "if", "while", "for", "function", "{", "}", "begin", "end", "program", "repeat", "until", "do" };
         HashSet<string> Ariphmetical_strings = new HashSet<string>() { "=", "-", "+", "*", "/", "+=", "-=", "*=", "/=", "%", "^", "=+", "=-", "=*", "=/" };
         HashSet<string> Ariphmetical_functions = new HashSet<string>() { "mod", "div", "round", "sqr", "sqrt", "log", "integr", "sin", "cos", "tan", "abs", "acos", "asin", "atan", "fabs", "pow" };
+        HashSet<string> Logical_strings = new HashSet<string>() { ">", "<", "==", "<=", "!=", ">=", "><" };
         
         /* Определения Hashset сверху-вниз
         Basic_types - содержит все названия/имена типов, которые возможно применять в программе.
         Basic_structure_commands - содержит все ключевые слова, имеющие отношение к базовой структуре программы.
         Ariphmetical_strings - содержит все арифметические символики, которые возможно применить при рассчетах внутри программы.
         Ariphmetical_functions - содержит все арифметические функции, которые выполняют некие арифметические расчеты и предназначены для взаимодействия с числами
+        Logical_strings - содержит все логические символикиЮ которые возможно применить для логических расчетов и условий внутри программы.
         */
 
         public Hashtable Begin_translating(List<Word> input_list)
@@ -399,7 +401,7 @@ namespace Parsers
                 switch (Word_ID)
                 {
                     case 1:
-                        Ariphmetical_translation(input_list, i);
+                        
                         break;
                 }
             }
@@ -474,9 +476,29 @@ namespace Parsers
             return word_data == "=";
         }
 
-        private bool Is_ariphmetical(string word_data)
+        private bool Is_structure_function(string word_data)
         {
-            return ((word_data == "==") || (word_data == "=") || (word_data == "+=") || (word_data == "+") || (word_data == "-=") || (word_data == "-") || (word_data == "*=") || (word_data == "*") || (word_data == "/=") || (word_data == "/") || (word_data == "^") || (word_data == "%") || (word_data == "--"));
+            return Basic_structure_commands.Contains(word_data);
+        }
+
+        private bool Is_logical_symbol(string word_data)
+        {
+            return Logical_strings.Contains(word_data);
+        }
+
+        private bool Is_type_definition(string word_data)
+        {
+            return Basic_types.Contains(word_data);
+        }
+
+        private bool Is_ariphmetical_symbol(string word_data) //Проверяет является ли слово приемлемым арифметическим символом
+        {
+            return Ariphmetical_strings.Contains(word_data);
+        }
+
+        private bool Is_ariphmetical_function(string word_data) //Проверяет является ли слово приемлимой арифметической функцией
+        {
+            return Ariphmetical_functions.Contains(word_data);
         }
 
         /* Небольшие эксперименты над функциями contains и функциями
