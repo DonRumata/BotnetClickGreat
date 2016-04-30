@@ -253,14 +253,21 @@ namespace Parsers
                     else
                     {
                         i = While_delegate_function(Numeric_check, 4, i, Previous_char_ID, List_of_Words,Input_text,Row_Counter);  //Формирует из цифр число, которое затем записывается как отдельный токен, даже в том случае если перед числом шел не пробел, однако это указывается отдельно
-                        if ((Previous_char_ID==9)&&(List_of_Words[List_of_Words.Count-2].Get_ID()==4))
+                        if ((Previous_char_ID == 9) && (List_of_Words[List_of_Words.Count - 2].Get_ID() == 4))
                         {
                             int help_counter = List_of_Words.Count - 2;
                             /* По сути данная функция формирует десятичную дробь, если предыдущим символом была точка или запятая, а перед ней шло число
                               В общем и целом позволяет избежать дальнейших исправлений списка. */
-                            List_of_Words[help_counter].change_data(List_of_Words[help_counter + 1].get_data() + List_of_Words[help_counter + 2].get_data()); 
+                            List_of_Words[help_counter].change_data(List_of_Words[help_counter + 1].get_data() + List_of_Words[help_counter + 2].get_data());
                             List_of_Words.RemoveRange(help_counter + 1, 1); //ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО, НУЖНО ОТТРАССИРОВАТЬ И ИСПРАВИТЬ ЗНАЧЕНИЯ!
                         }
+                        else if ((Previous_char_ID ==11)||(Previous_char_ID==8))
+                        {
+                            /*Если число идет после кириллицы или латиницы без пробела, то формирует из этого единую строку и помечает эту строку как возможное имя переменной*/
+                            List_of_Words[List_of_Words.Count - 1].change_data(List_of_Words[List_of_Words.Count - 1].get_data() + List_of_Words.Last().get_data());
+                            List_of_Words.RemoveAt(List_of_Words.Count);
+                        }
+                            
                         Previous_char_ID = 4;
                     }
                 }
@@ -413,7 +420,7 @@ namespace Parsers
             return (input_list_word[count + 1].Get_row_count() == input_list_word[count].Get_row_count());
         }
 
-        private int Priority_of_word(string Word_data, int Word_id)
+        private int Priority_of_word(string Word_data)
         {
             switch (Word_data)
             {
@@ -515,22 +522,59 @@ namespace Parsers
         */
         private void Ariphmetical_translation(List<Word> Input_list_word, int counter)
         {
+            List<string> Output_string = new List<string>();
+            Stack<string> Operators_stack = new Stack<string>();
+            string nowdata = "";
             bool row_check_result = false;
             bool cycle_stop = false;
             bool double_combination = false;
             bool equality_left = false;
             bool end_equality = false;
             int double_minus = 0;
-            string previous_word_data= Input_list_word[counter - 1].get_data();
-            string next_word_data = Input_list_word[counter + 1].get_data();
-
+            Word Now_word = new Word();
+            counter = counter - 1;
             while (!cycle_stop)
             {
                 row_check_result = Row_control_check(Input_list_word, counter);
-                switch ()
+                Now_word = Input_list_word[counter];
+                nowdata = Now_word.get_data();
+                switch(Input_list_word[counter].Get_ID())
                 {
+                    case 4:
+                        Output_string.Add(Now_word.get_data());
+                    break;
+                    case 1:
+                        if (Is_ariphmetical_symbol(Now_word.get_data()))
+                        {
+                            if (Operators_stack.Count>0)
+                            {
+                                if (Priority_of_word(Now_word.get_data())<=Priority_of_word(Operators_stack.Peek()))
+                                {
+                                    Output_string.Add(Now_word.get_data());
+                                }
+                                Operators_stack.Push(Now_word.get_data());
+                            }
+                        }
+                        break;
+                    case 2:Operators_stack.Push(Now_word.get_data());
+                        break;
+                    case 3:
+                        nowdata = Operators_stack.Pop();
+                        while (nowdata!="(")
+                        {
+                            Output_string.Add(nowdata);
+                            nowdata = Operators_stack.Pop();
+                        }
+                        break;
+                    case 11:
+                        break;
+                    case 8:
+                        if (Is_ariphmetical_function(Input_list_word[counter].get_data()))
+                        {
 
-                }
+                        }
+                        break;
+                }                    
             }
         }
         private string Expression_former(List<Word> Word_list, int counter)
