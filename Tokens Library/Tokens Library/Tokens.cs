@@ -213,6 +213,7 @@ namespace Tokens_Library
 
     public class User_Function : AnyFunction
     {
+        private string return_type;
         public override void Interpretate()
         {
 

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tokens_Library;
 
 
 
@@ -29,9 +30,10 @@ namespace Parsers
         protected int Num_of_last_open_begin;
         public int Num_of_rows;
         private int Num_of_analyse_string;
-        protected Dictionary<string, Tokens_Library.AnyFunction> Program_interpretation = new Dictionary<string, Tokens_Library.AnyFunction>();
-        protected Dictionary<string, object> Variable_storage = new Dictionary<string, object>();
-        private Dictionary<string, Func<Type>> User_function_storage = new Dictionary<string, Func<Type>>();
+        protected Dictionary<string, AnyFunction> Program_interpretation = new Dictionary<string, AnyFunction>();
+        protected Dictionary<string, Variable> Variable_storage = new Dictionary<string, Variable>();
+        private Dictionary<string, User_Function> User_function_storage = new Dictionary<string, User_Function>();
+
 
         /* Функции и методы */
         /*
@@ -48,9 +50,28 @@ namespace Parsers
 
         public void Load_from_file() { } //Заглушка на загрузку из файла
 
-        public Dictionary<string,object> Get_variable_storage()
+
+    }
+
+    class Variable
+    {
+        protected string Val_type;
+        protected object Value;
+
+        public Variable(string type, object value, string name)
         {
-            return Variable_storage;
+            Val_type = type;
+            Value = value;
+        }
+
+        public object Get_value()
+        {
+            return Value;
+        }
+
+        public string Get_val_type()
+        {
+            return Val_type;
         }
     }
 
@@ -458,12 +479,12 @@ namespace Parsers
             //return typeof(MainProgram).GetMethod("get_variable_storage", args);
         }
 
-        private bool Is_variable(string word_data, Dictionary<string,object> Varialbe_storage) //Проверяет содержится ли строка в пространстве имен пользовательских переменных
+        private bool Is_variable(string word_data, Dictionary<string,Variable> VStorage) //Проверяет содержится ли строка в пространстве имен пользовательских переменных
         {
-            return Varialbe_storage.ContainsKey(word_data);
+            return VStorage.ContainsKey(word_data);
         }
 
-        private bool Is_user_function(string word_data, Dictionary<string,Func<Type>> User_function_storage) //Проверяет содержится ли строка в пространстве имен пользовательских функций
+        private bool Is_user_function(string word_data, Dictionary<string,User_Function> User_function_storage) //Проверяет содержится ли строка в пространстве имен пользовательских функций
         {
             return User_function_storage.ContainsKey(word_data);
         }
@@ -520,17 +541,21 @@ namespace Parsers
             return (new int[] {1,2,3,4 }.Contains(Word_ID))
         }
         */
-        private void Ariphmetical_translation(List<Word> Input_list_word, int counter)
+
+        private void Ariphmetical_translation(List<Word> Input_list_word, int counter, Dictionary<string,Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
+
+            /*Функция служит для трансляции арифметических выражений методом обратной польской записи
+            сначала он формирует строку, а затем уже интерпретирует ее получая результат, важно то что в этой функции
+            не идет никакой интерпретации, здесь протекает исключительно подготовка строки, трансляция выполняется другим методом.*/
         {
             List<string> Output_string = new List<string>();
             Stack<string> Operators_stack = new Stack<string>();
             string nowdata = "";
             bool row_check_result = false;
             bool cycle_stop = false;
+            int priority_value = 0;
             bool double_combination = false;
-            bool equality_left = false;
-            bool end_equality = false;
-            int double_minus = 0;
+            bool equality_left = Was_equality;
             Word Now_word = new Word();
             counter = counter - 1;
             while (!cycle_stop)
@@ -541,22 +566,36 @@ namespace Parsers
                 switch(Input_list_word[counter].Get_ID())
                 {
                     case 4:
-                        Output_string.Add(Now_word.get_data());
+                        Output_string.Add(nowdata);
                     break;
                     case 1:
-                        if (Is_ariphmetical_symbol(Now_word.get_data()))
+                        if ((Is_ariphmetical_symbol(nowdata))&&(nowdata!="="))
                         {
                             if (Operators_stack.Count>0)
                             {
-                                if (Priority_of_word(Now_word.get_data())<=Priority_of_word(Operators_stack.Peek()))
+                                if (priority_value+Priority_of_word(nowdata)<=priority_value+Priority_of_word(Operators_stack.Peek()))
                                 {
-                                    Output_string.Add(Now_word.get_data());
+                                    Output_string.Add(nowdata);
                                 }
-                                Operators_stack.Push(Now_word.get_data());
+                                Operators_stack.Push(nowdata);
+                            }
+                        }
+                        else if(nowdata=="=")
+                        {
+                            if(equality_left)
+                            {
+                                /*Нужно подумать что делать с двумя равенствами в одном выражении*/
+                            }
+                            else
+                            {
+                                cycle_stop = true; /*Здесь необходимо заканчивать трансляцию и вызывать интерпретацию, поскольку после правостороннего =
+                                необходимо вычислять значение выражения слева.*/
                             }
                         }
                         break;
-                    case 2:Operators_stack.Push(Now_word.get_data());
+                    case 2:
+                        Operators_stack.Push(Now_word.get_data());
+                        priority_value++;
                         break;
                     case 3:
                         nowdata = Operators_stack.Pop();
@@ -565,18 +604,54 @@ namespace Parsers
                             Output_string.Add(nowdata);
                             nowdata = Operators_stack.Pop();
                         }
+                        priority_value--;
                         break;
                     case 11:
+                        Variable Temp_variable_value;
+                        if (Val_storage.TryGetValue(nowdata, out Temp_variable_value))
+                            Temp_variable_value.Get_value();
+                        else;
+                            /*Здесь необходимо создавать исключение о необьявленной переменной.*/
                         break;
                     case 8:
-                        if (Is_ariphmetical_function(Input_list_word[counter].get_data()))
+                        User_Function temp_interpretate;
+                        if (Is_ariphmetical_function(nowdata))
+                        {
+                                Output_string.Add(nowdata);
+                            //Нужно подумать над интерпретацией функций.
+                        }
+                        else if(Is_basic_function(nowdata))
                         {
 
                         }
+                        else if (User_func_storage.TryGetValue(nowdata,out temp_interpretate)) /*Здесь необходимо будет вызывать метод интерпретации пользовательской функции, как передавать туда аргументы не знаю, возможно придется делать отдельный транслятор под юзер_функции. */
+                        {
+                            temp_interpretate.Interpretate(); //Нужно будет проверять возвращаемый функцией тип, в контексте арифметического транслятора он может быть исключительно числовым.
+                        }
+                        else if(Is_prodigy_function(nowdata))
+                        {
+                            //Здесь необходимо проверять и завершать работу транслятора арифметических выражений.
+                        }
+                        else if(Is_structure_function(nowdata))
+                        {
+                            //Здесь необходимо проверять и завершать работу транслятора арифметических выражений.
+                        }
+                        else if(Is_type_definition(nowdata))
+                        {
+                            Input_list_word[counter+1].get_data()
+                        }
+                        else
+                        {
+                            /*Возможно формирование исключения*/
+                        }
                         break;
-                }                    
+                }
+                counter++;                    
             }
+            while (Operators_stack.Count>0)
+                Output_string.Add(Operators_stack.Pop());
         }
+
         private string Expression_former(List<Word> Word_list, int counter)
         {
             string result = "";
