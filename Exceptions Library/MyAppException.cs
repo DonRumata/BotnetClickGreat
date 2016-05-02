@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace 
+namespace Exceptions_Library
 {
     /*На данный момент код представляет собой заглушку, а не полный и работоспособный класс, классы в дальнейшем будут расширены.
     Также необходимо написать класс автоматического исправления предупреждений или ошибок, для Premium версии */

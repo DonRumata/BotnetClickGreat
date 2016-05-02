@@ -11,7 +11,7 @@ using Tokens_Library;
 namespace Parsers
 {
 
-    class MainProgram
+    public class MainProgram
     /* Основной класс который хранит главные атрибуты программы
     - Количество открытых/закрытых begin/end
     - Местоположение последнего открытого begin
@@ -30,9 +30,12 @@ namespace Parsers
         protected int Num_of_last_open_begin;
         public int Num_of_rows;
         private int Num_of_analyse_string;
+        protected string Program_text;
+        protected List<string> Frist_translation_result = new List<string>();
         protected Dictionary<string, AnyFunction> Program_interpretation = new Dictionary<string, AnyFunction>();
-        protected Dictionary<string, Variable> Variable_storage = new Dictionary<string, Variable>();
+        private Dictionary<string, Variable> Variable_storage = new Dictionary<string, Variable>();
         private Dictionary<string, User_Function> User_function_storage = new Dictionary<string, User_Function>();
+
 
 
         /* Функции и методы */
@@ -45,6 +48,16 @@ namespace Parsers
             Anyfunction p = new Anyfunction(Save_in_file);
         }
         */
+
+        public MainProgram()
+        {
+            
+        }
+
+        public void Translate_program(string input_program_text)
+        {
+
+        }
 
         public void Save_in_file() { } //Заглушка на сохранение в файлы
 
@@ -554,6 +567,8 @@ namespace Parsers
             bool row_check_result = false;
             bool cycle_stop = false;
             int priority_value = 0;
+            int function_insider = 0;
+            bool function_opened = false;
             bool double_combination = false;
             bool equality_left = Was_equality;
             Word Now_word = new Word();
@@ -604,7 +619,7 @@ namespace Parsers
                             Output_string.Add(nowdata);
                             nowdata = Operators_stack.Pop();
                         }
-                        priority_value--;
+                        function_insider--;
                         break;
                     case 11:
                         Variable Temp_variable_value;
@@ -614,6 +629,7 @@ namespace Parsers
                             /*Здесь необходимо создавать исключение о необьявленной переменной.*/
                         break;
                     case 8:
+                        function_insider++;
                         User_Function temp_interpretate;
                         if (Is_ariphmetical_function(nowdata))
                         {
@@ -638,23 +654,21 @@ namespace Parsers
                         }
                         else if(Is_type_definition(nowdata))
                         {
-                            Input_list_word[counter+1].get_data()
+                            
                         }
                         else
                         {
                             /*Возможно формирование исключения*/
                         }
                         break;
+                    case 9:
+
+                        break;
                 }
                 counter++;                    
             }
             while (Operators_stack.Count>0)
                 Output_string.Add(Operators_stack.Pop());
-        }
-
-        private string Expression_former(List<Word> Word_list, int counter)
-        {
-            string result = "";
         }
     }
 

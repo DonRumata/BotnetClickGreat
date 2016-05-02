@@ -118,6 +118,7 @@ namespace Tokens_Library
                     Result = Math.Round(Math.Sqrt(first_value), 4);
                     break;
                 case "log":
+                    Result = Math.Log(first_value);
                     break;
                 case "integr":
                     break;
@@ -138,6 +139,9 @@ namespace Tokens_Library
                     break;
                 case "tan":
                     Result = Math.Tan(first_value);
+                    break;
+                case "pow":
+                    Result = Math.Pow(first_value, second_value);
                     break;
             }
             return Result;

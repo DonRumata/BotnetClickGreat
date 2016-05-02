@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Parsers;
 
 namespace BotnetClickGreat
 {
@@ -26,7 +27,7 @@ namespace BotnetClickGreat
 
         private void button1_Click(object sender, EventArgs e)   //Запускает трансляцию введенного пользователем скрипта.
         {
-
+            MainProgram User_program = new MainProgram();
         }
         /*
 var List_of_Words = new List<Word>();  //Хранит в себе данные о токенах|словах

@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsers Library", "Parsers\
 		{CEFD2706-31CE-4210-BC64-3567A2011258} = {CEFD2706-31CE-4210-BC64-3567A2011258}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptions Library", "Exceptions Library\Exceptions Library.csproj", "{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D72C2B3-8D11-427A-B6C6-E5CEA7CDFF44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
