@@ -14,8 +14,13 @@ namespace BotnetClickGreat
 {
     public partial class Form1 : Form
     {
-        List<MyAppWarning> List_of_warnings = new List<MyAppWarning>(); //Представляет собой список предупреждений, для вывода в соответствующую таблицу интерфейса
-        List<MyAppError> List_of_errors = new List<MyAppError>(); //Представляет собой список ошибок, для вывода в соответствующую таблицу интерфейса
+        public static MainProgram User_program;
+
+        private void Initialize_program_shell() //Данная функция инициализирует глобальные переменные, а также проводит валидацию DLL и обеспечивает инициализацию связи клиент/сервер приложения.
+        {
+            User_program = new MainProgram();
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -27,7 +32,8 @@ namespace BotnetClickGreat
 
         private void button1_Click(object sender, EventArgs e)   //Запускает трансляцию введенного пользователем скрипта.
         {
-            MainProgram User_program = new MainProgram();
+            Initialize_program_shell();
+            User_program.Translate_program(textBox1.Text);
         }
         /*
 var List_of_Words = new List<Word>();  //Хранит в себе данные о токенах|словах

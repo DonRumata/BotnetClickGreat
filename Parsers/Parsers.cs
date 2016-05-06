@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tokens_Library;
+using Exceptions_Library;
 
 
 
@@ -31,10 +32,11 @@ namespace Parsers
         public int Num_of_rows;
         private int Num_of_analyse_string;
         protected string Program_text;
-        protected List<string> Frist_translation_result = new List<string>();
+        protected List<string> First_translation_result;
         protected Dictionary<string, AnyFunction> Program_interpretation = new Dictionary<string, AnyFunction>();
-        private Dictionary<string, Variable> Variable_storage = new Dictionary<string, Variable>();
-        private Dictionary<string, User_Function> User_function_storage = new Dictionary<string, User_Function>();
+        private Dictionary<string, Variable> Variable_storage;
+        private Dictionary<string, User_Function> User_function_storage;
+        private Dictionary<int, Message> Output_data;
 
 
 
@@ -50,13 +52,40 @@ namespace Parsers
         */
 
         public MainProgram()
+            /*Конструктор, выполняет роль инициализатора, инициализирует и проверяет инициализацию всех переменных.*/
         {
-            
+            Num_of_right_BeginEnds = 0;
+            Num_of_last_open_begin = 0;
+            Num_of_rows = 0;
+            Num_of_analyse_string = 0;
+            Program_text = "";
+        }
+
+        private bool Initialize_translaters()
+        {
+            /*Инициализирует транслятор и словари и списки привязанные к трансляции, проверяет их существование.*/
+            First_translation_result = new List<string>();
+            Variable_storage = new Dictionary<string, Variable>();
+            User_function_storage = new Dictionary<string, User_Function>();
+            Program_interpretation = new Dictionary<string, AnyFunction>();
+            if ((First_translation_result != null) && (Variable_storage != null) && (User_function_storage != null) && (Program_interpretation != null))
+                return true;
+            else
+                return false;
+        }
+
+        private void Initialize_interpretators() //Будет инициазилировать интерпретатор пока что в стадии заглушки
+        {
+
         }
 
         public void Translate_program(string input_program_text)
         {
 
+            Program_text = input_program_text;
+            First_char_parser First_parser=new First_char_parser();
+            Translation_word_parser Translater = new Translation_word_parser();
+            Translater.Begin_translating(First_parser.Parse_first_text(input_program_text));
         }
 
         public void Save_in_file() { } //Заглушка на сохранение в файлы
@@ -86,6 +115,12 @@ namespace Parsers
         {
             return Val_type;
         }
+    }
+
+    class Message:MyAppException
+    {
+        protected string message = "";
+
     }
 
     class Word  //Класс необходимый для формирования списка токенов, представляет собой по факту описание токена.
@@ -398,13 +433,13 @@ namespace Parsers
         {
             int helper_counter = i_counter;
             string Data_former = "";
-            while (Cycle_condition(input_text[helper_counter]) == second_cycle_condition)  //Проходит циклом по тексту и формирует строку, пока входящая функция удовлетворяет второму условию
+            while ((helper_counter!=input_text.Length)&&(Cycle_condition(input_text[helper_counter]) == second_cycle_condition))  //Проходит циклом по тексту и формирует строку, пока входящая функция удовлетворяет второму условию
             {
                 Data_former += input_text[helper_counter];
                 helper_counter++;
             }
-            Word_list.Add(new Word(Data_former,previous_ID==0,second_cycle_condition,row_count,i_counter,helper_counter)); //Формирует и добавляет заготовку токена в список
-            return helper_counter;
+            Word_list.Add(new Word(Data_former,previous_ID==0,second_cycle_condition,row_count,i_counter,helper_counter-1)); //Формирует и добавляет заготовку токена в список
+            return helper_counter-1;
         }
     }
 
@@ -428,7 +463,7 @@ namespace Parsers
         Logical_strings - содержит все логические символикиЮ которые возможно применить для логических расчетов и условий внутри программы.
         */
 
-        public Hashtable Begin_translating(List<Word> input_list)
+        public Hashtable Begin_translating(List<Word> input_list, Dictionary<string,Variable> VStorage, Dictionary<string,User_Function> UFStorage)
         {
             int i = 0;
             int Word_ID = 0;
@@ -442,9 +477,10 @@ namespace Parsers
                 switch (Word_ID)
                 {
                     case 1:
-                        
+                        Ariphmetical_translation(input_list,i,)
                         break;
                 }
+                i++;
             }
             return Result;
         }
