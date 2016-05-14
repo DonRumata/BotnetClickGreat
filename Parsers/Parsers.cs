@@ -34,8 +34,8 @@ namespace Parsers
         protected string Program_text;
         protected List<string> First_translation_result;
         protected Dictionary<string, AnyFunction> Program_interpretation = new Dictionary<string, AnyFunction>();
-        private Dictionary<string, Variable> Variable_storage;
-        private Dictionary<string, User_Function> User_function_storage;
+        private Dictionary<int, Variable> Variable_storage;
+        private Dictionary<int, User_Function> User_function_storage;
         private Dictionary<int, Message> Output_data;
 
 
@@ -65,8 +65,8 @@ namespace Parsers
         {
             /*Инициализирует транслятор и словари и списки привязанные к трансляции, проверяет их существование.*/
             First_translation_result = new List<string>();
-            Variable_storage = new Dictionary<string, Variable>();
-            User_function_storage = new Dictionary<string, User_Function>();
+            Variable_storage = new Dictionary<int, Variable>();
+            User_function_storage = new Dictionary<int, User_Function>();
             Program_interpretation = new Dictionary<string, AnyFunction>();
             if ((First_translation_result != null) && (Variable_storage != null) && (User_function_storage != null) && (Program_interpretation != null))
                 return true;
@@ -85,7 +85,7 @@ namespace Parsers
             Program_text = input_program_text;
             First_char_parser First_parser=new First_char_parser();
             Translation_word_parser Translater = new Translation_word_parser();
-            Translater.Begin_translating(First_parser.Parse_first_text(input_program_text));
+            Translater.Begin_translating(First_parser.Parse_first_text(input_program_text),Variable_storage,User_function_storage);
         }
 
         public void Save_in_file() { } //Заглушка на сохранение в файлы
@@ -95,27 +95,6 @@ namespace Parsers
 
     }
 
-    class Variable
-    {
-        protected string Val_type;
-        protected object Value;
-
-        public Variable(string type, object value, string name)
-        {
-            Val_type = type;
-            Value = value;
-        }
-
-        public object Get_value()
-        {
-            return Value;
-        }
-
-        public string Get_val_type()
-        {
-            return Val_type;
-        }
-    }
 
     class Message:MyAppException
     {
@@ -268,6 +247,9 @@ namespace Parsers
                                         Previous_char_ID = 3;
                                         break;
                                     case ',':
+                                        List_of_Words.Add(new Word(",", Helper, 15, Row_Counter, i, i));
+                                        Previous_char_ID = 15;
+                                        break;
                                     case '.':
                                         List_of_Words.Add(new Word(nowchar.ToString(), Helper, 9, Row_Counter, i, i));
                                         Previous_char_ID = 9;
@@ -325,7 +307,7 @@ namespace Parsers
                         if ((Previous_char_ID == 9) && (List_of_Words[List_of_Words.Count - 2].Get_ID() == 4))
                         {
                             int help_counter = List_of_Words.Count - 2;
-                            /* По сути данная функция формирует десятичную дробь, если предыдущим символом была точка или запятая, а перед ней шло число
+                            /* По сути данная функция формирует десятичную дробь, если предыдущим символом была точка, а перед ней шло число
                               В общем и целом позволяет избежать дальнейших исправлений списка. */
                             List_of_Words[help_counter].change_data(List_of_Words[help_counter + 1].get_data() + List_of_Words[help_counter + 2].get_data());
                             List_of_Words.RemoveRange(help_counter + 1, 1); //ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО, НУЖНО ОТТРАССИРОВАТЬ И ИСПРАВИТЬ ЗНАЧЕНИЯ!
@@ -463,7 +445,7 @@ namespace Parsers
         Logical_strings - содержит все логические символикиЮ которые возможно применить для логических расчетов и условий внутри программы.
         */
 
-        public Hashtable Begin_translating(List<Word> input_list, Dictionary<string,Variable> VStorage, Dictionary<string,User_Function> UFStorage)
+        public Hashtable Begin_translating(List<Word> input_list, Dictionary<int,Variable> VStorage, Dictionary<int,User_Function> UFStorage)
         {
             int i = 0;
             int Word_ID = 0;
@@ -477,7 +459,7 @@ namespace Parsers
                 switch (Word_ID)
                 {
                     case 1:
-                        Ariphmetical_translation(input_list,i,)
+                        Ariphmetical_translation(input_list, i, VStorage, UFStorage, false);
                         break;
                 }
                 i++;
@@ -488,6 +470,18 @@ namespace Parsers
         private bool Row_control_check(List<Word> input_list_word, int count)  //Проводит проверку на соответствие строк предыдущего и следующего слова.
         {
             return (input_list_word[count + 1].Get_row_count() == input_list_word[count].Get_row_count());
+        }
+
+        private bool Row_control_check(List<Word> input_list_word, int count, int Range) //Проводит проверку на соответствие строк диапазона слов, задаваемого range.
+        {
+            bool NFailed = true;
+            int end_cycler = count + Range - 1;
+            while ((count!=end_cycler)&&(NFailed))
+            {
+                NFailed = (input_list_word[count].Get_row_count() == input_list_word[count + 1].Get_row_count());
+                count++;
+            }
+            return NFailed;
         }
 
         private int Priority_of_word(string Word_data)
@@ -520,6 +514,12 @@ namespace Parsers
                 default:
                     return 7; //Возможно необходимо будет исправление.
             }
+        }
+
+        private bool Is_definition_ariphmetical_allowed(string data) //Проверяет удовлетворяет ли строка требованиям к допустимым арифметическим символикам при обьявлении переменной.
+        {
+            char[] oh_shi = data.ToCharArray(); 
+            return (((oh_shi[0] == '=') || (oh_shi[1] == '=')) && (Is_ariphmetical_symbol(data)));
         }
 
         private bool Is_basic_function(string word_data)
@@ -577,6 +577,11 @@ namespace Parsers
         {
             return Ariphmetical_functions.Contains(word_data);
         }
+        
+        private bool Is_any_function(string data)
+        {
+            return ((Is_ariphmetical_function(data)) || (Is_basic_function(data)) || (Is_prodigy_function(data)));
+        }
 
         /* Небольшие эксперименты над функциями contains и функциями
         для определения типа.
@@ -591,7 +596,39 @@ namespace Parsers
         }
         */
 
-        private void Ariphmetical_translation(List<Word> Input_list_word, int counter, Dictionary<string,Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
+        private void Function_definition_translator(List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<>)
+        
+        
+        
+        private void Non_local_Args_translator(string Call_function_name, List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<string,User_Function> Uf_storage)
+            /*Пока что преобразовывается в заглушку, ибо приоритет меньше чем у транслятора обьявления функций*/
+        {
+            if (Is_any_function(Call_function_name))
+            {
+                
+            }
+        }
+
+        private void Variable_definition_translater(List<Word> Input_list, int counter, Dictionary<string, Variable> Var_storage, Dictionary<string, User_Function> Uf_storage) //Функция должна просто возвращать variable тип или ошибку
+        {
+            /*На данные момент заглушка, приоритет меньше чем у трансляции функций*/
+            bool row_check_result = false;
+            bool equality_check_result;
+            if (Row_control_check(Input_list, counter))
+            {
+                if (Row_control_check(Input_list, counter + 1))
+                {
+                    if (Input_list[counter + 2].get_data() == "=")
+                    {
+
+                    }
+                    Variable result = new Variable(Input_list[counter - 1].get_data(), 0, Input_list[counter].get_data()); //Вместо значения 0, необходимо подставлять значение вычисленное после равенства.
+                }
+
+            }
+        }
+
+        private void Ariphmetical_translation(List<Word> Input_list, int counter, Dictionary<int,Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
 
             /*Функция служит для трансляции арифметических выражений методом обратной польской записи
             сначала он формирует строку, а затем уже интерпретирует ее получая результат, важно то что в этой функции
@@ -611,10 +648,10 @@ namespace Parsers
             counter = counter - 1;
             while (!cycle_stop)
             {
-                row_check_result = Row_control_check(Input_list_word, counter);
-                Now_word = Input_list_word[counter];
+                row_check_result = Row_control_check(Input_list, counter);
+                Now_word = Input_list[counter];
                 nowdata = Now_word.get_data();
-                switch(Input_list_word[counter].Get_ID())
+                switch(Input_list[counter].Get_ID())
                 {
                     case 4:
                         Output_string.Add(nowdata);
@@ -628,10 +665,10 @@ namespace Parsers
                                 {
                                     Output_string.Add(nowdata);
                                 }
-                                Operators_stack.Push(nowdata);
                             }
+                            Operators_stack.Push(nowdata);
                         }
-                        else if(nowdata=="=")
+                        else if (nowdata=="=")
                         {
                             if(equality_left)
                             {
@@ -659,14 +696,13 @@ namespace Parsers
                         break;
                     case 11:
                         Variable Temp_variable_value;
-                        if (Val_storage.TryGetValue(nowdata, out Temp_variable_value))
+                        /*if (Val_storage.TryGetValue(nowdata, out Temp_variable_value))
                             Temp_variable_value.Get_value();
-                        else;
+                        else;*/
                             /*Здесь необходимо создавать исключение о необьявленной переменной.*/
                         break;
                     case 8:
                         function_insider++;
-                        User_Function temp_interpretate;
                         if (Is_ariphmetical_function(nowdata))
                         {
                                 Output_string.Add(nowdata);
@@ -675,10 +711,6 @@ namespace Parsers
                         else if(Is_basic_function(nowdata))
                         {
 
-                        }
-                        else if (User_func_storage.TryGetValue(nowdata,out temp_interpretate)) /*Здесь необходимо будет вызывать метод интерпретации пользовательской функции, как передавать туда аргументы не знаю, возможно придется делать отдельный транслятор под юзер_функции. */
-                        {
-                            temp_interpretate.Interpretate(); //Нужно будет проверять возвращаемый функцией тип, в контексте арифметического транслятора он может быть исключительно числовым.
                         }
                         else if(Is_prodigy_function(nowdata))
                         {
