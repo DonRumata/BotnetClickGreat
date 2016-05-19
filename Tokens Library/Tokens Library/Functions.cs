@@ -22,12 +22,12 @@ namespace Tokens_Library
     public class User_Function : AnyFunction
     {
         private string return_type;
-        public int num_of_args { get; }
-        protected HashSet<string> Arg_types = new HashSet<string>();
-
-        public User_Function(string return_type, string types)
+        protected HashSet<Local_Variable> L_variables = new HashSet<Local_Variable>();
+        protected HashSet<Argument> Args = new HashSet<Argument>();
+        public User_Function(string rtype, HashSet<Local_Variable> locals)
         {
-            num_of_args = Arg_types.Count();
+            return_type = rtype;
+            L_variables = locals;
         }
 
         public override void Interpretate()

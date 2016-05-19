@@ -34,7 +34,7 @@ namespace Parsers
         protected string Program_text;
         protected List<string> First_translation_result;
         protected Dictionary<string, AnyFunction> Program_interpretation = new Dictionary<string, AnyFunction>();
-        private Dictionary<int, Variable> Variable_storage;
+        private Dictionary<int, Global_Variable> Variable_storage;
         private Dictionary<int, User_Function> User_function_storage;
         private Dictionary<int, Message> Output_data;
 
@@ -65,7 +65,7 @@ namespace Parsers
         {
             /*Инициализирует транслятор и словари и списки привязанные к трансляции, проверяет их существование.*/
             First_translation_result = new List<string>();
-            Variable_storage = new Dictionary<int, Variable>();
+            Variable_storage = new Dictionary<int, Global_Variable>();
             User_function_storage = new Dictionary<int, User_Function>();
             Program_interpretation = new Dictionary<string, AnyFunction>();
             if ((First_translation_result != null) && (Variable_storage != null) && (User_function_storage != null) && (Program_interpretation != null))
@@ -445,7 +445,7 @@ namespace Parsers
         Logical_strings - содержит все логические символикиЮ которые возможно применить для логических расчетов и условий внутри программы.
         */
 
-        public Hashtable Begin_translating(List<Word> input_list, Dictionary<int,Variable> VStorage, Dictionary<int,User_Function> UFStorage)
+        public Hashtable Begin_translating(List<Word> input_list, Dictionary<int,Global_Variable> VStorage, Dictionary<int,User_Function> UFStorage)
         {
             int i = 0;
             int Word_ID = 0;
@@ -583,6 +583,27 @@ namespace Parsers
             return ((Is_ariphmetical_function(data)) || (Is_basic_function(data)) || (Is_prodigy_function(data)));
         }
 
+        private bool equality_with_the_row_check(string equaler, List<Word> Word_list,int counter)
+        {
+            return ((Word_list[counter].Get_row_count() == Word_list[counter + 1].Get_row_count()) && (Word_list[counter + 1].get_data() == equaler));
+        }
+
+        private bool equality_with_the_row_check(Func<string,bool> equaler, List<Word> Word_list, int counter)
+        {
+            return ((Word_list[counter].Get_row_count() == Word_list[counter + 1].Get_row_count()) && (equaler(Word_list[counter+1].get_data())));
+        }
+
+        private bool equality_with_the_row_check(Func<string,bool> equaler, List<Word> Word_list, int counter, bool space_check, out int num_of_error)
+        {
+            if (!equaler(Word_list[counter + 1].get_data()))
+                num_of_error = 1;
+            else if (!Word_list[counter + 1].get_space_check())
+                num_of_error = 2;
+            else
+                num_of_error = 0;
+            return ((Word_list[counter].Get_row_count() == Word_list[counter + 1].Get_row_count()) && (equaler(Word_list[counter + 1].get_data()))&&(Word_list[counter+1].get_space_check()));
+        }
+
         /* Небольшие эксперименты над функциями contains и функциями
         для определения типа.
         private bool contains (int[] input_array, int value_cont)
@@ -596,8 +617,62 @@ namespace Parsers
         }
         */
 
-        private void Function_definition_translator(List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<>)
-        
+        private void UFunction_args_definition_translater(List<Word> List_word, int counter)
+        {
+            int error_num = -1;
+            HashSet<Local_Variable> Args_hst = new HashSet<Local_Variable>();
+            if (List_word[counter].Get_ID() == 2)
+                counter++;
+            while (List_word[counter].Get_ID() != 3)
+            {
+                if (equality_with_the_row_check(Is_type_definition,List_word,counter,out error_num))
+                    switch (error_num)
+                    {
+                        case 0: /*Создавать ошибку на тему row_count, несоответствие строки*/
+                            break;
+                        case 1: /*Создавать ошибку на тему аргумента неизвестного типа*/
+                            break;
+                        case 2:
+                            counter++;
+                            args_counter++;
+                            Args_hst.Add(new Local_Variable(List_word[counter],))
+                            break;
+                        default:/*Создавать ошибку об ошибке трансляции аргументов*/
+                            break;
+                    }
+            }
+        }
+
+        private void Function_definition_translator(List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<string,User_Function> Uf_storage)
+        {
+            string return_type = "";
+            string Func_name = "";
+            int error_num = -1;
+            if (equality_with_the_row_check(Is_type_definition, Input_list_word, counter, true,out error_num))
+            {
+                counter++;
+                return_type = Input_list_word[counter].get_data();
+            }
+            else
+            {
+                counter++;
+                switch (error_num)
+                {
+                    case 0:/*Создавать ошибку на тему row_count, несоответствие строки*/
+                        break;
+                    case 1:
+                        return_type = "void";
+                        Func_name = Input_list_word[counter].get_data();
+                        break;
+                    case 2:/*Создавать ошибку на тему space_check, отсутствие пробела*/
+                        break;
+                    default:
+                        /*Создавать ошибку об ошибке трансляции.*/
+                        break;
+                }
+            }
+
+        }
         
         
         private void Non_local_Args_translator(string Call_function_name, List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<string,User_Function> Uf_storage)
@@ -609,26 +684,7 @@ namespace Parsers
             }
         }
 
-        private void Variable_definition_translater(List<Word> Input_list, int counter, Dictionary<string, Variable> Var_storage, Dictionary<string, User_Function> Uf_storage) //Функция должна просто возвращать variable тип или ошибку
-        {
-            /*На данные момент заглушка, приоритет меньше чем у трансляции функций*/
-            bool row_check_result = false;
-            bool equality_check_result;
-            if (Row_control_check(Input_list, counter))
-            {
-                if (Row_control_check(Input_list, counter + 1))
-                {
-                    if (Input_list[counter + 2].get_data() == "=")
-                    {
-
-                    }
-                    Variable result = new Variable(Input_list[counter - 1].get_data(), 0, Input_list[counter].get_data()); //Вместо значения 0, необходимо подставлять значение вычисленное после равенства.
-                }
-
-            }
-        }
-
-        private void Ariphmetical_translation(List<Word> Input_list, int counter, Dictionary<int,Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
+        private void Ariphmetical_translation(List<Word> Input_list, int counter, Dictionary<int,Global_Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
 
             /*Функция служит для трансляции арифметических выражений методом обратной польской записи
             сначала он формирует строку, а затем уже интерпретирует ее получая результат, важно то что в этой функции
