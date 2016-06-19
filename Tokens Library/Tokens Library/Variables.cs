@@ -32,27 +32,17 @@ namespace Tokens_Library
     public class Local_Variable : Variable
     {
         public int Func_ID;
-        public int arg_chainer;
-        public Local_Variable(string Ntype, object Nvalue, string Nname, int ID, int arg_num) : base(Ntype, Nvalue, Nname) { Func_ID = ID; arg_chainer = arg_num; }
+        public Local_Variable(string Ntype, object Nvalue, string Nname, int ID, int arg_num) : base(Ntype, Nvalue, Nname) { Func_ID = ID; }
+    }
+
+    public class Argument:Variable
+    {
+        public int Func_ID;
+        public Argument(string Ntype, string Nname, int FID) : base(Ntype, 0, Nname) { Func_ID = FID; }
     }
 
     public class Global_Variable : Variable
     {
         public Global_Variable(string Ntype, object Nvalue, string Nname) : base(Ntype, Nvalue, Nname) { }
     }
-
-    public class Argument
-    {
-        public string Arg_name { get; set; }
-        protected string Arg_type;
-        protected int Func_ID;
-
-        public Argument(string Name, string type, int ID)
-        {
-            Arg_name = Name;
-            Arg_type = type;
-            Func_ID = ID;
-        }
-    }
-
 }

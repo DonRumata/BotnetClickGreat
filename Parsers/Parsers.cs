@@ -548,6 +548,11 @@ namespace Parsers
             return false;
         }
 
+        private bool is_ariphm_delimeter(string word_data)
+        {
+            return word_data == ",";
+        }
+
         private bool Is_delimeter(string word_data)
         {
             return word_data == "=";
@@ -568,6 +573,11 @@ namespace Parsers
             return Basic_types.Contains(word_data);
         }
 
+        private bool Is_normal_for_name(string word_data)
+        {
+            return false;
+        }
+
         private bool Is_ariphmetical_symbol(string word_data) //Проверяет является ли слово приемлемым арифметическим символом
         {
             return Ariphmetical_strings.Contains(word_data);
@@ -581,6 +591,25 @@ namespace Parsers
         private bool Is_any_function(string data)
         {
             return ((Is_ariphmetical_function(data)) || (Is_basic_function(data)) || (Is_prodigy_function(data)));
+        }
+
+        private bool equality_with_the_row_check(int equaler, List<Word> Word_list, int counter, out int err_code)
+        {
+            if (equaler != Word_list[counter].Get_ID())
+            {
+                err_code = 1;
+                return false;
+            }
+            else if (Word_list[counter].Get_row_count() != Word_list[counter + 1].Get_row_count())
+            {
+                err_code = 2;
+                return false;
+            }
+            else
+            {
+                err_code = 0;
+                return true;
+            }
         }
 
         private bool equality_with_the_row_check(string equaler, List<Word> Word_list,int counter)
@@ -597,7 +626,7 @@ namespace Parsers
         {
             if (!equaler(Word_list[counter + 1].get_data()))
                 num_of_error = 1;
-            else if (!Word_list[counter + 1].get_space_check())
+            else if ((!Word_list[counter + 1].get_space_check())&&(space_check))
                 num_of_error = 2;
             else
                 num_of_error = 0;
@@ -617,36 +646,75 @@ namespace Parsers
         }
         */
 
-        private void UFunction_args_definition_translater(List<Word> List_word, int counter)
+        private bool UFunction_args_definition_translater(List<Word> List_word, int counter, int function_id, out int count)
+            /*Функция транслирует и проверяет форму и семантику записи */
         {
             int error_num = -1;
-            HashSet<Local_Variable> Args_hst = new HashSet<Local_Variable>();
+            bool delimeter = true;
+            bool was_error = false;
+            HashSet<Argument> Args_hst = new HashSet<Argument>();
             if (List_word[counter].Get_ID() == 2)
                 counter++;
-            while (List_word[counter].Get_ID() != 3)
+            while ((List_word[counter].Get_ID() != 3)&&(!was_error))
             {
-                if (equality_with_the_row_check(Is_type_definition,List_word,counter,out error_num))
+                if (equality_with_the_row_check(Is_type_definition,List_word,counter,true, out error_num))
                     switch (error_num)
                     {
                         case 0: /*Создавать ошибку на тему row_count, несоответствие строки*/
                             break;
                         case 1: /*Создавать ошибку на тему аргумента неизвестного типа*/
+                            if ((!delimeter)&&(List_word[counter].get_data()==","))
+                            {
+                                delimeter = true;
+                                if (Row_control_check(List_word, counter))
+                                    goto case 2;
+                            }
+                            else
+                            {
+                                //Создавать ошибку на тему аргумента неизвестного типа.
+                            }
                             break;
                         case 2:
                             counter++;
-                            args_counter++;
-                            Args_hst.Add(new Local_Variable(List_word[counter],))
+                            //Тут нужно добавить проверку на соответствие имени, возможному вводу и символам.
+                            Args_hst.Add(new Argument(List_word[counter - 1].get_data(), List_word[counter].get_data(), function_id));
+                            if (Row_control_check(List_word, counter))
+                            {
+                                counter++;
+                                delimeter = false;
+                            }
+                            else
+                            {
+                                //Создавать ошибку на row_count, несоответствие строки.
+                            }
                             break;
                         default:/*Создавать ошибку об ошибке трансляции аргументов*/
                             break;
                     }
             }
+            if (!was_error)
+            {
+                count = counter;  //ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО, нужно выяснить нужна ли out переменная.
+                return true;
+            }
+            else
+            {
+                count = counter;
+                return false;
+            }
+        }
+
+        private void Function_body_translator(List<Word> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string,User_Function> UF_storage)
+        {
+
         }
 
         private void Function_definition_translator(List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<string,User_Function> Uf_storage)
+            /*Функция осуществляет трансляцию определения функции и записывает ее в список User_function, */
         {
             string return_type = "";
             string Func_name = "";
+            int FuncID=Uf_storage.Count+1;
             int error_num = -1;
             if (equality_with_the_row_check(Is_type_definition, Input_list_word, counter, true,out error_num))
             {
@@ -663,6 +731,7 @@ namespace Parsers
                     case 1:
                         return_type = "void";
                         Func_name = Input_list_word[counter].get_data();
+                        UFunction_args_definition_translater(Input_list_word, counter, FuncID, out counter);
                         break;
                     case 2:/*Создавать ошибку на тему space_check, отсутствие пробела*/
                         break;
