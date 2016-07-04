@@ -9,6 +9,7 @@ namespace Tokens_Library
     public abstract class AnyFunction
     {
         public abstract void Interpretate();
+        public abstract string GetType();
     }
 
     public class BuiltIn_Function : AnyFunction
@@ -16,6 +17,11 @@ namespace Tokens_Library
         public override void Interpretate()
         {
 
+        }
+
+        public override string GetType()
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -37,5 +43,18 @@ namespace Tokens_Library
         {
 
         }
+
+        public override string GetType()
+        {
+            return return_type;
+        }
+    }
+
+    public class Condition_function
+    {
+        private List<string> First_body;
+        private List<string> Second_body;
+        private List<string> Condition;
+        private int condition_id;
     }
 }

@@ -436,6 +436,7 @@ namespace Parsers
         HashSet<string> Ariphmetical_strings = new HashSet<string>() { "=", "-", "+", "*", "/", "+=", "-=", "*=", "/=", "%", "^", "=+", "=-", "=*", "=/" };
         HashSet<string> Ariphmetical_functions = new HashSet<string>() { "mod", "div", "round", "sqr", "sqrt", "log", "integr", "sin", "cos", "tan", "abs", "acos", "asin", "atan", "fabs", "pow" };
         HashSet<string> Logical_strings = new HashSet<string>() { ">", "<", "==", "<=", "!=", ">=", "><" };
+        //static Dictionary<string, User_Function> User_function_storage = new Dictionary<string, User_Function>();
         
         /* Определения Hashset сверху-вниз
         Basic_types - содержит все названия/имена типов, которые возможно применять в программе.
@@ -443,9 +444,10 @@ namespace Parsers
         Ariphmetical_strings - содержит все арифметические символики, которые возможно применить при рассчетах внутри программы.
         Ariphmetical_functions - содержит все арифметические функции, которые выполняют некие арифметические расчеты и предназначены для взаимодействия с числами
         Logical_strings - содержит все логические символикиЮ которые возможно применить для логических расчетов и условий внутри программы.
+        User_function_storage - хранит в себе все транслированные пользовательские функции.
         */
 
-        public Hashtable Begin_translating(List<Word> input_list, Dictionary<int,Global_Variable> VStorage, Dictionary<int,User_Function> UFStorage)
+        public Hashtable Begin_translating(List<Word> input_list, Dictionary<int,Global_Variable> VStorage, Dictionary<string,User_Function> UFStorage)
         {
             int i = 0;
             int Word_ID = 0;
@@ -612,6 +614,86 @@ namespace Parsers
             }
         }
 
+        private void Type_calc()
+        {
+
+        }
+
+        private string Get_type_from_UF(string Func_name, Dictionary<string, User_Function> Ustorage)
+        {
+            User_Function Temp_USERFUNCTION;
+            if (Ustorage.TryGetValue(Func_name, out Temp_USERFUNCTION))
+                return Temp_USERFUNCTION.GetType();
+            else
+                throw new StackOverflowException();//Заменить на создание собственного Exception о невозможности определить тип.
+        }
+
+        private string Get_type_from_Any_function(string Func_name,Dictionary<string,BuiltIn_Function> Fstorage)
+        {
+            BuiltIn_Function Temp_BUILTINFUNCTION;
+            if (Fstorage.TryGetValue(Func_name, out Temp_BUILTINFUNCTION))
+                return Temp_BUILTINFUNCTION.GetType();
+            else
+                throw new StackOverflowException();//Заменить на создание собственного Exception о невозможности определить тип.
+        }
+
+        private string Type_getter(string Input_word, int ID)
+        {
+            int IFINT = 0;
+            float IFFLOAT = 0;
+            double IFDOUBLE = 0;
+            Dictionary<string, User_Function> temps = new Dictionary<string, User_Function>(); //ЗАМЕНИТЬ НА ПРИВЯЗКУ К ГЛОБАЛЬНОЙ!
+            Dictionary<string, BuiltIn_Function> temps2 = new Dictionary<string, BuiltIn_Function>(); //ЗАМЕНИТЬ НА ПРИВЯЗКУ К ГЛОБАЛЬНОЙ!
+            switch (ID)
+            {
+                case 4:
+                    if (int.TryParse(Input_word, out IFINT))
+                        return "int";
+                    else if (float.TryParse(Input_word, out IFFLOAT))
+                        return "float";
+                    else if (double.TryParse(Input_word, out IFDOUBLE))
+                        return "double";
+                    else return "anytype";
+                case 8:
+                    if (Is_any_function(Input_word))
+                        return BuiltIn_Function
+            }
+        }
+
+        private string Type_getter(Word Input_word)
+        {
+            int IFINT = 0;
+            float IFFLOAT = 0;
+            double IFDOUBLE = 0;
+            Dictionary<string, User_Function> temps = new Dictionary<string, User_Function>(); //ЗАМЕНИТЬ НА ПРИВЯЗКУ К ГЛОБАЛЬНОЙ!
+            Dictionary<string, BuiltIn_Function> temps2 = new Dictionary<string, BuiltIn_Function>(); //ЗАМЕНИТЬ НА ПРИВЯЗКУ К ГЛОБАЛЬНОЙ!
+            string nowdata = Input_word.get_data();
+            
+            switch (Input_word.Get_ID())
+            {
+                case 4:
+                    if (int.TryParse(Input_word.get_data(), out IFINT))
+                        return "int";
+                    else if (float.TryParse(Input_word.get_data(), out IFFLOAT))
+                        return "float";
+                    else if (double.TryParse(Input_word.get_data(), out IFDOUBLE))
+                        return "double";
+                    else
+                        return "anytype"; //Создавать ошибку о неизвестном числовом типе.
+                case 8:
+                    if (Is_type_definition(nowdata))
+                        return nowdata;
+                    else if (Is_any_function(nowdata))
+                        return "";
+                    else if (Is_user_function(nowdata, temps))  //зАМЕНИТЬ TEMPS НА ПРИВЯЗКУ К ГЛОБАЛЬНОЙ!
+                        return Get_type_from_UF(nowdata, temps);
+                    else
+                        return "anytype"; //Создавать ошибку о неизвестном типе функции.
+                default:
+                    return "anytype";  //Создавать ошибку о неизвестном типе функции.
+            }
+        }
+
         private bool equality_with_the_row_check(string equaler, List<Word> Word_list,int counter)
         {
             return ((Word_list[counter].Get_row_count() == Word_list[counter + 1].Get_row_count()) && (Word_list[counter + 1].get_data() == equaler));
@@ -645,6 +727,112 @@ namespace Parsers
             return (new int[] {1,2,3,4 }.Contains(Word_ID))
         }
         */
+
+        private void If_construction_translation(List<Word> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string, User_Function> UF_storage)
+        {
+            int error_num = -1;
+            bool cycle_stop = false;
+            if (equality_with_the_row_check("(", List_word, counter - 1))
+            {
+                counter++;
+                while (!cycle_stop)
+                {
+                    switch (List_word[counter].Get_ID())
+                    {
+                        case 4:
+                            break;
+                    }
+                    /*switch (Input_list[counter].Get_ID())
+                    {
+                        case 4:
+                            Output_string.Add(nowdata);
+                            break;
+                        case 1:
+                            if ((Is_ariphmetical_symbol(nowdata)) && (nowdata != "="))
+                            {
+                                if (Operators_stack.Count > 0)
+                                {
+                                    if (Priority_of_word(nowdata) <= Priority_of_word(Operators_stack.Peek()))
+                                    {
+                                        Output_string.Add(nowdata);
+                                    }
+                                }
+                                Operators_stack.Push(nowdata);
+                            }
+                            else if (nowdata == "=")
+                            {
+                                if (equality_left)
+                                {
+                                    /*Нужно подумать что делать с двумя равенствами в одном выражении, как вариант добавлять некую пометку в строку, о том что тут должно быть второе присваивание, возможно знак равенства.*//*
+                                }
+                                else
+                                {
+                                    cycle_stop = true; /*Здесь необходимо заканчивать трансляцию и вызывать интерпретацию, поскольку после правостороннего =
+                                необходимо вычислять значение выражения слева.*//*
+                                }
+                            }
+                            break;
+                        case 2:
+                            Operators_stack.Push(Now_word.get_data());
+                            break;
+                        case 3:
+                            nowdata = Operators_stack.Pop();
+                            while (nowdata != "(")
+                            {
+                                Output_string.Add(nowdata);
+                                nowdata = Operators_stack.Pop();
+                            }
+                            break;
+                        case 11:
+                            Variable Temp_variable_value;
+                            /*if (Val_storage.TryGetValue(nowdata, out Temp_variable_value))
+                                Temp_variable_value.Get_value();
+                            else;*/
+                            /*Здесь необходимо создавать исключение о необьявленной переменной.*//*
+                            break;
+                        case 8:
+                            if (Is_ariphmetical_function(nowdata))
+                            {
+                                Output_string.Add(nowdata);
+                                //Нужно подумать над интерпретацией функций.
+                            }
+                            else if (Is_basic_function(nowdata))
+                            {
+
+                            }
+                            else if (Is_prodigy_function(nowdata))
+                            {
+                                //Здесь необходимо проверять и завершать работу транслятора арифметических выражений.
+                            }
+                            else if (Is_structure_function(nowdata))
+                            {
+                                //Здесь необходимо проверять и завершать работу транслятора арифметических выражений.
+                            }
+                            else if (Is_type_definition(nowdata))
+                            {
+
+                            }
+                            else
+                            {
+                                /*Возможно формирование исключения*//*
+                            }
+                            break;
+                        case 9:
+
+                            break;
+                    }*/
+                }
+            }
+            else
+                ;//Создавать сообщение об ошибке, "ожидалось "("    
+
+            
+        }
+
+        private void cycle_construction_translator()
+        {
+
+        }
 
         private bool UFunction_args_definition_translater(List<Word> List_word, int counter, int function_id, out int count)
             /*Функция транслирует и проверяет форму и семантику записи */
@@ -705,8 +893,13 @@ namespace Parsers
         }
 
         private void Function_body_translator(List<Word> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string,User_Function> UF_storage)
+            /*Функция осуществляет трансляцию тела функции, приводя ее к виду RPN, при вызове функции осуществляется интерпретация RPN строки*/
         {
+            bool quiter = false;
+            while (!quiter)
+            {
 
+            }
         }
 
         private void Function_definition_translator(List<Word> Input_list_word, int counter, Dictionary<int,Variable> Var_storage, Dictionary<string,User_Function> Uf_storage)
@@ -753,21 +946,40 @@ namespace Parsers
             }
         }
 
-        private void Ariphmetical_translation(List<Word> Input_list, int counter, Dictionary<int,Global_Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
-
-            /*Функция служит для трансляции арифметических выражений методом обратной польской записи
-            сначала он формирует строку, а затем уже интерпретирует ее получая результат, важно то что в этой функции
-            не идет никакой интерпретации, здесь протекает исключительно подготовка строки, трансляция выполняется другим методом.*/
+        private void RPN_translation(List<Word> Input_list, int counter, Dictionary<int,Global_Variable> Var_storage, Dictionary<string,User_Function> User_func_storage)
+            /*Универсальная функция трансляции через метод обратной польской записи, преобразует входящий текст в RPN строку*/
         {
             List<string> Output_string = new List<string>();
             Stack<string> Operators_stack = new Stack<string>();
             string nowdata = "";
             bool row_check_result = false;
             bool cycle_stop = false;
-            int priority_value = 0;
-            int function_insider = 0;
-            bool function_opened = false;
-            bool double_combination = false;
+            Word Now_word = new Word();
+            while (!cycle_stop)
+            {
+                row_check_result = Row_control_check(Input_list, counter);
+                Now_word = Input_list[counter];
+                nowdata = Now_word.get_data();
+                switch (Input_list[counter].Get_ID())
+                {
+                    case 4:
+                        Output_string.Add(nowdata);
+                        break;
+                }
+            }
+        }
+
+        private void Ariphmetical_translation(List<Word> Input_list, int counter, Dictionary<int,Global_Variable> Val_storage, Dictionary<string,User_Function> User_func_storage, bool Was_equality) 
+
+            /*Функция служит для трансляции арифметических выражений методом обратной польской записи
+            сначала он формирует строку, а затем уже интерпретирует ее получая результат, ВАЖНО то что в этой функции
+            не идет никакой интерпретации, здесь протекает исключительно подготовка строки, интерпретация выполняется другим методом.*/
+        {
+            List<string> Output_string = new List<string>();
+            Stack<string> Operators_stack = new Stack<string>();
+            string nowdata = "";
+            bool row_check_result = false;
+            bool cycle_stop = false;
             bool equality_left = Was_equality;
             Word Now_word = new Word();
             counter = counter - 1;
@@ -786,7 +998,7 @@ namespace Parsers
                         {
                             if (Operators_stack.Count>0)
                             {
-                                if (priority_value+Priority_of_word(nowdata)<=priority_value+Priority_of_word(Operators_stack.Peek()))
+                                if (Priority_of_word(nowdata)<=Priority_of_word(Operators_stack.Peek()))
                                 {
                                     Output_string.Add(nowdata);
                                 }
@@ -797,7 +1009,7 @@ namespace Parsers
                         {
                             if(equality_left)
                             {
-                                /*Нужно подумать что делать с двумя равенствами в одном выражении*/
+                                /*Нужно подумать что делать с двумя равенствами в одном выражении, как вариант добавлять некую пометку в строку, о том что тут должно быть второе присваивание, возможно знак равенства.*/
                             }
                             else
                             {
@@ -808,7 +1020,6 @@ namespace Parsers
                         break;
                     case 2:
                         Operators_stack.Push(Now_word.get_data());
-                        priority_value++;
                         break;
                     case 3:
                         nowdata = Operators_stack.Pop();
@@ -817,7 +1028,6 @@ namespace Parsers
                             Output_string.Add(nowdata);
                             nowdata = Operators_stack.Pop();
                         }
-                        function_insider--;
                         break;
                     case 11:
                         Variable Temp_variable_value;
@@ -827,7 +1037,6 @@ namespace Parsers
                             /*Здесь необходимо создавать исключение о необьявленной переменной.*/
                         break;
                     case 8:
-                        function_insider++;
                         if (Is_ariphmetical_function(nowdata))
                         {
                                 Output_string.Add(nowdata);
