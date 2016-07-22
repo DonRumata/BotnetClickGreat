@@ -8,12 +8,15 @@ namespace Tokens_Library
 {
     public abstract class AnyFunction
     {
+        protected HashSet<Argument> Args = new HashSet<Argument>();
         public abstract void Interpretate();
-        public abstract string GetType();
+        public abstract new string GetType();
+        public abstract string Get_arg_type(int arg_num);
     }
 
     public class BuiltIn_Function : AnyFunction
     {
+        
         public override void Interpretate()
         {
 
@@ -23,6 +26,11 @@ namespace Tokens_Library
         {
             throw new NotImplementedException();
         }
+
+        public override string Get_arg_type(int arg_num)
+        {
+            return base.Args.ElementAt(arg_num).Get_val_type();
+        }
     }
 
     public class User_Function : AnyFunction
@@ -30,13 +38,12 @@ namespace Tokens_Library
         private string return_type;
         protected string Func_body;
         protected HashSet<Local_Variable> L_variables = new HashSet<Local_Variable>();
-        protected HashSet<Argument> Args = new HashSet<Argument>();
         public User_Function(string rtype, string Bdy, HashSet<Local_Variable> locals, HashSet<Argument> Arguments)
         {
             return_type = rtype;
             Func_body = Bdy;
             L_variables = locals;
-            Args = Arguments;
+            base.Args = Arguments;
         }
 
         public override void Interpretate()
@@ -47,6 +54,11 @@ namespace Tokens_Library
         public override string GetType()
         {
             return return_type;
+        }
+
+        public override string Get_arg_type(int arg_num)
+        {
+            return base.Args.ElementAt(arg_num).Get_val_type();
         }
     }
 
