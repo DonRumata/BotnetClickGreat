@@ -458,6 +458,10 @@ namespace Parsers
             bool quiter = false;
             Word Word_copyr = new Word();
             Hashtable Result = new Hashtable();
+            Dictionary<string, Variable> Variable_storage = new Dictionary<string, Variable>();
+            Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();
+
+
             while (i != input_list.Count)
             {
                 Word_data = input_list[i].get_Prime_data(out Word_ID);
@@ -547,11 +551,6 @@ namespace Parsers
             return false;
         }
 
-        private bool Is_fraction(string word_data)
-        {
-            return false;
-        }
-
         private bool is_ariphm_delimeter(string word_data)
         {
             return word_data == ",";
@@ -594,8 +593,7 @@ namespace Parsers
 
         private bool Is_any_function(string data)
         {
-            Enum.
-            return ((Is_ariphmetical_function(data)) || (Is_basic_function(data)) || (Is_prodigy_function(data)));
+            return Enumerable.Concat(Ariphmetical_functions, Basic_structure_commands).Contains(data);
         }
 
         private bool equality_with_the_row_check(int equaler, List<Word> Word_list, int counter, out int err_code)
