@@ -6,39 +6,108 @@ using System.Threading.Tasks;
 
 namespace Tokens_Library
 {
-    class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
+    public enum ETypeChar       //Типы предтокенов
     {
-        protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
-        protected int ID { get; set; } //ID конкретного токена.
-        protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
-        protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
+        space = 0,
+        arifm = 1,
+        lBracket = 2,
+        rBracket = 3,
+        digit = 4,
+        lSBracket = 5,
+        rSBracket = 6,
+        dotComma = 7,
+        alpha = 8,
+        dot = 9,
+        newLine = 10,
+        alphaRus = 11,
+        lFBracket = 12,
+        rFBracket = 13,
+        logical = 14,
+        comma = 15,
+        unknown = -1,
+        other = -2,
 
-        public Token(string data, int First_numR, int Second_numR, int row_counter, int id) //Конструктор базового класса задающий базовые значения извне
+    }
+
+    public class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
+    {
+
+        protected string Data;           //сам предтокен
+        protected Tuple<int, int> Range; //расположение предтокена в строке (номер первого символа, номер последнего символа)
+        protected bool Space_check;       //флаг наличия пробела до предтокена
+        protected ETypeChar ID;                 //Номер типа токена
+        protected int Row;                //Номер строки
+
+        public Token(string data, bool space, ETypeChar id, int row, int FRange_value, int SRange_value) //Конструктор для создания класса Word, сразу со всеми первоначальными данными
         {
             this.Data = data;
+            this.Space_check = space;
             this.ID = id;
-            this.Row_count = row_counter;
-            Number_range_former(First_numR, Second_numR);
+            this.Row = row;
+            this.Range = Tuple.Create(FRange_value, SRange_value);
         }
 
-        public Token() //Конструктор базового класса по умолчанию.
+        public Token()  //Вариант конструктора для простого выделения памяти и создания класса с значениями по умолчанию.
         {
             this.Data = "";
+            this.Space_check = false;
             this.ID = 0;
-            this.Row_count = 0;
-            this.Number_range = "UNDEFINED";
+            this.Row = 0;
+            this.Range = null;
         }
 
-        private int Number_range_converter(out int Last_value)  //Возвращает в виде Int значений диапазон номеров символов для текущего слова
+        public bool get_space_check()
         {
-            int help_value = Number_range.IndexOf('-');
-            Last_value = int.Parse(Number_range.Substring(help_value));
-            return int.Parse(Number_range.Substring(0, help_value));
+            return this.Space_check;
         }
 
-        private void Number_range_former(int First_char_num, int Last_char_num)  //Формирует строку хранящую диапазон номеров символов для текущего слова
+        public ETypeChar Get_ID()
         {
-            this.Number_range = (First_char_num.ToString() + "-" + Last_char_num.ToString());
+            return this.ID;
+        }
+
+        public int Get_row_count()
+        {
+            return this.Row;
+        }
+        public void change_data(string newdata)  //Метод для изменения поля Data
+        {
+            this.Data = newdata;
+        }
+        /* ДАННЫЕ ФУНКЦИИ НИГДЕ НЕ ИСПОЛЬЗУЮТСЯ!
+        public void change_data(string newdata)  //Метод для изменения поля Data
+        {
+            this.Data = newdata;
+        }
+        public void Plus_data(char char_plus)  //Метод для дополнения поля Data символом char
+        {
+            this.Data += char_plus;
+        }
+        public void change_id(int id)  //Метод для изменения поля ID
+        {
+            this.ID = id;
+        }
+        public void change_bool(bool space)  //Метод для изменения bool полей класса
+        {
+            this.Space_check = space;
+        }
+        */
+        public string get_all_data(out ETypeChar id, out int row, out int FRange_value, out int SRange_value) //Позволяет получить все данные о слове.
+        {
+            id = this.ID;
+            row = this.Row;
+            FRange_value = Range.Item1;
+            SRange_value = Range.Item2;
+            return this.Data;
+        }
+        public string get_Prime_data(out ETypeChar id) //Позволяет ID и Data слова
+        {
+            id = this.ID;
+            return this.Data;
+        }
+        public string get_data() //Позволяет получить Data значение слова
+        {
+            return this.Data;
         }
     }
 
@@ -51,14 +120,14 @@ namespace Tokens_Library
         protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
         */
 
-        public Ariphmetical(string ndata, int nFirst_numR, int nSecond_numR, int nrow_counter, int nid) : base(ndata, nFirst_numR, nSecond_numR, nrow_counter, nid) { } //Наследуется от базового, конструктор, вызывается при переводе первичной строки слов, в токены
+        public Ariphmetical(string ndata, int NRow, int NFRange_value, int NSRange_value, ETypeChar NID, bool spacer) : base(ndata,spacer,NID,NRow,NFRange_value,NSRange_value) { } //Наследуется от базового, конструктор, вызывается при переводе первичной строки слов, в токены
         public Ariphmetical() : base() { } //Наследуется от базового, конструктор с базовыми значениями по умолчанию
         public double Interpretation_function(string first_value, string second_value) //Функция для исполнения интерпретатором, вшита непосредственно в токен для более быстрой интерпретации.
         {
             double FValue = Convert.ToDouble(first_value);
             double SValue = Convert.ToDouble(first_value);
             double Result = 0;
-            switch (Data)
+            switch ()
             {
                 case "+=":
                 case "+":
@@ -86,6 +155,26 @@ namespace Tokens_Library
             return Result;
         }
     }
+
+    class TAriphmetical : Token
+    {
+        private enum TypeTable
+        {
+            integer=0,
+            flt=1,
+            dbl=2,
+            point=3,
+            other=-1,
+            defalt=0,
+        }
+        public TAriphmetical()
+    }
+
+    class TStringAriphmetical:Token
+    {
+
+    }
+
     class Basic_ariphmetical_commands : Token //Дочерний класс токен, описывающий все арифметические команды вроде синусов, косинусов, логарифмов и интегралов ОСТОРОЖНО, СОДЕРЖИТ МАТАН!!
     {
         /*Свойства и атрибуты, наследуемые от базового класса.
@@ -184,6 +273,11 @@ namespace Tokens_Library
         private bool Condition { get; set; }
     }
 
+
+    class Basic_condition_structure:Token
+    {
+
+    }
 
 
     /*double Nth_root(double number, double power)

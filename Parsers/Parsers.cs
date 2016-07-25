@@ -81,7 +81,7 @@ namespace Parsers
             Program_text = input_program_text;
             First_char_parser First_parser = new First_char_parser();
             Translation_word_parser Translater = new Translation_word_parser();
-            Translater.Begin_translating(First_parser.Parse_first_text(input_program_text), Variable_storage, User_function_storage);
+            //Translater.Begin_translating(First_parser.Parse_first_text(input_program_text), Variable_storage, User_function_storage);
         }
 
         public void Save_in_file() { } //Заглушка на сохранение в файлы
@@ -98,111 +98,6 @@ namespace Parsers
 
     }
 
-    class Word  //Класс необходимый для формирования списка токенов, представляет собой по факту описание токена.
-    {
-
-        public enum ETypeChar       //Типы предтокенов
-        {
-            space = 0,
-            arifm = 1,
-            lBracket = 2,
-            rBracket = 3,
-            digit = 4,
-            lSBracket = 5,
-            rSBracket = 6,
-            dotComma = 7,
-            alpha = 8,
-            dot = 9,
-            newLine = 10,
-            alphaRus = 11,
-            lFBracket = 12,
-            rFBracket = 13,
-            logical = 14,
-            comma = 15,
-            unknown = -1,
-            other = -2,
-
-        }
-
-        private string Data;           //сам предтокен
-        private Tuple<int, int> Range; //расположение предтокена в строке (номер первого символа, номер последнего символа)
-        private bool Space_check;       //флаг наличия пробела до предтокена
-        private ETypeChar ID;                 //Номер типа токена
-        private int Row;                //Номер строки
-
-        public Word(string data, bool space, ETypeChar id, int row, int FRange_value, int SRange_value) //Конструктор для создания класса Word, сразу со всеми первоначальными данными
-        {
-            this.Data = data;
-            this.Space_check = space;
-            this.ID = id;
-            this.Row = row;
-            this.Range = Tuple.Create(FRange_value, SRange_value);
-        }
-
-        public Word()  //Вариант конструктора для простого выделения памяти и создания класса с значениями по умолчанию.
-        {
-            this.Data = "";
-            this.Space_check = false;
-            this.ID = 0;
-            this.Row = 0;
-            this.Range = null;
-        }
-
-        public bool get_space_check()
-        {
-            return this.Space_check;
-        }
-
-        public ETypeChar Get_ID()
-        {
-            return this.ID;
-        }
-
-        public int Get_row_count()
-        {
-            return this.Row;
-        }
-        public void change_data(string newdata)  //Метод для изменения поля Data
-        {
-            this.Data = newdata;
-        }
-        /* ДАННЫЕ ФУНКЦИИ НИГДЕ НЕ ИСПОЛЬЗУЮТСЯ!
-        public void change_data(string newdata)  //Метод для изменения поля Data
-        {
-            this.Data = newdata;
-        }
-        public void Plus_data(char char_plus)  //Метод для дополнения поля Data символом char
-        {
-            this.Data += char_plus;
-        }
-        public void change_id(int id)  //Метод для изменения поля ID
-        {
-            this.ID = id;
-        }
-        public void change_bool(bool space)  //Метод для изменения bool полей класса
-        {
-            this.Space_check = space;
-        }
-        */
-        public string get_all_data(out ETypeChar id, out int row, out int FRange_value, out int SRange_value) //Позволяет получить все данные о слове.
-        {
-            id = this.ID;
-            row = this.Row;
-            FRange_value = Range.Item1;
-            SRange_value = Range.Item2;
-            return this.Data;
-        }
-        public string get_Prime_data(out ETypeChar id) //Позволяет ID и Data слова
-        {
-            id = this.ID;
-            return this.Data;
-        }
-        public string get_data() //Позволяет получить Data значение слова
-        {
-            return this.Data;
-        }
-
-    }
     class First_char_parser
     /* Первичный парсер кода превращает код введенный пользователем в список слов класса Word, выходной результата данного класса это список слов с небольшими помогающими анализаторам пометками. */
     {
@@ -210,42 +105,42 @@ namespace Parsers
 
 
 
-        private Word.ETypeChar getTypeChar(char c)
+        private ETypeChar getTypeChar(char c)
         {
-            Word.ETypeChar res = Alphabet_check(c);
-            if (res != Word.ETypeChar.unknown) return res;
+            ETypeChar res = Alphabet_check(c);
+            if (res != ETypeChar.unknown) return res;
             switch (c)   //Отдельно создает заготовки токенов под различные возможные значения,
             {
                 case '\r':
                 case '\n':
-                    return Word.ETypeChar.newLine;
+                    return ETypeChar.newLine;
                 case ' ':
-                    return Word.ETypeChar.space;
+                    return ETypeChar.space;
                 case '(':
-                    return Word.ETypeChar.lBracket;
+                    return ETypeChar.lBracket;
                 case ')':
-                    return Word.ETypeChar.rBracket;
+                    return ETypeChar.rBracket;
                 case '[':
-                    return Word.ETypeChar.lSBracket;
+                    return ETypeChar.lSBracket;
                 case ']':
-                    return Word.ETypeChar.rSBracket;
+                    return ETypeChar.rSBracket;
                 case ';':
-                    return Word.ETypeChar.dotComma;
+                    return ETypeChar.dotComma;
                 case ',':
-                    return Word.ETypeChar.comma;
+                    return ETypeChar.comma;
                 case '.':
-                    return Word.ETypeChar.dot;
+                    return ETypeChar.dot;
                 case '{':
-                    return Word.ETypeChar.lFBracket;
+                    return ETypeChar.lFBracket;
                 case '}':
-                    return Word.ETypeChar.rFBracket;
+                    return ETypeChar.rFBracket;
                 case '*':
                 case '/':
                 case '+':
                 case '-':
                 case '^':
                 case '%':
-                    return Word.ETypeChar.arifm;
+                    return ETypeChar.arifm;
                 case '0':
                 case '1':
                 case '2':
@@ -256,53 +151,53 @@ namespace Parsers
                 case '7':
                 case '8':
                 case '9':
-                    return Word.ETypeChar.digit;
+                    return ETypeChar.digit;
                 case '|':
                 case '&':
                 case '>':
                 case '<':
                 case '=':
-                    return Word.ETypeChar.logical;
+                    return ETypeChar.logical;
                 default:
-                    return Word.ETypeChar.other;
+                    return ETypeChar.other;
             }
 
         }
 
-        public List<Word> Parse_first_text(string Input_text)
+        public List<Token> Parse_first_text(string Input_text)
         {
-            var List_of_Words = new List<Word>();  //Хранит в себе данные о токенах|словах
+            var List_of_Words = new List<Token>();  //Хранит в себе данные о токенах|словах
             int i = 0, Is_Parenthesis = 0, Row_Counter = 0;  //I - счетчик, Previous_char_ID - самая важная переменная, указывает на ID предыдущего символа.
-            Word.ETypeChar Previous_char_ID = Word.ETypeChar.unknown;
+            ETypeChar Previous_char_ID = ETypeChar.unknown;
 
             //Word word_creator = new Word();  //Служит для создания токена, основываясь на поступающих данных
             //HashSet<char> Another_char_set = Hashset_creator(); //Множество Char символов соответствующих ID другие символы. НЕ ИСПОЛЬЗУЕТСЯ!
             while (i != Input_text.Length)
             {
                 char nowchar = Input_text[i]; //Значение текущего символа
-                Word.ETypeChar nowCharId = getTypeChar(nowchar);
+                ETypeChar nowCharId = getTypeChar(nowchar);
                 switch (nowCharId)
                 {
-                    case Word.ETypeChar.arifm:
-                    case Word.ETypeChar.digit:
-                    case Word.ETypeChar.alpha:
-                    case Word.ETypeChar.alphaRus:
-                    case Word.ETypeChar.logical:
-                    case Word.ETypeChar.other:
+                    case ETypeChar.arifm:
+                    case ETypeChar.digit:
+                    case ETypeChar.alpha:
+                    case ETypeChar.alphaRus:
+                    case ETypeChar.logical:
+                    case ETypeChar.other:
                         i = While_delegate_function(c => getTypeChar(c) == nowCharId, nowCharId, i, Previous_char_ID, List_of_Words, Input_text, Row_Counter);  //Формирует из арифметических символов строку, которая затем записывается как отдельный токен, даже в том случае если перед ней не шел пробел, однако это указывается отдельно
                         break;
                 }
 
-                if (nowCharId == Word.ETypeChar.arifm)  //Проверка символа на принадлежность к арифметическим операциям
+                if (nowCharId == ETypeChar.arifm)  //Проверка символа на принадлежность к арифметическим операциям
                 {
                     if (List_of_Words.Last().get_data() == "--")  //Отдельно меняет -- на + для избежания дальнейших ошибок в компиляции.
                         List_of_Words.Last().change_data("+");
 
                 }
-                else if (nowCharId == Word.ETypeChar.digit)  //Если символ был не арифметической операцией, то проверка на принадлежность к цифрам
+                else if (nowCharId == ETypeChar.digit)  //Если символ был не арифметической операцией, то проверка на принадлежность к цифрам
                 {
 
-                    if ((Previous_char_ID == Word.ETypeChar.dot) && (List_of_Words.Count > 1) && (List_of_Words[List_of_Words.Count - 2].Get_ID() == Word.ETypeChar.digit))
+                    if ((Previous_char_ID == ETypeChar.dot) && (List_of_Words.Count > 1) && (List_of_Words[List_of_Words.Count - 2].Get_ID() == ETypeChar.digit))
                     {
                         int help_counter = List_of_Words.Count - 2;
                         /* По сути данная функция формирует десятичную дробь, если предыдущим символом была точка, а перед ней шло число
@@ -310,7 +205,7 @@ namespace Parsers
                         List_of_Words[help_counter].change_data(List_of_Words[help_counter + 1].get_data() + List_of_Words[help_counter + 2].get_data());
                         List_of_Words.RemoveRange(help_counter + 1, 1); //ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО, НУЖНО ОТТРАССИРОВАТЬ И ИСПРАВИТЬ ЗНАЧЕНИЯ!
                     }
-                    else if ((Previous_char_ID == Word.ETypeChar.alphaRus) || (Previous_char_ID == Word.ETypeChar.alpha))
+                    else if ((Previous_char_ID == ETypeChar.alphaRus) || (Previous_char_ID == ETypeChar.alpha))
                     {
                         /*Если число идет после кириллицы или латиницы без пробела, то формирует из этого единую строку и помечает эту строку как возможное имя переменной*/
                         List_of_Words[List_of_Words.Count - 1].change_data(List_of_Words[List_of_Words.Count - 1].get_data() + List_of_Words.Last().get_data());
@@ -318,32 +213,32 @@ namespace Parsers
                     }
 
                 }
-                else if ((nowCharId != Word.ETypeChar.alpha)&& (nowCharId != Word.ETypeChar.alphaRus) && (nowCharId != Word.ETypeChar.logical))
+                else if ((nowCharId != ETypeChar.alpha)&& (nowCharId != ETypeChar.alphaRus) && (nowCharId != ETypeChar.logical))
                 {
-                    bool Helper = Previous_char_ID == Word.ETypeChar.space;
+                    bool Helper = Previous_char_ID == ETypeChar.space;
 
 
                     //TODO слово, после которого нет символов не обработается
                     switch (nowCharId)
                     {
-                        case Word.ETypeChar.lBracket: ++Is_Parenthesis; break;
-                        case Word.ETypeChar.rBracket: --Is_Parenthesis; break;
+                        case ETypeChar.lBracket: ++Is_Parenthesis; break;
+                        case ETypeChar.rBracket: --Is_Parenthesis; break;
                     }
                     switch (nowCharId)   //Отдельно создает заготовки токенов под различные возможные значения,
                     {
-                        case Word.ETypeChar.newLine:
+                        case ETypeChar.newLine:
                             Row_Counter++;
                             break;
-                        case Word.ETypeChar.lBracket:
-                        case Word.ETypeChar.rBracket:
-                        case Word.ETypeChar.lSBracket:
-                        case Word.ETypeChar.rSBracket:
-                        case Word.ETypeChar.lFBracket:
-                        case Word.ETypeChar.rFBracket:
-                        case Word.ETypeChar.dotComma:
-                        case Word.ETypeChar.dot:
-                        case Word.ETypeChar.comma:
-                            List_of_Words.Add(new Word(nowchar.ToString(), Helper, nowCharId, Row_Counter, i, i));
+                        case ETypeChar.lBracket:
+                        case ETypeChar.rBracket:
+                        case ETypeChar.lSBracket:
+                        case ETypeChar.rSBracket:
+                        case ETypeChar.lFBracket:
+                        case ETypeChar.rFBracket:
+                        case ETypeChar.dotComma:
+                        case ETypeChar.dot:
+                        case ETypeChar.comma:
+                            List_of_Words.Add(new Token(nowchar.ToString(), Helper, nowCharId, Row_Counter, i, i));
                             break;
                     }
 
@@ -402,18 +297,18 @@ namespace Parsers
         */
 
 
-        private Word.ETypeChar Alphabet_check(char nowchar_f)  //Проверяет является ли текущий символ, кириллицей или латиницей.
+        private ETypeChar Alphabet_check(char nowchar_f)  //Проверяет является ли текущий символ, кириллицей или латиницей.
         {
             if (((nowchar_f >= 'a') && (nowchar_f <= 'z')) || ((nowchar_f >= 'A') && (nowchar_f <= 'Z')))
-                return Word.ETypeChar.alpha;
+                return ETypeChar.alpha;
             else
                 if ((nowchar_f >= 'А') && ((nowchar_f >= 'Я')) || (nowchar_f >= 'а') && ((nowchar_f >= 'я')) || (nowchar_f >= 'ё') || (nowchar_f >= 'Ё'))  //Потенциальное БАГОДЕРЬМО, не удовлетворяет значениям кириллицы в кодировке юникода, нужно сделать отдельную проверку для кириллицы
-                return Word.ETypeChar.alphaRus;
+                return ETypeChar.alphaRus;
             else
-                return Word.ETypeChar.unknown;
+                return ETypeChar.unknown;
         }
 
-        private int While_delegate_function(Func<char, bool> Cycle_condition, Word.ETypeChar second_cycle_condition, int i_counter, Word.ETypeChar previous_ID, List<Word> Word_list, string input_text, int row_count)
+        private int While_delegate_function(Func<char, bool> Cycle_condition, ETypeChar second_cycle_condition, int i_counter, ETypeChar previous_ID, List<Token> Word_list, string input_text, int row_count)
         /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
         {
             int helper_counter = i_counter;
@@ -423,7 +318,7 @@ namespace Parsers
                 Data_former += input_text[helper_counter];
                 helper_counter++;
             }
-            Word_list.Add(new Word(Data_former, previous_ID == 0, second_cycle_condition, row_count, i_counter, helper_counter - 1)); //Формирует и добавляет заготовку токена в список
+            Word_list.Add(new Token(Data_former, previous_ID == 0, second_cycle_condition, row_count, i_counter, helper_counter - 1)); //Формирует и добавляет заготовку токена в список
             return helper_counter - 1;
         }
     }
@@ -450,24 +345,23 @@ namespace Parsers
         User_function_storage - хранит в себе все транслированные пользовательские функции.
         */
 
-        public Hashtable Begin_translating(List<Word> input_list, Dictionary<int, Global_Variable> VStorage, Dictionary<string, User_Function> UFStorage)
+        public Hashtable Begin_translating(List<Token> input_list, Dictionary<int, Global_Variable> VStorage, Dictionary<string, User_Function> UFStorage)
         {
             int i = 0;
-            Word.ETypeChar Word_ID = 0;
+            ETypeChar Word_ID = 0;
             string Word_data = "";
             bool quiter = false;
-            Word Word_copyr = new Word();
+            Token Word_copyr = new Word();
             Hashtable Result = new Hashtable();
             Dictionary<string, Variable> Variable_storage = new Dictionary<string, Variable>();
             Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();
-
 
             while (i != input_list.Count)
             {
                 Word_data = input_list[i].get_Prime_data(out Word_ID);
                 switch (Word_ID)
                 {
-                    case Word.ETypeChar.arifm:
+                    case ETypeChar.arifm:
                         Ariphmetical_translation(input_list, i, VStorage, UFStorage, false);
                         break;
                 }
@@ -476,12 +370,12 @@ namespace Parsers
             return Result;
         }
 
-        private bool Row_control_check(List<Word> input_list_word, int count)  //Проводит проверку на соответствие строк предыдущего и следующего слова.
+        private bool Row_control_check(List<Token> input_list_word, int count)  //Проводит проверку на соответствие строк предыдущего и следующего слова.
         {
             return (input_list_word[count + 1].Get_row_count() == input_list_word[count].Get_row_count());
         }
 
-        private bool Row_control_check(List<Word> input_list_word, int count, int Range) //Проводит проверку на соответствие строк диапазона слов, задаваемого range.
+        private bool Row_control_check(List<Token> input_list_word, int count, int Range) //Проводит проверку на соответствие строк диапазона слов, задаваемого range.
         {
             bool NFailed = true;
             int end_cycler = count + Range - 1;
@@ -495,6 +389,7 @@ namespace Parsers
 
         private int Priority_of_word(string Word_data)
         {
+
             switch (Word_data)
             {
                 case "(":
@@ -596,7 +491,7 @@ namespace Parsers
             return Enumerable.Concat(Ariphmetical_functions, Basic_structure_commands).Contains(data);
         }
 
-        private bool equality_with_the_row_check(int equaler, List<Word> Word_list, int counter, out int err_code)
+        private bool equality_with_the_row_check(int equaler, List<Token> Word_list, int counter, out int err_code)
         {
             if (equaler != Word_list[counter].Get_ID())
             {
@@ -615,10 +510,10 @@ namespace Parsers
             }
         }
 
+
         private string Type_compability(string first_value, string second_value)
         {
-            if (first_value ==)
-                return "";
+            
         }
 
         private string Type_calc(List<string> input_string)
@@ -731,7 +626,7 @@ namespace Parsers
             }
         }
 
-        private string Type_getter(Word Input_word, out bool ISERROR)
+        private string Type_getter(Token Input_word, out bool ISERROR)
         {
             int IFINT = 0;
             float IFFLOAT = 0;
@@ -774,7 +669,7 @@ namespace Parsers
             }
         }
 
-        private string Type_getter_until_symbol(List<Word> Input_list, int counter, out bool ISERROR, string symbol)
+        private string Type_getter_until_word(List<Token> Input_list, int counter, out bool ISERROR, string word)
         {
             int IFINT = 0;
             float IFFLOAT = 0;
@@ -782,13 +677,13 @@ namespace Parsers
             bool cycle_stop = false;
             ISERROR = false;
             string nowdata = "";
-            Word temp_word = new Word();
-            List<Word> Output_string = new List<Word>();
-            Stack<Word> Operators_stack = new Stack<Word>();
+            Token temp_word = new Word();
+            List<Token> Output_string = new List<Token>();
+            Stack<Token> Operators_stack = new Stack<Token>();
             Dictionary<string, User_Function> temps = new Dictionary<string, User_Function>();
             Dictionary<string, BuiltIn_Function> temps2 = new Dictionary<string, BuiltIn_Function>();
             Dictionary<string, Variable> temps3 = new Dictionary<string, Variable>();
-            while ((!cycle_stop) || (nowdata != symbol))
+            while ((!cycle_stop) || (nowdata != word))
             {
                 nowdata = Input_list[counter].get_data();
                 temp_word = Input_list[counter];
@@ -850,7 +745,7 @@ namespace Parsers
                 }
                 counter++;
             }
-            if (nowdata == symbol)
+            if (nowdata == word)
             {
                 while (Operators_stack.Count > 0)
                     Output_string.Add(Operators_stack.Pop());
@@ -858,17 +753,17 @@ namespace Parsers
             Type_calc
         }
 
-        private bool equality_with_the_row_check(string equaler, List<Word> Word_list, int counter)
+        private bool equality_with_the_row_check(string equaler, List<Token> Word_list, int counter)
         {
             return ((Word_list[counter].Get_row_count() == Word_list[counter + 1].Get_row_count()) && (Word_list[counter + 1].get_data() == equaler));
         }
 
-        private bool equality_with_the_row_check(Func<string, bool> equaler, List<Word> Word_list, int counter)
+        private bool equality_with_the_row_check(Func<string, bool> equaler, List<Token> Word_list, int counter)
         {
             return ((Word_list[counter].Get_row_count() == Word_list[counter + 1].Get_row_count()) && (equaler(Word_list[counter + 1].get_data())));
         }
 
-        private bool equality_with_the_row_check(Func<string, bool> equaler, List<Word> Word_list, int counter, bool space_check, out int num_of_error)
+        private bool equality_with_the_row_check(Func<string, bool> equaler, List<Token> Word_list, int counter, bool space_check, out int num_of_error)
         {
             if (!equaler(Word_list[counter + 1].get_data()))
                 num_of_error = 1;
@@ -892,7 +787,7 @@ namespace Parsers
         }
         */
 
-        private bool Call_Function_translation(List<Word> Word_List, int counter, out int Err_num)
+        private bool Call_Function_translation(List<Token> Word_List, int counter, out int Err_num)
         /*Проверяет правильность вызова функции, проверка типа аргументов.*/
         {
             bool result = false;
@@ -959,7 +854,7 @@ namespace Parsers
             return result;
         }
 
-        private void If_construction_translation(List<Word> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string, User_Function> UF_storage)
+        private void If_construction_translation(List<Token> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string, User_Function> UF_storage)
         /*Функция занимается трансляцией конструкции IF, основывается на калькуляторе типов, который работает через RPN.
          Выходным результатом является строка типов с действиями.*/
         {
@@ -1042,7 +937,7 @@ namespace Parsers
 
         }
 
-        private bool UFunction_args_definition_translater(List<Word> List_word, int counter, int function_id, out int count)
+        private bool UFunction_args_definition_translater(List<Token> List_word, int counter, int function_id, out int count)
         /*Функция транслирует и проверяет форму и семантику записи */
         {
             int error_num = -1;
@@ -1100,7 +995,7 @@ namespace Parsers
             }
         }
 
-        private void Function_body_translator(List<Word> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string, User_Function> UF_storage)
+        private void Function_body_translator(List<Token> List_word, int counter, Dictionary<int, Variable> Var_storage, HashSet<Argument> Args, Dictionary<string, User_Function> UF_storage)
         /*Функция осуществляет трансляцию тела функции, приводя ее к виду RPN, при вызове функции осуществляется интерпретация RPN строки*/
         {
             bool quiter = false;
@@ -1110,7 +1005,7 @@ namespace Parsers
             }
         }
 
-        private void Function_definition_translator(List<Word> Input_list_word, int counter, Dictionary<int, Variable> Var_storage, Dictionary<string, User_Function> Uf_storage)
+        private void Function_definition_translator(List<Token> Input_list_word, int counter, Dictionary<int, Variable> Var_storage, Dictionary<string, User_Function> Uf_storage)
         /*Функция осуществляет трансляцию определения функции и записывает ее в список User_function, */
         {
             string return_type = "";
@@ -1145,7 +1040,7 @@ namespace Parsers
         }
 
 
-        private void Non_local_Args_translator(string Call_function_name, List<Word> Input_list_word, int counter, Dictionary<int, Variable> Var_storage, Dictionary<string, User_Function> Uf_storage)
+        private void Non_local_Args_translator(string Call_function_name, List<Token> Input_list_word, int counter, Dictionary<int, Variable> Var_storage, Dictionary<string, User_Function> Uf_storage)
         /*Пока что преобразовывается в заглушку, ибо приоритет меньше чем у транслятора обьявления функций*/
         {
             if (Is_any_function(Call_function_name))
@@ -1154,7 +1049,7 @@ namespace Parsers
             }
         }
 
-        private void RPN_translation(List<Word> Input_list, int counter, Dictionary<int, Global_Variable> Var_storage, Dictionary<string, User_Function> User_func_storage)
+        private void RPN_translation(List<Token> Input_list, int counter, Dictionary<int, Global_Variable> Var_storage, Dictionary<string, User_Function> User_func_storage)
         /*Универсальная функция трансляции через метод обратной польской записи, преобразует входящий текст в RPN строку*/
         {
             List<string> Output_string = new List<string>();
@@ -1162,7 +1057,7 @@ namespace Parsers
             string nowdata = "";
             bool row_check_result = false;
             bool cycle_stop = false;
-            Word Now_word = new Word();
+            Token Now_word = new Token();
             while (!cycle_stop)
             {
                 row_check_result = Row_control_check(Input_list, counter);
@@ -1177,7 +1072,7 @@ namespace Parsers
             }
         }
 
-        private void Ariphmetical_translation(List<Word> Input_list, int counter, Dictionary<int, Global_Variable> Val_storage, Dictionary<string, User_Function> User_func_storage, bool Was_equality)
+        private void Ariphmetical_translation(List<Token> Input_list, int counter, Dictionary<int, Global_Variable> Val_storage, Dictionary<string, User_Function> User_func_storage, bool Was_equality)
 
         /*Функция служит для трансляции арифметических выражений методом обратной польской записи
         сначала он формирует строку, а затем уже интерпретирует ее получая результат, ВАЖНО то что в этой функции
@@ -1189,7 +1084,7 @@ namespace Parsers
             bool row_check_result = false;
             bool cycle_stop = false;
             bool equality_left = Was_equality;
-            Word Now_word = new Word();
+            Token Now_word = new Word();
             counter = counter - 1;
             while (!cycle_stop)
             {
