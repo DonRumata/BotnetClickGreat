@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functions.cs" />
+    <Compile Include="MainAbstractTokens.cs" />
+    <Compile Include="OtherDerived_Classes.cs" />
     <Compile Include="Small_Functions.cs" />
     <Compile Include="Tokens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

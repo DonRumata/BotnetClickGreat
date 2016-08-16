@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotnetClickGreat", "BotnetClickGreat\BotnetClickGreat.csproj", "{B7B4319D-EE7D-47BC-B571-475E39001131}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsers Library", "Parsers\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptions Library", "Exceptions Library\Exceptions Library.csproj", "{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "UMLClass_Documentation", "UMLClass_Documentation\UMLClass_Documentation.modelproj", "{A485A12F-15A1-418A-A46D-E52C50784768}"
+EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "ParserSchema", "ParserSchema\ParserSchema.modelproj", "{74C2A0CB-B89C-4E2E-8760-3A5FFBF8A10C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,14 @@ Global
 		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6FAB8DF-2EB2-4EDD-94D1-E0B1A53EA884}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A485A12F-15A1-418A-A46D-E52C50784768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A485A12F-15A1-418A-A46D-E52C50784768}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A485A12F-15A1-418A-A46D-E52C50784768}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A485A12F-15A1-418A-A46D-E52C50784768}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74C2A0CB-B89C-4E2E-8760-3A5FFBF8A10C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74C2A0CB-B89C-4E2E-8760-3A5FFBF8A10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74C2A0CB-B89C-4E2E-8760-3A5FFBF8A10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74C2A0CB-B89C-4E2E-8760-3A5FFBF8A10C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

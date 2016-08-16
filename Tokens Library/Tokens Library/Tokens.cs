@@ -29,7 +29,7 @@ namespace Tokens_Library
 
     }
 
-    public class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
+   /* public class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
     {
 
         protected string Data;           //сам предтокен
@@ -91,7 +91,7 @@ namespace Tokens_Library
         {
             this.Space_check = space;
         }
-        */
+        *//*
         public string get_all_data(out ETypeChar id, out int row, out int FRange_value, out int SRange_value) //Позволяет получить все данные о слове.
         {
             id = this.ID;
@@ -109,9 +109,9 @@ namespace Tokens_Library
         {
             return this.Data;
         }
-    }
+    } */
 
-    class Ariphmetical : Token  //Дочерний класс токен, описывающий все взаимодействия с арифметическими символами
+    /*class Ariphmetical : Token  //Дочерний класс токен, описывающий все взаимодействия с арифметическими символами
     {
         /*Свойства и атрибуты, наследуемые от базового класса.
         protected string Data { get; set; } //Текстовое значение слова содержащегося в токене.
@@ -119,7 +119,7 @@ namespace Tokens_Library
         protected string Number_range; //Хранит диапазон номеров символов для текущего токена.
         protected int Row_count { get; set; } //Хранит номер строки в тексте, для текущего токена.
         */
-
+        /*
         public Ariphmetical(string ndata, int NRow, int NFRange_value, int NSRange_value, ETypeChar NID, bool spacer) : base(ndata,spacer,NID,NRow,NFRange_value,NSRange_value) { } //Наследуется от базового, конструктор, вызывается при переводе первичной строки слов, в токены
         public Ariphmetical() : base() { } //Наследуется от базового, конструктор с базовыми значениями по умолчанию
         public double Interpretation_function(string first_value, string second_value) //Функция для исполнения интерпретатором, вшита непосредственно в токен для более быстрой интерпретации.
@@ -127,7 +127,7 @@ namespace Tokens_Library
             double FValue = Convert.ToDouble(first_value);
             double SValue = Convert.ToDouble(first_value);
             double Result = 0;
-            switch ()
+            switch (Data)
             {
                 case "+=":
                 case "+":
@@ -154,26 +154,7 @@ namespace Tokens_Library
             }
             return Result;
         }
-    }
-
-    class TAriphmetical : Token
-    {
-        private enum TypeTable
-        {
-            integer=0,
-            flt=1,
-            dbl=2,
-            point=3,
-            other=-1,
-            defalt=0,
-        }
-        public TAriphmetical()
-    }
-
-    class TStringAriphmetical:Token
-    {
-
-    }
+    } */
 
     class Basic_ariphmetical_commands : Token //Дочерний класс токен, описывающий все арифметические команды вроде синусов, косинусов, логарифмов и интегралов ОСТОРОЖНО, СОДЕРЖИТ МАТАН!!
     {

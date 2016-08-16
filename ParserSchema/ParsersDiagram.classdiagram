@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="dc686f37-3e8a-4b65-913a-ac0c4b4015a1" name="ParsersDiagram" linkedPackageId="ef0cb373-5208-4b5f-9d28-25f711176962" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="e7ac896a-7dd3-4a98-9b25-c6e99ab667ea">
+      <profileInstance Id="d507517b-d575-436b-b7b6-a94c15bc87e0" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="04c19910-dac0-4db6-a1c0-c5dca7c94c87">
+      <profileInstance Id="e77fab83-1997-4f80-8249-4226cd5e731a" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="de156f8d-71ee-46bf-bdde-f77ad7ea014c" name="FirstCharParser" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a035395b-7827-4753-a40c-f0f1e7566c82" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="0e463371-0e94-4f2e-a017-0b190700a0a1" name="RPN String Parser" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="89cf804f-3f1c-4188-a4af-7bd8418e33cd" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="f98ffffe-e742-49c1-acd7-ab573e5a5f18" name="TypeCalcParser" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="31b74ff9-2a14-4917-8ff8-ceae51565c4e" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="ef0cb373-5208-4b5f-9d28-25f711176962" name="ParserSchema">
+    <elementDefinition Id="a9ed6ccf-7c81-4669-813e-de7e64f85035" />
+  </package>
+</logicalClassDesignerModel>
