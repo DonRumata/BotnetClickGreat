@@ -27,17 +27,12 @@ namespace Parsers
     КЛАСС И ОПИСАНИЕ НЕ ЗАКОНЧЕННО! */
     {
         /* Переменные и атрибуты*/
-        protected int Num_of_right_BeginEnds = 0;
-        protected int Num_of_last_open_begin = 0;
         public int Num_of_rows = 0;
-        private int Num_of_analyse_string = 0;
         protected string Program_text = "";
-
-        protected List<string> First_translation_result;
-        protected Dictionary<string, AnyFunction> Program_interpretation = new Dictionary<string, AnyFunction>();
-        private Dictionary<int, Global_Variable> Variable_storage;
-        private Dictionary<int, User_Function> User_function_storage;
-        private Dictionary<int, Message> Output_data;
+        protected Dictionary<string, AnyFunction> Function_storage = null;
+        protected Dictionary<string, Variable> Variable_storage = null;
+        protected List<Token> TokenListText=null;
+        //private Dictionary<int, Message> Output_data;
 
 
 
@@ -57,17 +52,16 @@ namespace Parsers
         {
         }
 
-        private bool Initialize_translaters()
+        private void Initialize_translater()
         {
             /*Инициализирует транслятор и словари и списки привязанные к трансляции, проверяет их существование.*/
-            First_translation_result = new List<string>();
-            Variable_storage = new Dictionary<int, Global_Variable>();
-            User_function_storage = new Dictionary<int, User_Function>();
-            Program_interpretation = new Dictionary<string, AnyFunction>();
-            if ((First_translation_result != null) && (Variable_storage != null) && (User_function_storage != null) && (Program_interpretation != null))
-                return true;
-            else
-                return false;
+            Function_storage = new Dictionary<string, AnyFunction>();
+            Variable_storage = new Dictionary<string, Variable>();
+            TokenListText = new List<Token>();
+            if ((Function_storage != null) && (Variable_storage != null) && (TokenListText != null))
+            {
+                
+            }
         }
 
         private void Initialize_interpretators() //Будет инициазилировать интерпретатор пока что в стадии заглушки

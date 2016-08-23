@@ -30,6 +30,18 @@
       <SubType>Content</SubType>
       <DependentUpon>AllProgramUML.classdiagram</DependentUpon>
     </Content>
+    <Content Include="ModelDefinition\Package1_1601.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1558.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1559.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1601.uml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\UMLClass_Documentation.uml">
       <SubType>Content</SubType>
     </Content>

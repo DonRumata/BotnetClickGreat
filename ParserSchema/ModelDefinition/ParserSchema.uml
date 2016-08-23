@@ -20,14 +20,6 @@
   <packagedElements>
     <packageHasNamedElement>
       <class
-        Id="a035395b-7827-4753-a40c-f0f1e7566c82"
-        name="FirstCharParser"
-        isAbstract="false"
-        isLeaf="false"
-        isActiveClass="false" />
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <class
         Id="89cf804f-3f1c-4188-a4af-7bd8418e33cd"
         name="RPN String Parser"
         isAbstract="false"
@@ -41,6 +33,24 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="a684422f-c87d-4583-a0a9-a8a7c5666a57"
+        LastKnownName="Package1"
+        LastKnownLocation="Package_1558.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="be5387c6-d325-4d17-a43f-1855a5b3d8fc"
+        LastKnownName="Package2"
+        LastKnownLocation="Package_1559.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="4eb0ff13-7547-43f7-a829-bd89219f4cf6"
+        LastKnownName="ParsersLibrary"
+        LastKnownLocation="Package_1600.uml" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
