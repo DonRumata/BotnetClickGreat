@@ -96,68 +96,6 @@ namespace Parsers
     /* Первичный парсер кода превращает код введенный пользователем в список слов класса Word, выходной результата данного класса это список слов с небольшими помогающими анализаторам пометками. */
     {
 
-
-
-
-        private ETypeChar getTypeChar(char c)
-        {
-            ETypeChar res = Alphabet_check(c);
-            if (res != ETypeChar.unknown) return res;
-            switch (c)   //Отдельно создает заготовки токенов под различные возможные значения,
-            {
-                case '\r':
-                case '\n':
-                    return ETypeChar.newLine;
-                case ' ':
-                    return ETypeChar.space;
-                case '(':
-                    return ETypeChar.lBracket;
-                case ')':
-                    return ETypeChar.rBracket;
-                case '[':
-                    return ETypeChar.lSBracket;
-                case ']':
-                    return ETypeChar.rSBracket;
-                case ';':
-                    return ETypeChar.dotComma;
-                case ',':
-                    return ETypeChar.comma;
-                case '.':
-                    return ETypeChar.dot;
-                case '{':
-                    return ETypeChar.lFBracket;
-                case '}':
-                    return ETypeChar.rFBracket;
-                case '*':
-                case '/':
-                case '+':
-                case '-':
-                case '^':
-                case '%':
-                    return ETypeChar.arifm;
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return ETypeChar.digit;
-                case '|':
-                case '&':
-                case '>':
-                case '<':
-                case '=':
-                    return ETypeChar.logical;
-                default:
-                    return ETypeChar.other;
-            }
-
-        }
-
         public List<Token> Parse_first_text(string Input_text)
         {
             var List_of_Words = new List<Token>();  //Хранит в себе данные о токенах|словах
@@ -300,20 +238,6 @@ namespace Parsers
                 return ETypeChar.alphaRus;
             else
                 return ETypeChar.unknown;
-        }
-
-        private int While_delegate_function(Func<char, bool> Cycle_condition, ETypeChar second_cycle_condition, int i_counter, ETypeChar previous_ID, List<Token> Word_list, string input_text, int row_count)
-        /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
-        {
-            int helper_counter = i_counter;
-            string Data_former = "";
-            while ((helper_counter != input_text.Length) && (Cycle_condition(input_text[helper_counter])))  //Проходит циклом по тексту и формирует строку, пока входящая функция удовлетворяет второму условию
-            {
-                Data_former += input_text[helper_counter];
-                helper_counter++;
-            }
-            Word_list.Add(new Token(Data_former, previous_ID == 0, second_cycle_condition, row_count, i_counter, helper_counter - 1)); //Формирует и добавляет заготовку токена в список
-            return helper_counter - 1;
         }
     }
 

@@ -99,12 +99,6 @@
             <class Id="e17e4e88-9d61-4f26-b234-29b0264faaac" name="Typecial" isAbstract="true" isLeaf="false" isActiveClass="false">
               <description>Base type class</description>
               <elementDefinition Id="d3f09fda-33a3-4c5c-b16a-28f6a63819b8" />
-              <suppliersInternal>
-                <dependency Id="249eb210-955d-4186-b909-769ac3011fe3">
-                  <classMoniker Id="e6e8f023-8a94-475a-8aac-a0df1bf9fb7e" LastKnownName="FirstParser" />
-                  <elementDefinition Id="2279d413-6551-4e68-beae-a3ae4e2e1d43" />
-                </dependency>
-              </suppliersInternal>
               <targetEnds>
                 <association Id="9c7fc4a1-a375-4725-86d3-9f5b51ee17be" isDerived="false" sourceEndRoleName="Typecial" targetEndRoleName="ETypeTable" isLeaf="false" isAbstract="false">
                   <enumerationMoniker Id="92f594d9-cfb0-4255-8c54-c513345a9391" LastKnownName="ETypeTable" />
@@ -121,6 +115,22 @@
                     </associationHasOwnedEnds>
                   </relationshipOwnedElementsInternal>
                   <elementDefinition Id="1c855a38-600f-4580-ae85-c3eb3b611307" />
+                </association>
+                <association Id="68bb43e7-67e9-4ed1-88a3-5274945408ce" isDerived="false" sourceEndRoleName="Typecial" targetEndRoleName="FirstParser" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="e6e8f023-8a94-475a-8aac-a0df1bf9fb7e" LastKnownName="FirstParser" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="5815752f-def6-4b30-b476-3308d25f6ffa" name="Typecial" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="39b840dd-099b-46c0-82ee-1bcdd74950d3" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="362bc70d-b543-4d76-99c6-0e770305ccce" name="FirstParser" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <elementDefinition Id="8c785578-d681-41f6-ab53-7da2884051e8" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="efd4b880-b41a-4254-bd88-d8ab29e1891b" />
                 </association>
               </targetEnds>
               <ownedAttributesInternal>
@@ -234,12 +244,6 @@
           <packageHasNamedElement>
             <class Id="2f03a2ef-40b8-4b12-abf7-10b79f322456" name="Token" visibility="Protected" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="698c4281-0b45-45a4-98e1-c8d75d2beed6" />
-              <suppliersInternal>
-                <dependency Id="215ef594-f5ec-4f57-adbb-a3d87aa280cb">
-                  <classMoniker Id="e6e8f023-8a94-475a-8aac-a0df1bf9fb7e" LastKnownName="FirstParser" />
-                  <elementDefinition Id="56509772-bb11-46d6-8027-10d3c5dfd5e5" />
-                </dependency>
-              </suppliersInternal>
               <targetEnds>
                 <association Id="5e53feb2-a31b-4339-a19c-a3abfbec17be" isDerived="false" sourceEndRoleName="Token" targetEndRoleName="Group_of_Tokens" isLeaf="false" isAbstract="false">
                   <enumerationMoniker Id="1fd42700-e729-4372-921d-5bf1e4c255d7" LastKnownName="Group_of_Tokens" />
@@ -256,6 +260,22 @@
                     </associationHasOwnedEnds>
                   </relationshipOwnedElementsInternal>
                   <elementDefinition Id="86d983bf-e641-41c0-a86b-cb6cff2d47c6" />
+                </association>
+                <association Id="73a7ba42-29bf-48ec-b548-c69a1f89d844" isDerived="false" sourceEndRoleName="Token" targetEndRoleName="FirstParser" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="e6e8f023-8a94-475a-8aac-a0df1bf9fb7e" LastKnownName="FirstParser" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="ec42913a-d6fa-474d-a668-37f71ab648b7" name="Token" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="4dddd510-5e87-43ac-81e3-aa01f1bf5105" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="6ee21bcc-0c98-404b-be2c-4ad6c0a3a762" name="FirstParser" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <elementDefinition Id="56c3a175-1a9e-4ba1-ae98-5c34acfc596d" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="56006523-a429-43b9-ac26-cca2f48782eb" />
                 </association>
               </targetEnds>
               <ownedAttributesInternal>
@@ -377,7 +397,7 @@
                 <enumerationLiteral Id="a5cb5289-cc12-4437-9719-ffc3223f993d" name="(">
                   <elementDefinition Id="9356bbc6-d21a-416e-964f-310f19d0f23e" />
                   <specification>
-                    <literalInteger Id="b6f82390-8741-49b3-8922-98ac5a3bbad2" name="Integer" value="5">
+                    <literalInteger Id="b6f82390-8741-49b3-8922-98ac5a3bbad2" name="Integer" value="1">
                       <elementDefinition Id="a462913e-afe3-4f44-b99e-132f6a0f76a6" />
                     </literalInteger>
                   </specification>
@@ -385,7 +405,7 @@
                 <enumerationLiteral Id="05a56759-a1e8-47dd-847c-38330da33401" name=")">
                   <elementDefinition Id="4e454113-cd35-44be-b441-c66b4fddd115" />
                   <specification>
-                    <literalInteger Id="0918a44f-5c82-4401-b4d1-371ccd89ce2a" name="Integer" value="6">
+                    <literalInteger Id="0918a44f-5c82-4401-b4d1-371ccd89ce2a" name="Integer" value="2">
                       <elementDefinition Id="c45b2814-b955-4baf-8254-fee52ebcc2b3" />
                     </literalInteger>
                   </specification>
@@ -393,7 +413,7 @@
                 <enumerationLiteral Id="356b16b5-8c38-4ac2-aad4-6244c026bc4d" name="{">
                   <elementDefinition Id="160c363d-e0fe-4fd9-8f0b-3c112ac3323d" />
                   <specification>
-                    <literalInteger Id="22e8c716-801d-4d80-82a5-f59c7478dfea" name="Integer" value="7">
+                    <literalInteger Id="22e8c716-801d-4d80-82a5-f59c7478dfea" name="Integer" value="3">
                       <elementDefinition Id="020b05aa-aad2-4ca6-82d6-a3a48f5ddd69" />
                     </literalInteger>
                   </specification>
@@ -401,48 +421,32 @@
                 <enumerationLiteral Id="8e0e0d9e-354f-4ec1-939c-8c45d36aea95" name="}">
                   <elementDefinition Id="9f59c7b1-a6c9-4f97-a57b-ced17b749c9f" />
                   <specification>
-                    <literalInteger Id="8c07c403-5f97-4703-b6a3-699b6cd1e19a" name="Integer" value="8">
+                    <literalInteger Id="8c07c403-5f97-4703-b6a3-699b6cd1e19a" name="Integer" value="4">
                       <elementDefinition Id="448b8ed8-493b-43fd-8a2c-810c9012beb3" />
-                    </literalInteger>
-                  </specification>
-                </enumerationLiteral>
-                <enumerationLiteral Id="6e38d170-ccb2-4ad4-bd59-f81e616df996" name="+=">
-                  <elementDefinition Id="b76c9061-185b-4cd2-b86a-57da884cdec3" />
-                  <specification>
-                    <literalInteger Id="50845b4c-bae1-4741-b92e-7eed11326ff4" name="Integer" value="1">
-                      <elementDefinition Id="4339c515-7716-4492-ae28-607548a59048" />
-                    </literalInteger>
-                  </specification>
-                </enumerationLiteral>
-                <enumerationLiteral Id="9c3df301-e0b8-4913-b103-0c4a43c5865d" name="-=">
-                  <elementDefinition Id="b55c34f6-5b09-475d-b297-c7c78ab44321" />
-                  <specification>
-                    <literalInteger Id="2f788e27-9a7b-44a7-9078-4f1eff71fd32" name="Integer" value="2">
-                      <elementDefinition Id="1ee2e6b2-e31f-473b-83b4-8129e6c45eef" />
-                    </literalInteger>
-                  </specification>
-                </enumerationLiteral>
-                <enumerationLiteral Id="9d9979f5-6144-4d6a-ac87-83d1a849f410" name="*=">
-                  <elementDefinition Id="9e56496e-eb0c-4814-904c-8ac73db008e7" />
-                  <specification>
-                    <literalInteger Id="3d405364-69b2-4492-9afb-ebe092333b44" name="Integer" value="3">
-                      <elementDefinition Id="e80af369-292e-4b92-a37f-c47800ca8913" />
-                    </literalInteger>
-                  </specification>
-                </enumerationLiteral>
-                <enumerationLiteral Id="9e6332d3-9106-463e-9b9d-75e87552af4f" name="/=">
-                  <elementDefinition Id="ddcbf6eb-48c8-49fb-b21f-243abaaefd15" />
-                  <specification>
-                    <literalInteger Id="2405cf7b-e149-4a82-a5ed-16e0384a4e53" name="Integer" value="4">
-                      <elementDefinition Id="d7e2575d-81d0-4026-b607-e85483761de8" />
                     </literalInteger>
                   </specification>
                 </enumerationLiteral>
                 <enumerationLiteral Id="8413480f-9625-4325-a35c-29a1bd74aa3c" name="\n">
                   <elementDefinition Id="fd4ef79b-7e06-45b0-8d18-bfee480e9dd7" />
                   <specification>
-                    <literalInteger Id="0bf2b356-3bf4-44e8-99ad-a7712be7f0be" name="Integer" value="9">
+                    <literalInteger Id="0bf2b356-3bf4-44e8-99ad-a7712be7f0be" name="Integer" value="5">
                       <elementDefinition Id="33914bc2-8d65-4beb-bee1-a8b8bfa7eb18" />
+                    </literalInteger>
+                  </specification>
+                </enumerationLiteral>
+                <enumerationLiteral Id="7b378855-fce1-4c37-a06c-7a0dd5062cb1" name="\r">
+                  <elementDefinition Id="ffa3cd6d-c8a6-405f-a124-e38d6701d169" />
+                  <specification>
+                    <literalInteger Id="aca508bc-de5b-44ee-bee4-6b0602af495b" name="Integer" value="5">
+                      <elementDefinition Id="8da5693a-e528-4b78-9eb8-70076d695fcd" />
+                    </literalInteger>
+                  </specification>
+                </enumerationLiteral>
+                <enumerationLiteral Id="d7c9582c-e951-49da-9574-8991c70860ed" name=";">
+                  <elementDefinition Id="a9b3c3d7-93fb-4b2a-a649-5e07031fc5e9" />
+                  <specification>
+                    <literalInteger Id="487bbc37-d564-414a-bb72-021a4a82d5d6" name="Integer" value="6">
+                      <elementDefinition Id="9736acd1-07f2-425c-86b7-aec41ec50d04" />
                     </literalInteger>
                   </specification>
                 </enumerationLiteral>
@@ -1064,11 +1068,27 @@
                     </literalInteger>
                   </specification>
                 </enumerationLiteral>
-                <enumerationLiteral Id="3ae6f29b-e174-465a-be12-3b7c70a2f23f" name="ReservedName">
-                  <elementDefinition Id="45388489-7fb8-4423-88ed-0e7e94650e5a" />
+                <enumerationLiteral Id="b169bce2-5596-4575-8f66-aa4d9cce27ba" name="Construction">
+                  <elementDefinition Id="698839c1-c312-49d7-92c6-f51ef9710e07" />
                   <specification>
-                    <literalInteger Id="2eb2750f-dca7-4b3f-8bc0-937b27312760" name="Integer" value="7">
-                      <elementDefinition Id="0d0d1542-b905-411c-948d-17f1ae08e9ef" />
+                    <literalInteger Id="2bf1506f-b939-4ce6-8501-141c34313989" name="Integer" value="7">
+                      <elementDefinition Id="401b2be4-5a73-4058-8188-e28de50a3acb" />
+                    </literalInteger>
+                  </specification>
+                </enumerationLiteral>
+                <enumerationLiteral Id="514ab4d1-b75e-4aff-9aaa-886201b49ccd" name="Type Definition">
+                  <elementDefinition Id="42b16d73-4541-40fb-9c49-57f6680e48ad" />
+                  <specification>
+                    <literalInteger Id="91fa0bc9-7284-4a64-94cc-f6a6d44bf9b0" name="Integer" value="9">
+                      <elementDefinition Id="98459d7b-1652-48e4-b28b-02290dff0d7d" />
+                    </literalInteger>
+                  </specification>
+                </enumerationLiteral>
+                <enumerationLiteral Id="7fb5905f-9eb1-4cb1-9f1b-eea3c4eeef5c" name="Function">
+                  <elementDefinition Id="3caef49f-5aef-4e2e-b43d-936c6ff9de74" />
+                  <specification>
+                    <literalInteger Id="8b3fe34e-1a75-4add-b30c-8eec172dd2dd" name="Integer" value="8">
+                      <elementDefinition Id="e5844396-b805-4133-811b-25ddcbeadaad" />
                     </literalInteger>
                   </specification>
                 </enumerationLiteral>

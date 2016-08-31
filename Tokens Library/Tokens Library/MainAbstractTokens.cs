@@ -38,7 +38,9 @@ namespace Tokens_Library
         Name = 4,
         BooleanOperation = 5,
         Help_symbol = 6,
-        Reserved_name = 7,
+        Construction = 7,
+        Function = 8,
+        Type_Definition = 9,
         NoN = 0,
     }
 

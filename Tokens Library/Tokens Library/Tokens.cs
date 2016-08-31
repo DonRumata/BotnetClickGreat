@@ -6,29 +6,6 @@ using System.Threading.Tasks;
 
 namespace Tokens_Library
 {
-    public enum ETypeChar       //Типы предтокенов
-    {
-        space = 0,
-        arifm = 1,
-        lBracket = 2,
-        rBracket = 3,
-        digit = 4,
-        lSBracket = 5,
-        rSBracket = 6,
-        dotComma = 7,
-        alpha = 8,
-        dot = 9,
-        newLine = 10,
-        alphaRus = 11,
-        lFBracket = 12,
-        rFBracket = 13,
-        logical = 14,
-        comma = 15,
-        unknown = -1,
-        other = -2,
-
-    }
-
    /* public class Token //Базовый класс токена, содержит в себе лишь общие значения для всех токенов.
     {
 

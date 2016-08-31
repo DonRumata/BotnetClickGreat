@@ -9,29 +9,66 @@ using Parsers;
 
 namespace Parsers
 {
+
+    public enum PreTokenGroup
+    {
+        Symbol = 1,
+        Numeric = 2,
+        Alphabet = 3,
+        RuAlphabet = 4,
+        Delimeter = 5,
+        NaN = -1,
+        Default = 0,
+        Space = 6,
+    }
+
     class FirstParser
     {
         private List<AnyFunction> FuncStorage = null;
         private List<Variable> VarStorage = null;
+        private List<Token> CodeStorage = null;
         private string Text = null;
+        private int RowCount = 0;
+        private HashSet<string> Type_definitions = null;
+        private HashSet<string> Built_In_Functions = null;
+        private HashSet<string> Construction_reservation = null;
 
         public void PARSETEXT(List<AnyFunction>InFunc, List<Variable>InVar, string Input_Text)
         {
             FuncStorage = InFunc;
             VarStorage = InVar;
             Text = Input_Text;
+            PreTokenGroup nowcharID;
+            PreTokenGroup PreviousCharID = PreTokenGroup.NaN;
+            CodeStorage = new List<Token>();
+            Hashsets_initialization();
             char nowchar;
             int i = 0;
             while (i!=Input_Text.Length)
             {
                 nowchar = Input_Text[i];
-                
+                nowcharID = getTypeChar(nowchar);
+                switch (nowcharID)
+                {
+                    case PreTokenGroup.Alphabet:
+                    case PreTokenGroup.Numeric:
+                    case PreTokenGroup.RuAlphabet:
+                    case PreTokenGroup.Symbol:
+                        i=While_delegate_function(c => getTypeChar(c)==nowcharID,nowcharID,i,PreviousCharID,CodeStorage,Input_Text,)
+                }
             }
            
             
         }
 
-        private int While_delegate_function(Func<char, bool> Cycle_condition, ETypeChar second_cycle_condition, int i_counter, ETypeChar previous_ID, List<Token> Word_list, string input_text, int row_count)
+        private void Hashsets_initialization() //Инициализирует значения множеств, при запуске парсера.
+        {
+            Type_definitions = new HashSet<string>() { "null","void", "int", "float", "double", "point", "char", "string", "picture" };
+            Built_In_Functions = new HashSet<string>() { "" };
+            Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };
+        }
+
+        private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, Token previous_ID, List<Token> Word_list, string input_text, int row_count)
         /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
         {
             int helper_counter = i_counter;
@@ -41,52 +78,196 @@ namespace Parsers
                 Data_former += input_text[helper_counter];
                 helper_counter++;
             }
-            Word_list.Add(new Token(Data_former, previous_ID == 0, second_cycle_condition, row_count, i_counter, helper_counter - 1)); //Формирует и добавляет заготовку токена в список
+            Word_list.Add(GetToken(Data_former, second_cycle_condition, previous_ID, i_counter, helper_counter - 1));
             return helper_counter - 1;
         }
 
-        private ETypeChar Alphabet_check(char nowchar_f)  //Проверяет является ли текущий символ, кириллицей или латиницей.
+        private bool Numeric_check(char symbol)  //Выполняет проверку, является ли символ цифрой.
         {
-            if (((nowchar_f >= 'a') && (nowchar_f <= 'z')) || ((nowchar_f >= 'A') && (nowchar_f <= 'Z')))
-                return ETypeChar.alpha;
+            if ((symbol >= '0') && (symbol <= '9'))
+                return true;
             else
-                if ((nowchar_f >= 'А') && ((nowchar_f >= 'Я')) || (nowchar_f >= 'а') && ((nowchar_f >= 'я')) || (nowchar_f >= 'ё') || (nowchar_f >= 'Ё'))  //Потенциальное БАГОДЕРЬМО, не удовлетворяет значениям кириллицы в кодировке юникода, нужно сделать отдельную проверку для кириллицы
-                return ETypeChar.alphaRus;
-            else
-                return ETypeChar.unknown;
+                return false;
         }
 
-        private ETypeChar getTypeChar(char c)
+        private int Alphabet_check(char symbol) //Проверяет является ли текущий символ кириллицей или латиницей.
         {
-            switch (c)   //Отдельно создает заготовки токенов под различные возможные значения,
+            if (((symbol >= 'a') && (symbol <= 'z')) || ((symbol >= 'A') && (symbol <= 'Z')))
+                return 1;
+            else if (((symbol >= 'а') && (symbol <= 'я')) || ((symbol >= 'А') && (symbol <= 'Я'))||(symbol=='ё')||(symbol=='Ё'))
+                return 2;
+            else
+                return 0;
+        }
+
+
+        private PreTokenGroup getTypeChar(char c)
+        {
+            int Temp = Alphabet_check(c);
+            if (Temp == 1)
+                return PreTokenGroup.Alphabet;
+            else if (Temp == 2)
+                return PreTokenGroup.RuAlphabet;
+            else if (Numeric_check(c))
+                return PreTokenGroup.Numeric;
+            else
             {
-                case '+':
-                case '-':
-                case '=':
-                case '*':
-                case '/':
-                case '&':
-                case '|':
-                case '>':
-                case '<':
-                    return 
+                switch (c)   //Отдельно создает заготовки токенов под различные возможные значения,
+                {
+                    case '+':
+                    case '-':
+                    case '=':
+                    case '*':
+                    case '/':
+                    case '&':
+                    case '|':
+                    case '>':
+                    case '<':
+                    case '^':
+                    case '%':
+                        return PreTokenGroup.Symbol;
+                    case '(':
+                    case ')':
+                    case '[':
+                    case ']':
+                    case '{':
+                    case '}':
+                    case '\n':
+                    case '\r':
+                    case '\"':
+                    case '\'':
+                    case ',':
+                    case '.':
+                        return PreTokenGroup.Delimeter;
+                    case ' ':
+                        return PreTokenGroup.Space;
+                    default: return PreTokenGroup.Default;
+                }
             }
+        }
 
-        private void GetToken()
+        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue)
         {
-
-            switch (nowCharId)
+            Token Resulter;
+            bool space_resulter = ID_Of_previous.Get_data() == " ";
+            switch (preID)
             {
-                case ETypeChar.arifm:
-                case ETypeChar.digit:
-                case ETypeChar.alpha:
-                case ETypeChar.alphaRus:
-                case ETypeChar.logical:
-                case ETypeChar.other:
-                    i = While_delegate_function(c => getTypeChar(c) == nowCharId, nowCharId, i, Previous_char_ID, List_of_Words, Input_text, Row_Counter);  //Формирует из арифметических символов строку, которая затем записывается как отдельный токен, даже в том случае если перед ней не шел пробел, однако это указывается отдельно
+                case PreTokenGroup.Alphabet:
+                    if (Construction_reservation.Contains(inStr))
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Construction, RowCount, FValue, SValue));
+                    else if (Type_definitions.Contains(inStr))
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue));
+                    else if()
                     break;
+                case PreTokenGroup.Delimeter:
+                    Delimeters_ID DelimID;
+                    Help_SymbolsID HSymbID;
+                    if (Is_delimeter(inStr, out DelimID))
+                        return (new Delimeter(inStr, space_resulter, RowCount, FValue, SValue, DelimID));
+                    else if (Is_Help_Symbol(inStr, out HSymbID))
+                        return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, HSymbID));
+                    else
+                        return null;
+                case PreTokenGroup.RuAlphabet:
+                    break;
+                case PreTokenGroup.Symbol:
+                    AriphmeticalSymbol_ID Ariphmetic_ID;
+                    BooleanSymbol_ID Boolean_ID;
+                    bool Equalty_resulter;
+                    if (Is_ariphmetical(inStr, out Ariphmetic_ID, out Equalty_resulter))
+                        return (new Ariphmetical(inStr, space_resulter, RowCount, FValue, SValue, Ariphmetic_ID));
+                    else if (Is_logical(inStr, out Boolean_ID))
+                        return (new Boolean_operation(inStr, space_resulter, RowCount, FValue, SValue, Boolean_ID));
+                    break;
+                case PreTokenGroup.Numeric:
+                    return (new Token(inStr, space_resulter, Group_of_Tokens.Digit, RowCount, FValue, SValue));
             }
+        }
 
+        private bool Reserve_name_check(string Input)
+        {
+            if (Construction_reservation.Contains(Input))
+                return true;
+
+        }
+
+        private bool Is_delimeter(string Input, out Delimeters_ID Delim_ID)
+        {
+            switch(Input)
+            {
+                case "=": Delim_ID = Delimeters_ID.Equality; return true;
+                case "(": Delim_ID = Delimeters_ID.LBracket; return true;
+                case ")": Delim_ID = Delimeters_ID.RBracket; return true;
+                case "{": Delim_ID = Delimeters_ID.LBrace; return true;
+                case "}": Delim_ID = Delimeters_ID.RBrace; return true;
+                case "\n":
+                case "\r": Delim_ID = Delimeters_ID.New_string; return true;
+                case ";": Delim_ID = Delimeters_ID.Semicolon; return true;
+                default: Delim_ID = Delimeters_ID.NaN; return false;
+            }
+        }
+
+        private bool Is_Help_Symbol(string Input, out Help_SymbolsID Help_Symbol_ID)
+        {
+            switch(Input)
+            {
+                case "\"": Help_Symbol_ID = Help_SymbolsID.Quotes; return true;
+                case "'": Help_Symbol_ID = Help_SymbolsID.Apostrophe; return true;
+                case ",": Help_Symbol_ID = Help_SymbolsID.Comma; return true;
+                case ".": Help_Symbol_ID = Help_SymbolsID.Dot; return true;
+                case "[": Help_Symbol_ID = Help_SymbolsID.LSqrBracket; return true;
+                case "]": Help_Symbol_ID = Help_SymbolsID.RSqrBracket; return true;
+                default: Help_Symbol_ID = Help_SymbolsID.NaN; return false;
+            }
+        }
+
+        private bool Is_ariphmetical(string Input, out AriphmeticalSymbol_ID Ariphm_ID, out bool WasEquality)
+        {
+            WasEquality = false;
+            switch (Input)
+            {
+                case "+":
+                    Ariphm_ID = AriphmeticalSymbol_ID.Plus; return true;
+                case "+=":
+                    WasEquality = true;
+                    goto case "+";
+                case "-":
+                    Ariphm_ID = AriphmeticalSymbol_ID.Minus; return true;
+                case "-=":
+                    WasEquality = true;
+                    goto case "-";
+                case "*":
+                    Ariphm_ID = AriphmeticalSymbol_ID.Multiplication; return true;
+                case "*=":
+                    WasEquality = true;
+                    goto case "*";
+                case "/":
+                    Ariphm_ID = AriphmeticalSymbol_ID.Division; return true;
+                case "/=":
+                    WasEquality = true;
+                    goto case "*";
+                case "%":
+                    Ariphm_ID = AriphmeticalSymbol_ID.Mod; return true;
+                case "^":
+                    Ariphm_ID = AriphmeticalSymbol_ID.Involution; return true;
+                default: Ariphm_ID = AriphmeticalSymbol_ID.NaN; return false;
+            }
+        }
+
+        private bool Is_logical(string Input, out BooleanSymbol_ID Bool_ID)
+        {
+            switch (Input)
+            {
+                case ">": Bool_ID = BooleanSymbol_ID.Greater; return true;
+                case ">=": Bool_ID = BooleanSymbol_ID.GreaterOrEqual; return true;
+                case "<": Bool_ID = BooleanSymbol_ID.Less; return true;
+                case "<=": Bool_ID = BooleanSymbol_ID.LessOrEqual; return true;
+                case "==": Bool_ID = BooleanSymbol_ID.Equality; return true;
+                case "!=": Bool_ID = BooleanSymbol_ID.NotEqual; return true;
+                case "&&": Bool_ID = BooleanSymbol_ID.And; return true;
+                case "||": Bool_ID = BooleanSymbol_ID.Or; return true;
+                default: Bool_ID = BooleanSymbol_ID.NaN; return false;
+            }
         }
     }
 }

@@ -12,15 +12,6 @@
         isLeaf="false"
         isActiveClass="false">
         <description>Base type class</description>
-        <suppliersInternal>
-          <dependency
-            Id="2279d413-6551-4e68-beae-a3ae4e2e1d43">
-            <classMoniker
-              Id="983ecdc2-5d85-4d46-a075-385717cfb19b"
-              LastKnownName="FirstParser"
-              LastKnownLocation="Package1_1601.uml" />
-          </dependency>
-        </suppliersInternal>
         <targetEnds>
           <association
             Id="1c855a38-600f-4580-ae85-c3eb3b611307"
@@ -51,6 +42,45 @@
                 <memberEnd
                   Id="b3829966-23b8-4044-aa04-9796778f95b9"
                   name="ETypeTable"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="efd4b880-b41a-4254-bd88-d8ab29e1891b"
+            isDerived="false"
+            sourceEndRoleName="Typecial"
+            targetEndRoleName="FirstParser"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="983ecdc2-5d85-4d46-a075-385717cfb19b"
+              LastKnownName="FirstParser"
+              LastKnownLocation="Package1_1601.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="39b840dd-099b-46c0-82ee-1bcdd74950d3"
+                  name="Typecial"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8c785578-d681-41f6-ab53-7da2884051e8"
+                  name="FirstParser"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -233,15 +263,6 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <suppliersInternal>
-          <dependency
-            Id="56509772-bb11-46d6-8027-10d3c5dfd5e5">
-            <classMoniker
-              Id="983ecdc2-5d85-4d46-a075-385717cfb19b"
-              LastKnownName="FirstParser"
-              LastKnownLocation="Package1_1601.uml" />
-          </dependency>
-        </suppliersInternal>
         <targetEnds>
           <association
             Id="86d983bf-e641-41c0-a86b-cb6cff2d47c6"
@@ -272,6 +293,45 @@
                 <memberEnd
                   Id="c4c2c73d-9f1d-4f76-8935-c544f6cc835e"
                   name="Group_of_Tokens"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="56006523-a429-43b9-ac26-cca2f48782eb"
+            isDerived="false"
+            sourceEndRoleName="Token"
+            targetEndRoleName="FirstParser"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="983ecdc2-5d85-4d46-a075-385717cfb19b"
+              LastKnownName="FirstParser"
+              LastKnownLocation="Package1_1601.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4dddd510-5e87-43ac-81e3-aa01f1bf5105"
+                  name="Token"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="56c3a175-1a9e-4ba1-ae98-5c34acfc596d"
+                  name="FirstParser"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -510,7 +570,7 @@
               <literalInteger
                 Id="a462913e-afe3-4f44-b99e-132f6a0f76a6"
                 name="Integer"
-                value="5" />
+                value="1" />
             </specification>
           </enumerationLiteral>
           <enumerationLiteral
@@ -520,7 +580,7 @@
               <literalInteger
                 Id="c45b2814-b955-4baf-8254-fee52ebcc2b3"
                 name="Integer"
-                value="6" />
+                value="2" />
             </specification>
           </enumerationLiteral>
           <enumerationLiteral
@@ -530,7 +590,7 @@
               <literalInteger
                 Id="020b05aa-aad2-4ca6-82d6-a3a48f5ddd69"
                 name="Integer"
-                value="7" />
+                value="3" />
             </specification>
           </enumerationLiteral>
           <enumerationLiteral
@@ -539,46 +599,6 @@
             <specification>
               <literalInteger
                 Id="448b8ed8-493b-43fd-8a2c-810c9012beb3"
-                name="Integer"
-                value="8" />
-            </specification>
-          </enumerationLiteral>
-          <enumerationLiteral
-            Id="b76c9061-185b-4cd2-b86a-57da884cdec3"
-            name="+=">
-            <specification>
-              <literalInteger
-                Id="4339c515-7716-4492-ae28-607548a59048"
-                name="Integer"
-                value="1" />
-            </specification>
-          </enumerationLiteral>
-          <enumerationLiteral
-            Id="b55c34f6-5b09-475d-b297-c7c78ab44321"
-            name="-=">
-            <specification>
-              <literalInteger
-                Id="1ee2e6b2-e31f-473b-83b4-8129e6c45eef"
-                name="Integer"
-                value="2" />
-            </specification>
-          </enumerationLiteral>
-          <enumerationLiteral
-            Id="9e56496e-eb0c-4814-904c-8ac73db008e7"
-            name="*=">
-            <specification>
-              <literalInteger
-                Id="e80af369-292e-4b92-a37f-c47800ca8913"
-                name="Integer"
-                value="3" />
-            </specification>
-          </enumerationLiteral>
-          <enumerationLiteral
-            Id="ddcbf6eb-48c8-49fb-b21f-243abaaefd15"
-            name="/=">
-            <specification>
-              <literalInteger
-                Id="d7e2575d-81d0-4026-b607-e85483761de8"
                 name="Integer"
                 value="4" />
             </specification>
@@ -590,7 +610,27 @@
               <literalInteger
                 Id="33914bc2-8d65-4beb-bee1-a8b8bfa7eb18"
                 name="Integer"
-                value="9" />
+                value="5" />
+            </specification>
+          </enumerationLiteral>
+          <enumerationLiteral
+            Id="ffa3cd6d-c8a6-405f-a124-e38d6701d169"
+            name="\r">
+            <specification>
+              <literalInteger
+                Id="8da5693a-e528-4b78-9eb8-70076d695fcd"
+                name="Integer"
+                value="5" />
+            </specification>
+          </enumerationLiteral>
+          <enumerationLiteral
+            Id="a9b3c3d7-93fb-4b2a-a649-5e07031fc5e9"
+            name=";">
+            <specification>
+              <literalInteger
+                Id="9736acd1-07f2-425c-86b7-aec41ec50d04"
+                name="Integer"
+                value="6" />
             </specification>
           </enumerationLiteral>
         </ownedLiterals>
@@ -1697,13 +1737,33 @@
             </specification>
           </enumerationLiteral>
           <enumerationLiteral
-            Id="45388489-7fb8-4423-88ed-0e7e94650e5a"
-            name="ReservedName">
+            Id="698839c1-c312-49d7-92c6-f51ef9710e07"
+            name="Construction">
             <specification>
               <literalInteger
-                Id="0d0d1542-b905-411c-948d-17f1ae08e9ef"
+                Id="401b2be4-5a73-4058-8188-e28de50a3acb"
                 name="Integer"
                 value="7" />
+            </specification>
+          </enumerationLiteral>
+          <enumerationLiteral
+            Id="42b16d73-4541-40fb-9c49-57f6680e48ad"
+            name="Type Definition">
+            <specification>
+              <literalInteger
+                Id="98459d7b-1652-48e4-b28b-02290dff0d7d"
+                name="Integer"
+                value="9" />
+            </specification>
+          </enumerationLiteral>
+          <enumerationLiteral
+            Id="3caef49f-5aef-4e2e-b43d-936c6ff9de74"
+            name="Function">
+            <specification>
+              <literalInteger
+                Id="e5844396-b805-4133-811b-25ddcbeadaad"
+                name="Integer"
+                value="8" />
             </specification>
           </enumerationLiteral>
         </ownedLiterals>
