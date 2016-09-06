@@ -40,6 +40,13 @@ namespace Parsers
             Text = Input_Text;
             PreTokenGroup nowcharID;
             PreTokenGroup PreviousCharID = PreTokenGroup.NaN;
+            bool[] Checker_storage = new bool[6] {false,false,false,false,false,false };
+            bool If_construct_translate = false;
+            bool If_then_body_translate = false;
+            bool If_else_body_translate = false;
+            bool Function_definition_translate = false;
+            bool Function_body_translate = false;
+            bool Procedure_definition_translate = false;
             CodeStorage = new List<Token>();
             Hashsets_initialization();
             char nowchar;
@@ -154,11 +161,12 @@ namespace Parsers
             {
                 case PreTokenGroup.Alphabet:
                     if (Construction_reservation.Contains(inStr))
-                        return (new Token(inStr, space_resulter, Group_of_Tokens.Construction, RowCount, FValue, SValue));
+                        construction_translation;
                     else if (Type_definitions.Contains(inStr))
                         return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue));
-                    else if()
-                    break;
+                    else if (Built_In_Functions.Contains(inStr))
+
+                        break;
                 case PreTokenGroup.Delimeter:
                     Delimeters_ID DelimID;
                     Help_SymbolsID HSymbID;
@@ -184,11 +192,34 @@ namespace Parsers
             }
         }
 
+        private Token construction_translation(string construction_name)
+        {
+            Token resulter = null;
+            switch (construction_name)
+            {
+                case "if": break;
+                case "while":break;
+                case "for":break;
+                case "function":
+                    
+                    break;
+                case "procedure":break;
+                case "repeat":break;
+                case "until":break;
+                case "begin":break;
+                case "end":break;
+                case "do":break;
+            }
+            return null;
+        }
+
+
+
         private bool Reserve_name_check(string Input)
         {
             if (Construction_reservation.Contains(Input))
                 return true;
-
+            else return false;
         }
 
         private bool Is_delimeter(string Input, out Delimeters_ID Delim_ID)

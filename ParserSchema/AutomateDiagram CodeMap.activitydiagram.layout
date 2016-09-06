@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<activityDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="AutomateDiagram CodeMap">
+  <activityRootModelMoniker Id="b288b7e9-1a01-4737-8b5b-613823c46af1" />
+  <nestedChildShapes>
+    <initialNodeShape Id="aa3da008-d9f5-4617-b42c-4b3e54f10270" absoluteBounds="7.5, 0.5, 0.375, 0.375" customColor="89, 89, 89">
+      <initialNodeMoniker Id="e612e6c8-2e19-48f6-a0af-8b2dc85abc55" LastKnownName="Initial1" />
+    </initialNodeShape>
+    <actionShape Id="33bd4612-2082-48f0-8591-aa07741e888b" absoluteBounds="7.25, 1.625, 1.125, 0.625" customColor="161, 199, 231">
+      <opaqueActionMoniker Id="e2db63d5-062b-4f0b-8fc1-0c547aba8167" LastKnownName="Проверка слова, согласно базовому общему свич" />
+    </actionShape>
+    <actionShape Id="405f243d-30d7-4588-be23-247924ebea31" absoluteBounds="7.25, 2.625, 1.125, 0.625" customColor="161, 199, 231">
+      <opaqueActionMoniker Id="96733da6-6a9c-462b-97e8-7d063a64d5c6" LastKnownName="Задание токена" />
+    </actionShape>
+    <forkNodeShape Id="588e7c38-7ca1-4d41-ac6e-1885313a6a83" absoluteBounds="5.375, 3.75, 5, 0.125" customColor="32, 32, 32">
+      <forkNodeMoniker Id="c196bd77-d77f-4edc-a472-ed1706b6fac4" LastKnownName="Fork1" />
+      <relativeChildShapes />
+    </forkNodeShape>
+    <actionShape Id="e84441fd-fb69-4cbb-a255-81edd1318b0b" absoluteBounds="9.375, 4.25, 1.125, 0.375" customColor="161, 199, 231">
+      <opaqueActionMoniker Id="c035cc6c-6647-421f-890f-6361aee86533" LastKnownName="Объявление функции" />
+    </actionShape>
+    <actionShape Id="dc55a75f-93f6-45a7-a7d5-6bfe622703cf" absoluteBounds="9.375, 4.875, 1.125, 0.75" customColor="161, 199, 231">
+      <opaqueActionMoniker Id="4a40e9de-d23f-42d3-bbb3-b5bcb01fdc82" LastKnownName="Override базового свича, согласно таблице возможных команд" />
+    </actionShape>
+    <actionShape Id="620657c5-c505-48f0-84e2-1f71a3434472" absoluteBounds="9.375, 5.875, 1.125, 0.375" customColor="161, 199, 231">
+      <opaqueActionMoniker Id="440ad1cb-031f-4966-b720-f09074580270" LastKnownName="Трансляция свича." />
+    </actionShape>
+  </nestedChildShapes>
+</activityDiagram>

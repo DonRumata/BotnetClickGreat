@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConditionConstructions.cs" />
+    <Compile Include="ExpressionClasses.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="MainAbstractTokens.cs" />
     <Compile Include="OtherDerived_Classes.cs" />

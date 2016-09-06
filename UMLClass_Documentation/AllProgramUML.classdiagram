@@ -689,7 +689,15 @@
                   </upperValueInternal>
                   <elementDefinition Id="b996c868-51f9-446f-b457-4cd3d7d48bdf" />
                 </property>
+                <property Id="227b2e02-49bc-485d-9e50-205c516bd35f" name="Type_Of_Func" visibility="Private" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="d26d93a2-05bf-46e5-a399-dd2b2fdeb306" />
+                </property>
               </ownedAttributesInternal>
+              <ownedOperationsInternal>
+                <operation Id="1f00c563-7498-42b5-9ba4-e705b427a2f7" name="Interpretate" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="0e87c0e8-bf7c-4c5f-a911-8463fd59d42f" />
+                </operation>
+              </ownedOperationsInternal>
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
@@ -724,6 +732,14 @@
                   <elementDefinition Id="cda6c347-8c57-4e89-b188-2a0ae0e9a1e0" />
                 </generalization>
               </generalsInternal>
+              <ownedAttributesInternal>
+                <property Id="c5809501-f51d-4e78-9803-0cf96c77f9e5" name="Func_pointer" visibility="Private" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="27e48324-228d-46c7-90c4-6a98d4e986b7" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="3a671218-2eda-4b1c-b62d-a2711abe081d" LastKnownName="Delegate" />
+                  </type_NamedElement>
+                </property>
+              </ownedAttributesInternal>
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
@@ -735,10 +751,18 @@
                   <elementDefinition Id="70a8ddc1-39c2-44ce-957a-ea04b82a5e24" />
                 </generalization>
               </generalsInternal>
+              <ownedAttributesInternal>
+                <property Id="31b9c4d8-886d-4824-a489-0a32d3dfb8d8" name="Function_Body" visibility="Private" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="36a70aa8-61c2-4da6-914e-0159c65e1412" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="481cf666-2c6c-459a-8c9c-a67be19fb5fd" LastKnownName="String" />
+                  </type_NamedElement>
+                </property>
+              </ownedAttributesInternal>
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="6dcbd282-a71d-4df3-b7fb-18480de815f7" name="Condition_construction" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="6dcbd282-a71d-4df3-b7fb-18480de815f7" name="Condition_Expression" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="b4230b11-f90a-4ef7-91e2-17de121d2830" />
               <generalsInternal>
                 <generalization Id="912e07df-439b-4987-8652-cfc568fdc47a" isSubstitutable="false">
@@ -791,7 +815,7 @@
               <elementDefinition Id="2730ee5c-aad9-4abc-84e5-264572ba3827" />
               <generalsInternal>
                 <generalization Id="9c2120ed-8a62-4076-a514-b7eb91382c0c" isSubstitutable="false">
-                  <classMoniker Id="6dcbd282-a71d-4df3-b7fb-18480de815f7" LastKnownName="Condition_construction" />
+                  <classMoniker Id="6dcbd282-a71d-4df3-b7fb-18480de815f7" LastKnownName="Condition_Expression" />
                   <elementDefinition Id="b0c1f3b5-afe6-4b3b-ad14-2cb80d371d1d" />
                 </generalization>
               </generalsInternal>
@@ -832,7 +856,7 @@
               <elementDefinition Id="899c2433-a115-4bd0-b69f-7d8ca4b6272a" />
               <generalsInternal>
                 <generalization Id="e158aab5-15c0-4465-b65c-586bb549cffa" isSubstitutable="false">
-                  <classMoniker Id="6dcbd282-a71d-4df3-b7fb-18480de815f7" LastKnownName="Condition_construction" />
+                  <classMoniker Id="6dcbd282-a71d-4df3-b7fb-18480de815f7" LastKnownName="Condition_Expression" />
                   <elementDefinition Id="390fd692-bbf4-4430-be07-63b1c7e7c8b8" />
                 </generalization>
               </generalsInternal>
@@ -1244,6 +1268,16 @@
     <packageHasNamedElement>
       <referencedType Id="f83fdb6c-9dc6-4f72-afce-a5d901eb804a" name="Variable" isAbstract="false" isLeaf="false" cachedFullName="UMLClass_Documentation::TokenLibrary::Variable">
         <elementDefinition Id="22ee4792-9cbf-4a41-af53-f4457b216af6" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="3a671218-2eda-4b1c-b62d-a2711abe081d" name="Delegate" isAbstract="false" isLeaf="false" cachedFullName="Delegate">
+        <elementDefinition Id="66209a77-af4c-4322-89d3-49b80a4663a4" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="481cf666-2c6c-459a-8c9c-a67be19fb5fd" name="String" isAbstract="false" isLeaf="false" cachedFullName="String">
+        <elementDefinition Id="59259974-6d55-42c6-b7bd-763d77ac8ef9" />
       </referencedType>
     </packageHasNamedElement>
   </packagedElements>

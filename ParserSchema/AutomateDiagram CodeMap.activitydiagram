@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<activityRootModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm11="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="b288b7e9-1a01-4737-8b5b-613823c46af1" name="AutomateDiagram CodeMap" linkedPackageId="c8d40f41-5dc0-4580-bd0a-b8aa8b6699c3" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner">
+  <packagedElements>
+    <activityRootModelHasActivity>
+      <activity Id="773a44c5-39b8-4bf5-a938-1d29dcdb26e6" name="AutomateDiagram CodeMap" isAbstract="false" isLeaf="false" isActiveClass="false" isReentrant="false" isReadOnly="false" isSingleExecution="false">
+        <elementDefinition Id="d9fac5b3-9722-4b2e-9bc0-23e31ac50786" />
+        <nodes>
+          <initialNode Id="e612e6c8-2e19-48f6-a0af-8b2dc85abc55" name="Initial1" isLeaf="false">
+            <elementDefinition Id="e748a7c1-99f4-4ea2-b585-155eef7898f4" />
+          </initialNode>
+          <opaqueAction Id="e2db63d5-062b-4f0b-8fc1-0c547aba8167" name="Проверка слова, согласно базовому общему свич" isLeaf="false">
+            <elementDefinition Id="e6355038-a50a-49ff-9503-072c02a21292" />
+          </opaqueAction>
+          <opaqueAction Id="96733da6-6a9c-462b-97e8-7d063a64d5c6" name="Задание токена" isLeaf="false">
+            <elementDefinition Id="639baaff-935c-4235-9858-3835ed58d338" />
+          </opaqueAction>
+          <forkNode Id="c196bd77-d77f-4edc-a472-ed1706b6fac4" name="Fork1" isLeaf="false">
+            <elementDefinition Id="0f5178e9-d0cb-4b29-9ad1-361094db5e61" />
+          </forkNode>
+          <opaqueAction Id="c035cc6c-6647-421f-890f-6361aee86533" name="Объявление функции" isLeaf="false">
+            <elementDefinition Id="9b9a921c-57bf-47e2-ac0d-a5ab0e560adc" />
+          </opaqueAction>
+          <opaqueAction Id="4a40e9de-d23f-42d3-bbb3-b5bcb01fdc82" name="Override базового свича, согласно таблице возможных команд" isLeaf="false">
+            <elementDefinition Id="c7a555da-433a-4492-8620-9892b5d16a36" />
+          </opaqueAction>
+          <opaqueAction Id="440ad1cb-031f-4966-b720-f09074580270" name="Трансляция свича." isLeaf="false">
+            <elementDefinition Id="b585d116-282c-4b20-b612-5d3bf56f4bc7" />
+          </opaqueAction>
+        </nodes>
+      </activity>
+    </activityRootModelHasActivity>
+  </packagedElements>
+  <package Id="c8d40f41-5dc0-4580-bd0a-b8aa8b6699c3" name="ParserSchema">
+    <elementDefinition Id="a9ed6ccf-7c81-4669-813e-de7e64f85035" />
+    <profileInstances>
+      <packageHasProfileInstances Id="e27e7145-4880-4d52-a280-c8032dde94e7">
+        <profileInstance Id="ffab7c23-fcde-43e8-b501-461db262d9e4" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="93f59be5-e351-4429-9fc5-8cf642a86247">
+        <profileInstance Id="19a34f17-cefa-493d-9e6e-7a1135e0368a" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</activityRootModel>

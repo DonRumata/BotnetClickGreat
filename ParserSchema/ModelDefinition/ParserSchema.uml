@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner"
   dslVersion="1.0.0.0"
   Id="a9ed6ccf-7c81-4669-813e-de7e64f85035"
   name="ParserSchema" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -51,6 +51,88 @@
         Id="4eb0ff13-7547-43f7-a829-bd89219f4cf6"
         LastKnownName="ParsersLibrary"
         LastKnownLocation="Package_1600.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <interaction
+        Id="c79aa380-cf51-4a0e-89a4-f8ce950d2285"
+        name="Sequence1"
+        collapseFragmentsFlag="false"
+        isActiveClass="false"
+        isAbstract="false"
+        isLeaf="false"
+        isReentrant="false">
+        <lifelines>
+          <lifeline
+            Id="a73d5878-e799-4f89-837e-4af322f229d5"
+            name="Lifeline1"
+            isActor="false"
+            lifelineDisplayName="Lifeline1" />
+        </lifelines>
+      </interaction>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <activity
+        Id="930b8a32-54ba-4669-b486-b986f17feaa7"
+        name="Activity1"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false"
+        isReentrant="false"
+        isReadOnly="false"
+        isSingleExecution="false">
+        <nodes>
+          <initialNode
+            Id="c5a5a7b8-0163-4a24-9c44-384114c30230"
+            name="Initial1"
+            isLeaf="false" />
+          <opaqueAction
+            Id="c937fb27-52fd-4f34-9e07-62075f59b30f"
+            name="Action1"
+            isLeaf="false" />
+        </nodes>
+      </activity>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <activity
+        Id="d9fac5b3-9722-4b2e-9bc0-23e31ac50786"
+        name="AutomateDiagram CodeMap"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false"
+        isReentrant="false"
+        isReadOnly="false"
+        isSingleExecution="false">
+        <nodes>
+          <initialNode
+            Id="e748a7c1-99f4-4ea2-b585-155eef7898f4"
+            name="Initial1"
+            isLeaf="false" />
+          <opaqueAction
+            Id="e6355038-a50a-49ff-9503-072c02a21292"
+            name="Проверка слова, согласно базовому общему свич"
+            isLeaf="false" />
+          <opaqueAction
+            Id="639baaff-935c-4235-9858-3835ed58d338"
+            name="Задание токена"
+            isLeaf="false" />
+          <forkNode
+            Id="0f5178e9-d0cb-4b29-9ad1-361094db5e61"
+            name="Fork1"
+            isLeaf="false" />
+          <opaqueAction
+            Id="9b9a921c-57bf-47e2-ac0d-a5ab0e560adc"
+            name="Объявление функции"
+            isLeaf="false" />
+          <opaqueAction
+            Id="c7a555da-433a-4492-8620-9892b5d16a36"
+            name="Override базового свича, согласно таблице возможных команд"
+            isLeaf="false" />
+          <opaqueAction
+            Id="b585d116-282c-4b20-b612-5d3bf56f4bc7"
+            name="Трансляция свича."
+            isLeaf="false" />
+        </nodes>
+      </activity>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

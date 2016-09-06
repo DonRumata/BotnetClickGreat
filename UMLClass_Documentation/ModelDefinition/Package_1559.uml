@@ -1057,7 +1057,28 @@
                 value="1" />
             </upperValueInternal>
           </property>
+          <property
+            Id="d26d93a2-05bf-46e5-a399-dd2b2fdeb306"
+            name="Type_Of_Func"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
         </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="0e87c0e8-bf7c-4c5f-a911-8463fd59d42f"
+            name="Interpretate"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -1132,6 +1153,26 @@
               LastKnownLocation="Package_1559.uml" />
           </generalization>
         </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="27e48324-228d-46c7-90c4-6a98d4e986b7"
+            name="Func_pointer"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="66209a77-af4c-4322-89d3-49b80a4663a4"
+                LastKnownName="Delegate"
+                LastKnownLocation="Package_1559.uml" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -1151,12 +1192,33 @@
               LastKnownLocation="Package_1559.uml" />
           </generalization>
         </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="36a70aa8-61c2-4da6-914e-0159c65e1412"
+            name="Function_Body"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <primitiveTypeMoniker
+                Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                LastKnownName="String"
+                LastKnownLocation="UMLClass_Documentation.uml" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
         Id="b4230b11-f90a-4ef7-91e2-17de121d2830"
-        name="Condition_construction"
+        name="Condition_Expression"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -1262,7 +1324,7 @@
             isSubstitutable="false">
             <classMoniker
               Id="b4230b11-f90a-4ef7-91e2-17de121d2830"
-              LastKnownName="Condition_construction"
+              LastKnownName="Condition_Expression"
               LastKnownLocation="Package_1559.uml" />
           </generalization>
         </generalsInternal>
@@ -1339,7 +1401,7 @@
             isSubstitutable="false">
             <classMoniker
               Id="b4230b11-f90a-4ef7-91e2-17de121d2830"
-              LastKnownName="Condition_construction"
+              LastKnownName="Condition_Expression"
               LastKnownLocation="Package_1559.uml" />
           </generalization>
         </generalsInternal>
@@ -1768,6 +1830,11 @@
           </enumerationLiteral>
         </ownedLiterals>
       </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="66209a77-af4c-4322-89d3-49b80a4663a4"
+        name="Delegate" />
     </packageHasNamedElement>
   </packagedElements>
 </package>
