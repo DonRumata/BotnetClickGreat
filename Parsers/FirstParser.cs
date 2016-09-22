@@ -7,10 +7,103 @@ using Tokens_Library;
 using Exceptions_Library;
 using Parsers;
 
+
 namespace Parsers
 {
 
-    public enum PreTokenGroup
+    public enum Rules_Statement
+    {
+        Default=-1,
+        DigitFormError=0,
+        BeginDigit=1,
+        AriphmeticalExpr_founded =2,
+    }
+    public enum Which_builder
+    {
+        Digit=1,
+    }
+
+    class Builder
+    {
+        Rules_Statement Magazine_sost;
+        private List<Token> Build_magazine_storage;
+        private Stack<Token> String_Translate_Builder;
+        Token Stack_statement=null;
+
+        private Token Build_It(Which_builder Caser)
+        {
+            Token Resulter;
+            switch(Caser)
+            {
+
+            }
+            return Resulter;
+        }
+
+        private bool PossibleExprForAriph(out int PossibilityNum)
+        {
+            if (Stack_statement.Token_Group == Group_of_Tokens.Digit)
+            {
+                PossibilityNum = 1;
+                return true;
+            }
+            else if (Stack_statement.Token_Group == Group_of_Tokens.Function)
+            {
+                PossibilityNum = 2;
+                return true;
+            }
+            else if (Stack_statement.Token_Group == Group_of_Tokens.AriphmeticalExpression)
+            {
+                PossibilityNum = 3;
+                return true;
+            }
+            else
+            {
+                PossibilityNum = -1;
+                return false;
+            }
+        }
+
+        public bool Rule_check(Token NewElement)
+        {
+            Token Resulter;
+            int counter=0;
+            int HInt = 0;
+            switch (NewElement.Token_Group)
+            {
+                case Group_of_Tokens.Digit:
+                    if (Stack_statement == null)
+                    {
+                        Stack_statement = NewElement;
+                        Build_magazine_storage.Add(NewElement);
+                        return true;
+                    }
+                    else if (Stack_statement.Token_Group == Group_of_Tokens.NoN)
+                        return false;
+                    else if (Magazine_sost == Rules_Statement.AriphmeticalExpr_founded)
+                    {
+                        Resulter = String_Translate_Builder.Pop();
+                        
+                    }
+                    else return false;
+                case Group_of_Tokens.Ariphmetical:
+                    if (Stack_statement.Token_Group==Group_of_Tokens.AriphmeticalExpression)
+                    {
+                        String_Translate_Builder.Push(NewElement);
+                        Magazine_sost = Rules_Statement.AriphmeticalExpr_founded;
+                    }
+
+                    break;
+            }
+        }
+
+        public int Get_magazine_count()
+        {
+            return Build_magazine_storage.Count();
+        }
+    }
+
+    public enum PreTokenGroup  //Содержит в себе базовые типы предопределенного токена.
     {
         Symbol = 1,
         Numeric = 2,
@@ -23,23 +116,54 @@ namespace Parsers
     }
 
     class FirstParser
+        /*Первый и главный парсер, преобразует входящий текст в список готовых к интерпретации токенов */
     {
-        private List<AnyFunction> FuncStorage = null;
-        private List<Variable> VarStorage = null;
-        private List<Token> CodeStorage = null;
-        private string Text = null;
-        private int RowCount = 0;
-        private HashSet<string> Type_definitions = null;
-        private HashSet<string> Built_In_Functions = null;
-        private HashSet<string> Construction_reservation = null;
+        private List<AnyFunction> FuncStorage = null; //Хранилище функций.
+        private List<Variable> VarStorage = null;    //Хранилище глобальных переменных.
+        private List<Token> CodeStorage = null;     //Выходной код, по факту явялется выходным списком кода.
+        private string Text = null;                //Базовый текст программы
+        private int RowCount = 0;                 //Счетчик строк программы
+        HashSet<string> Type_definitions = new HashSet<string>() { "null", "void", "int", "float", "double", "point", "char", "string", "picture" }; //Хранит в себе зарезервированные имена типов.
+        HashSet<string> Built_In_Functions = new HashSet<string>() { };  //Хранит в себе имена встроенных функций
+        HashSet<string> Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };  //Хранит в себе имена зарезервированных конструкций
 
-        public void PARSETEXT(List<AnyFunction>InFunc, List<Variable>InVar, string Input_Text)
+
+        public void First_Parse(List<AnyFunction>InFunc, List<Variable>InVar, string Input_Text)
+            /*Метод первого прохода парсера, здесь идет базовый синтаксический анализ и запись определений функций*/
         {
             FuncStorage = InFunc;
             VarStorage = InVar;
             Text = Input_Text;
             PreTokenGroup nowcharID;
             PreTokenGroup PreviousCharID = PreTokenGroup.NaN;
+            CodeStorage = new List<Token>();
+            int last_list_count = 0;
+            int i = 0;
+            char nowchar;
+            while (i!=Input_Text.Length)
+            {
+                nowchar = Input_Text[i];
+                nowcharID = getTypeChar(nowchar);
+                switch(nowcharID)
+                {
+                    case PreTokenGroup.Alphabet:
+                    case PreTokenGroup.Numeric:
+                    case PreTokenGroup.RuAlphabet:
+                    case PreTokenGroup.Symbol:
+                        i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i, PreviousCharID, CodeStorage, Input_Text, RowCount);
+                        break;
+                }
+            }
+        }
+        public void PARSETEXT(List<AnyFunction>InFunc, List<Variable>InVar, string Input_Text)
+            /*Главный метод парсера, запускает непосредственно сам процесс парсинга и трансляции кода
+             InFunc - передает вовнутрь хранилище функций*/
+        {
+            FuncStorage = InFunc; //Копирует внешнее хранилище функций
+            VarStorage = InVar;  //Копирует внешнее хранилище переменных
+            Text = Input_Text;  //Копирует исходный текст программы
+            PreTokenGroup nowcharID;  //Определяет ID текущего символа
+            PreTokenGroup PreviousCharID = PreTokenGroup.NaN;  //Определяет ID предыдущего символа
             bool[] Checker_storage = new bool[6] {false,false,false,false,false,false };
             bool If_construct_translate = false;
             bool If_then_body_translate = false;
@@ -48,10 +172,9 @@ namespace Parsers
             bool Function_body_translate = false;
             bool Procedure_definition_translate = false;
             CodeStorage = new List<Token>();
-            Hashsets_initialization();
             char nowchar;
             int i = 0;
-            while (i!=Input_Text.Length)
+            while (i!=Input_Text.Length)  //Главный цикл парсера, идет по строке составляя из символов "слова" и задавая им первичные значения
             {
                 nowchar = Input_Text[i];
                 nowcharID = getTypeChar(nowchar);
@@ -61,18 +184,22 @@ namespace Parsers
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
-                        i=While_delegate_function(c => getTypeChar(c)==nowcharID,nowcharID,i,PreviousCharID,CodeStorage,Input_Text,)
+                        i = Builder_function(c => getTypeChar(c) == nowcharID, i, PreviousCharID, CodeStorage, RowCount, Input_Text);
+                        break;
                 }
             }
-           
-            
         }
 
-        private void Hashsets_initialization() //Инициализирует значения множеств, при запуске парсера.
+        private int Builder_function(Func<char,bool> Cycle_condition, int i_counter, Token PreviousID, List<Token> Word_List,int row_count, string input_text )
         {
-            Type_definitions = new HashSet<string>() { "null","void", "int", "float", "double", "point", "char", "string", "picture" };
-            Built_In_Functions = new HashSet<string>() { "" };
-            Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };
+            int helper_counter = i_counter;
+            string Data_former = "";
+            while ((helper_counter!=input_text.Length)&&(Cycle_condition(input_text[helper_counter])))
+            {
+                Data_former += input_text[helper_counter];
+                helper_counter++;
+            }
+            return 1;
         }
 
         private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, Token previous_ID, List<Token> Word_list, string input_text, int row_count)
@@ -86,6 +213,7 @@ namespace Parsers
                 helper_counter++;
             }
             Word_list.Add(GetToken(Data_former, second_cycle_condition, previous_ID, i_counter, helper_counter - 1));
+            /*//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.*/
             return helper_counter - 1;
         }
 
@@ -109,6 +237,7 @@ namespace Parsers
 
 
         private PreTokenGroup getTypeChar(char c)
+            /*Метод определяющий группу символов, к которой относится входящий символ*/
         {
             int Temp = Alphabet_check(c);
             if (Temp == 1)
@@ -119,7 +248,7 @@ namespace Parsers
                 return PreTokenGroup.Numeric;
             else
             {
-                switch (c)   //Отдельно создает заготовки токенов под различные возможные значения,
+                switch (c)   //Определяет группу символов, к которой относится входящий символ
                 {
                     case '+':
                     case '-':
@@ -153,21 +282,28 @@ namespace Parsers
             }
         }
 
-        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue)
+        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue, out bool PreTranslater)
+            /*Один из основных методов, определяет из входящей строки токен и создает его полную структуру
+             inStr - входящая строка из которой формируется токен.
+             preID - передает ID символов использованных для составления строки.
+             ID_Of_previous - передает предыдущий токен
+             FValue - содержит информацию о номере в строке первого символа
+             SValue - содержит информацию о номере последнего в строке символа*/
         {
             Token Resulter;
-            bool space_resulter = ID_Of_previous.Get_data() == " ";
+            bool space_resulter = ID_Of_previous.Data == " ";
+            PreTranslater = false;
             switch (preID)
             {
-                case PreTokenGroup.Alphabet:
+                case PreTokenGroup.Alphabet: //Случай строки составленной из алфавитных символов
                     if (Construction_reservation.Contains(inStr))
-                        construction_translation;
+                        construction_translation(inStr);
                     else if (Type_definitions.Contains(inStr))
-                        return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue));
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue);
                     else if (Built_In_Functions.Contains(inStr))
-
+                        ;
                         break;
-                case PreTokenGroup.Delimeter:
+                case PreTokenGroup.Delimeter: //Случай строки составленной из разделителей
                     Delimeters_ID DelimID;
                     Help_SymbolsID HSymbID;
                     if (Is_delimeter(inStr, out DelimID))
@@ -176,9 +312,9 @@ namespace Parsers
                         return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, HSymbID));
                     else
                         return null;
-                case PreTokenGroup.RuAlphabet:
+                case PreTokenGroup.RuAlphabet:  //Случай строки составленной из кириллицы
                     break;
-                case PreTokenGroup.Symbol:
+                case PreTokenGroup.Symbol:  //Случай строки составленной из арифметических или логических символов
                     AriphmeticalSymbol_ID Ariphmetic_ID;
                     BooleanSymbol_ID Boolean_ID;
                     bool Equalty_resulter;
@@ -187,12 +323,13 @@ namespace Parsers
                     else if (Is_logical(inStr, out Boolean_ID))
                         return (new Boolean_operation(inStr, space_resulter, RowCount, FValue, SValue, Boolean_ID));
                     break;
-                case PreTokenGroup.Numeric:
+                case PreTokenGroup.Numeric:  //Случай строки составленной из цифр
                     return (new Token(inStr, space_resulter, Group_of_Tokens.Digit, RowCount, FValue, SValue));
             }
         }
 
-        private Token construction_translation(string construction_name)
+        private Token construction_translation(string construction_name) //В РАЗРАБОТКЕ!
+            /*Вспомогательный метод, формирует токены конструкций, необходим из-за сложности их формирования и недостаточности данных обычного GetToken*/
         {
             Token resulter = null;
             switch (construction_name)
@@ -215,14 +352,14 @@ namespace Parsers
 
 
 
-        private bool Reserve_name_check(string Input)
+        private bool Reserve_name_check(string Input)  //Вспомогательный метод, проверяет является ли входящая строка зарезервированным именем
         {
             if (Construction_reservation.Contains(Input))
                 return true;
             else return false;
         }
 
-        private bool Is_delimeter(string Input, out Delimeters_ID Delim_ID)
+        private bool Is_delimeter(string Input, out Delimeters_ID Delim_ID)  //Вспомогательный метод, проверяет является ли входящая строка разделителем
         {
             switch(Input)
             {
@@ -238,7 +375,8 @@ namespace Parsers
             }
         }
 
-        private bool Is_Help_Symbol(string Input, out Help_SymbolsID Help_Symbol_ID)
+        private bool Is_Help_Symbol(string Input, out Help_SymbolsID Help_Symbol_ID)  //Вспомогательный метод, проверяет является ли входящая строка вспомогательным символом.
+            /*Вспомогательный метод, определяет */
         {
             switch(Input)
             {
@@ -252,7 +390,7 @@ namespace Parsers
             }
         }
 
-        private bool Is_ariphmetical(string Input, out AriphmeticalSymbol_ID Ariphm_ID, out bool WasEquality)
+        private bool Is_ariphmetical(string Input, out AriphmeticalSymbol_ID Ariphm_ID, out bool WasEquality)  //Вспомогательный метод, проверяет является ли входящая строка арифметическим символом
         {
             WasEquality = false;
             switch (Input)
@@ -285,7 +423,7 @@ namespace Parsers
             }
         }
 
-        private bool Is_logical(string Input, out BooleanSymbol_ID Bool_ID)
+        private bool Is_logical(string Input, out BooleanSymbol_ID Bool_ID)  //Вспомогательный метод, проверяет является ли входящая строка логическим символом.
         {
             switch (Input)
             {

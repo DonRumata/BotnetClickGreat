@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Tokens_Library
 {
-    class Condition_Construction:Token
-        /*Служит для обозначения конструкции IF*/
+    abstract class Condition_Construction:Token
+        /*Базовый класс конструкций с условиями*/
     {
         private List<Token> Condition_code = null; //Хранит в себе код условия
-        private List<Token> Then_code = null;
-        private List<Token> Else_code = null;
         public Condition_Construction()
         {
             Condition_code = new List<Token>();
@@ -21,5 +19,12 @@ namespace Tokens_Library
         {
             Condition_code.Add(AddingData);
         }
+    }
+
+    class If_Condition_construction:Condition_Construction
+        /*Служит для обознчения конструкции IF*/
+    {
+        private List<Token> Then_body = null;
+        private List<Token> Else_body = null;
     }
 }

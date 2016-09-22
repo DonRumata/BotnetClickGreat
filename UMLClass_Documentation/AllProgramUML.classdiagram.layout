@@ -238,7 +238,7 @@
         <enumerationShapeMoniker Id="15f20184-5329-4431-8549-20543c81f8cf" />
       </nodes>
     </associationConnector>
-    <generalizationConnector edgePoints="[(14.875 : 15.375); (14.875 : 15.1281249602636); (6.77083333333333 : 15.1281249602636 : JumpStart); (6.60416666666667 : 15.1281249602636 : JumpEnd); (6.4375 : 15.1281249602636); (6.4375 : 14.8281249602636)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(14.875 : 15.375); (14.875 : 15.1281249602636); (6.4375 : 15.1281249602636); (6.4375 : 14.8281249602636)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
       <generalizationMoniker Id="31609298-88a3-4c3c-8421-5ae4603890de" />
       <relativeChildShapes />
       <nodes>
@@ -278,7 +278,7 @@
         <classShapeMoniker Id="e87437e2-69d2-47ce-b2f6-4fd0b1580209" />
       </nodes>
     </generalizationConnector>
-    <generalizationConnector edgePoints="[(18.5 : 15.75); (18.5 : 15.1281249602636); (6.77083333333333 : 15.1281249602636 : JumpStart); (6.60416666666667 : 15.1281249602636 : JumpEnd); (6.4375 : 15.1281249602636); (6.4375 : 14.8281249602636)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(18.5 : 15.75); (18.5 : 15.1281249602636); (14.9583333333333 : 15.1281249602636 : JumpStart); (14.7916666666667 : 15.1281249602636 : JumpEnd); (6.77083333333333 : 15.1281249602636 : JumpStart); (6.60416666666667 : 15.1281249602636 : JumpEnd); (6.4375 : 15.1281249602636); (6.4375 : 14.8281249602636)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
       <generalizationMoniker Id="e93cb240-e49f-4d1b-9eae-c5cef46636c1" />
       <relativeChildShapes />
       <nodes>
@@ -358,7 +358,7 @@
         <classShapeMoniker Id="0721d7ae-5478-44d2-b17d-eb842cc21513" />
       </nodes>
     </generalizationConnector>
-    <generalizationConnector edgePoints="[(21 : 15.75); (21 : 15.1281249602636); (6.4375 : 15.1281249602636); (6.4375 : 14.8281249602636)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(21 : 15.75); (21 : 15.1281249602636); (18.5833333333333 : 15.1281249602636 : JumpStart); (18.4166666666667 : 15.1281249602636 : JumpEnd); (14.9583333333333 : 15.1281249602636 : JumpStart); (14.7916666666667 : 15.1281249602636 : JumpEnd); (6.77083333333333 : 15.1281249602636 : JumpStart); (6.60416666666667 : 15.1281249602636 : JumpEnd); (6.4375 : 15.1281249602636); (6.4375 : 14.8281249602636)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
       <generalizationMoniker Id="eba6ce6f-360b-4d43-b5ae-4f6064876553" />
       <relativeChildShapes />
       <nodes>

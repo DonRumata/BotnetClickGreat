@@ -1108,7 +1108,7 @@
                     </literalInteger>
                   </specification>
                 </enumerationLiteral>
-                <enumerationLiteral Id="7fb5905f-9eb1-4cb1-9f1b-eea3c4eeef5c" name="Function">
+                <enumerationLiteral Id="7fb5905f-9eb1-4cb1-9f1b-eea3c4eeef5c" name="Function_usage">
                   <elementDefinition Id="3caef49f-5aef-4e2e-b43d-936c6ff9de74" />
                   <specification>
                     <literalInteger Id="8b3fe34e-1a75-4add-b30c-8eec172dd2dd" name="Integer" value="8">

@@ -6,18 +6,21 @@ using System.Threading.Tasks;
 
 namespace Tokens_Library
 {
-    class Ariphmetical_expression
+    public enum Expression_Type
     {
-
+        Ariphmetical_expression=1,
+        Logical_expression=2,
+        Function_body_expression=3,
     }
-
-    class Logical_expression
+    class Expression:Token
     {
+        public List<Token> RPN_Expression_data { get; private set; }
+        public Expression_Type EXPRType { get; private set; }
 
-    }
-
-    class Function_body_expression
-    {
-
+        public Expression(List<Token>Input_RPN, Expression_Type Input_Type_OFEXPR)
+        {
+            RPN_Expression_data = Input_RPN;
+            EXPRType = Input_Type_OFEXPR;
+        }
     }
 }

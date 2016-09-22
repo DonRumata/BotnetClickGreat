@@ -28,6 +28,11 @@ namespace Tokens_Library
         {
             return Type_ID;
         }
+
+        public string Get_TypeName()
+        {
+            return Type_Name;
+        }
     }
 
     public enum Group_of_Tokens
@@ -41,39 +46,52 @@ namespace Tokens_Library
         Construction = 7,
         Function = 8,
         Type_Definition = 9,
+        AriphmeticalExpression = 10,
         NoN = 0,
     }
 
     public class Token
     {
-        protected Tuple<int, int> Range; //расположение предтокена в строке (номер первого символа, номер последнего символа)
-        protected int Row;               //Номер строки
-        protected bool Space_check;      //флаг наличия пробела до предтокена
-        protected string Data;           //сам предтокен
-        protected Group_of_Tokens Token_Group; //Номер типа токена
+        public Tuple<int, int> Range { get; protected set; } //расположение предтокена в строке (номер первого символа, номер последнего символа)
+        public int Row { get; protected set; }               //Номер строки
+        public bool Space_check { get; protected set; }      //флаг наличия пробела до предтокена
+        public string Data { get; protected set; }           //сам предтокен
+        public Group_of_Tokens Token_Group { get; protected set; } //Номер типа токена
 
 
         public Token(string data, bool space, Group_of_Tokens id, int row, int FRange_value, int SRange_value) //Конструктор для создания класса Word, сразу со всеми первоначальными данными
         {
-            this.Data = data;
-            this.Space_check = space;
-            this.Token_Group = id;
-            this.Row = row;
-            this.Range = Tuple.Create(FRange_value, SRange_value);
+            Data = data;
+            Space_check = space;
+            Token_Group = id;
+            Row = row;
+            Range = Tuple.Create(FRange_value, SRange_value);
         }
 
         public Token()  //Вариант конструктора для простого выделения памяти и создания класса с значениями по умолчанию.
         {
-            this.Data = "";
-            this.Space_check = false;
-            this.Token_Group = 0;
-            this.Row = 0;
-            this.Range = null;
+            Data = "";
+            Space_check = false;
+            Token_Group = 0;
+            Row = 0;
+            Range = null;
         }
 
-        public string Get_data()
+        public virtual dynamic get_group_of_token()
         {
-            return Data;
+            return Token_Group;
+        }
+
+        public Token List_data_editable(List<Token> In_list, Group_of_Tokens New_Token_Group)
+        {
+            for (int i =2; i!= In_list.Count; i++)
+            {
+                Data += In_list[i].Data;
+            }
+            Space_check = In_list.First().Space_check;
+            Range = new Tuple<int, int>(Range.Item1, In_list.Last().Range.Item2);
+            Token_Group = New_Token_Group;
+            return this;
         }
     }
     

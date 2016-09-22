@@ -1,31 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <activityRootModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm11="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="b288b7e9-1a01-4737-8b5b-613823c46af1" name="AutomateDiagram CodeMap" linkedPackageId="c8d40f41-5dc0-4580-bd0a-b8aa8b6699c3" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner">
+  <ownedCommentsInternal>
+    <comment Id="c64dbe21-33ad-4543-9439-90aaf6c7f3ec">
+      <elementDefinition Id="bf0f00ce-b01a-43ee-a4ca-de5f3e6f27ff" />
+      <body>Число</body>
+      <annotatedElements>
+        <initialNodeMoniker Id="d53996d0-9847-450c-baea-94da1a6ac9ba" LastKnownName="Initial1" />
+      </annotatedElements>
+    </comment>
+    <comment Id="4948f358-8407-468b-8cbc-d5a28124945c">
+      <elementDefinition Id="8c153881-99f9-42d1-8d94-1dc044f9fd05" />
+      <body>Строка</body>
+      <annotatedElements>
+        <initialNodeMoniker Id="b2bcc497-5e91-4b21-a373-dd76929385e1" LastKnownName="Initial2" />
+      </annotatedElements>
+    </comment>
+    <comment Id="5e32c576-e688-4869-a18e-7e7255581e6c">
+      <elementDefinition Id="6af07970-4c73-4d87-921b-2d359cc40ae4" />
+      <body>Выражение</body>
+      <annotatedElements>
+        <initialNodeMoniker Id="f704cc31-6adc-4ed4-9232-8d10895a88a2" LastKnownName="Initial3" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
   <packagedElements>
     <activityRootModelHasActivity>
       <activity Id="773a44c5-39b8-4bf5-a938-1d29dcdb26e6" name="AutomateDiagram CodeMap" isAbstract="false" isLeaf="false" isActiveClass="false" isReentrant="false" isReadOnly="false" isSingleExecution="false">
         <elementDefinition Id="d9fac5b3-9722-4b2e-9bc0-23e31ac50786" />
         <nodes>
-          <initialNode Id="e612e6c8-2e19-48f6-a0af-8b2dc85abc55" name="Initial1" isLeaf="false">
-            <elementDefinition Id="e748a7c1-99f4-4ea2-b585-155eef7898f4" />
+          <initialNode Id="d53996d0-9847-450c-baea-94da1a6ac9ba" name="Initial1" isLeaf="false">
+            <elementDefinition Id="c4979fd2-b93e-490e-8820-aeaea0170770" />
+            <flowNodeTargets>
+              <controlFlow Id="e3b131c2-17cb-46db-a3ce-f37c5a1ded04" isLeaf="false">
+                <opaqueActionMoniker Id="0587fc48-10c6-4ee7-8a51-f3fe1b1c238b" LastKnownName="Число" />
+                <elementDefinition Id="75dcbd4d-fcdb-42e1-91fb-e25a3f7e2f3a" />
+              </controlFlow>
+              <controlFlow Id="280ca8dd-8b34-4f32-895f-d7e0e8bad564" isLeaf="false">
+                <opaqueActionMoniker Id="2d700930-6a3e-4650-a922-afadca31dba7" LastKnownName="Число" />
+                <elementDefinition Id="a70a32be-5771-489c-ac08-c6f59812ac43" />
+              </controlFlow>
+            </flowNodeTargets>
           </initialNode>
-          <opaqueAction Id="e2db63d5-062b-4f0b-8fc1-0c547aba8167" name="Проверка слова, согласно базовому общему свич" isLeaf="false">
-            <elementDefinition Id="e6355038-a50a-49ff-9503-072c02a21292" />
+          <opaqueAction Id="0587fc48-10c6-4ee7-8a51-f3fe1b1c238b" name="Число" isLeaf="false">
+            <elementDefinition Id="ca4ae8f7-2548-4b5d-85e7-cc34b523530b" />
           </opaqueAction>
-          <opaqueAction Id="96733da6-6a9c-462b-97e8-7d063a64d5c6" name="Задание токена" isLeaf="false">
-            <elementDefinition Id="639baaff-935c-4235-9858-3835ed58d338" />
+          <opaqueAction Id="2d700930-6a3e-4650-a922-afadca31dba7" name="Число" isLeaf="false">
+            <elementDefinition Id="63093bfe-4118-495d-8dce-741fa6fc229e" />
+            <flowNodeTargets>
+              <controlFlow Id="85ecb566-5877-4cbb-95be-abc7fc39ba02" isLeaf="false">
+                <opaqueActionMoniker Id="03bac10e-f947-4c59-9958-50d290017516" LastKnownName="Точка" />
+                <elementDefinition Id="a96acb25-5514-4504-b041-78783ec7a855" />
+              </controlFlow>
+              <controlFlow Id="eb98b13e-ae7e-442d-9300-79456b85e7e1" isLeaf="false">
+                <opaqueActionMoniker Id="0198b0c9-2ce1-4a70-873c-4387b5242a46" LastKnownName="Число" />
+                <elementDefinition Id="8714d526-49c2-49a9-9da8-b2c507652a7c" />
+              </controlFlow>
+            </flowNodeTargets>
           </opaqueAction>
-          <forkNode Id="c196bd77-d77f-4edc-a472-ed1706b6fac4" name="Fork1" isLeaf="false">
-            <elementDefinition Id="0f5178e9-d0cb-4b29-9ad1-361094db5e61" />
-          </forkNode>
-          <opaqueAction Id="c035cc6c-6647-421f-890f-6361aee86533" name="Объявление функции" isLeaf="false">
-            <elementDefinition Id="9b9a921c-57bf-47e2-ac0d-a5ab0e560adc" />
+          <opaqueAction Id="0198b0c9-2ce1-4a70-873c-4387b5242a46" name="Число" isLeaf="false">
+            <elementDefinition Id="4aea4d8e-c289-4bde-96d4-1e7ab931c1fd" />
           </opaqueAction>
-          <opaqueAction Id="4a40e9de-d23f-42d3-bbb3-b5bcb01fdc82" name="Override базового свича, согласно таблице возможных команд" isLeaf="false">
-            <elementDefinition Id="c7a555da-433a-4492-8620-9892b5d16a36" />
+          <opaqueAction Id="03bac10e-f947-4c59-9958-50d290017516" name="Точка" isLeaf="false">
+            <elementDefinition Id="6720fe81-d537-4cdf-9fc7-9223596f13c3" />
           </opaqueAction>
-          <opaqueAction Id="440ad1cb-031f-4966-b720-f09074580270" name="Трансляция свича." isLeaf="false">
-            <elementDefinition Id="b585d116-282c-4b20-b612-5d3bf56f4bc7" />
+          <initialNode Id="b2bcc497-5e91-4b21-a373-dd76929385e1" name="Initial2" isLeaf="false">
+            <elementDefinition Id="9ebe6e7f-83e1-4ccd-ab3d-b66682eed3f5" />
+            <flowNodeTargets>
+              <controlFlow Id="f08aa42e-f857-4d70-affa-0233bca2ef81" isLeaf="false">
+                <opaqueActionMoniker Id="cac2b4b0-4390-4331-a133-5749628ff8f1" LastKnownName="Кавычка" />
+                <elementDefinition Id="dd4aa00b-04e6-4531-9533-d69cb7e43787" />
+              </controlFlow>
+              <controlFlow Id="5dd750c0-01ac-4f7d-ac82-23a75c394693" isLeaf="false">
+                <opaqueActionMoniker Id="64361423-68a7-4b3b-a208-ab94455df63e" LastKnownName="ЛюбыеСимволы" />
+                <elementDefinition Id="a80fb41b-e3f8-4d7e-b7f4-acf099fb8a5f" />
+              </controlFlow>
+              <controlFlow Id="caee328e-8849-4209-8236-f83f0b9089e8" isLeaf="false">
+                <opaqueActionMoniker Id="dbd7809c-53e3-4ac9-8083-2aadb3662ed6" LastKnownName="Кавычка" />
+                <elementDefinition Id="60a255a5-4b9d-4480-acc7-0cb2bf257b6d" />
+              </controlFlow>
+            </flowNodeTargets>
+          </initialNode>
+          <opaqueAction Id="cac2b4b0-4390-4331-a133-5749628ff8f1" name="Кавычка" isLeaf="false">
+            <elementDefinition Id="91656920-577e-42fd-91fb-7b296e54a4d4" />
           </opaqueAction>
+          <opaqueAction Id="64361423-68a7-4b3b-a208-ab94455df63e" name="ЛюбыеСимволы" isLeaf="false">
+            <elementDefinition Id="ebc08f3f-c167-47f6-a4aa-c858466eadc6" />
+          </opaqueAction>
+          <opaqueAction Id="dbd7809c-53e3-4ac9-8083-2aadb3662ed6" name="Кавычка" isLeaf="false">
+            <elementDefinition Id="80ec0973-33f8-46fb-9fd3-6dae2150be9d" />
+          </opaqueAction>
+          <initialNode Id="f704cc31-6adc-4ed4-9232-8d10895a88a2" name="Initial3" isLeaf="false">
+            <elementDefinition Id="0ff53c0a-c9cd-46c0-bd1f-986ff2817373" />
+          </initialNode>
         </nodes>
       </activity>
     </activityRootModelHasActivity>

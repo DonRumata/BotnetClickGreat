@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace Tokens_Library
 {
 
-    public abstract class AnyFunction<V>:Token where V:class
+    public abstract class AnyFunction:Token
     {
         protected HashSet<Local_Variable> Args = new HashSet<Local_Variable>();
 
-        public abstract V Interpretate(HashSet<Local_Variable> Input_args);
+
     }
 
-    public class Built_InFunction<T> : AnyFunction<T> where T : class
+    public sealed class Built_InFunction<T> : AnyFunction where T : class
         /*Служит для хранения встроенных функций(не написанных пользователем). */
     {
         public delegate T Inside_function(IEnumerable<Local_Variable> arguments);  //Определение динамического делегата, создание которого зависит от типа указанного при создании класса
@@ -24,17 +24,17 @@ namespace Tokens_Library
             Interpretation_code = Delegation_code;
             base.Args = Local_variables;
         }
-        public override T Interpretate(HashSet<Local_Variable> Input_args)  //Вызывает хранимый делегат.
+        public T Interpretate(HashSet<Local_Variable> Input_args)  //Вызывает хранимый делегат.
         {
             return Interpretation_code.Invoke(base.Args.Concat(Input_args));
         }
     }
 
-    public class User_Function<T>:AnyFunction<T> where T:class 
+    public sealed class User_Function<T>:AnyFunction where T:class 
     {
         private List<Token> Function_code=null;
 
-        public override T Interpretate(HashSet<Local_Variable> Input_args)
+        public T Interpretate(HashSet<Local_Variable> Input_args)
         {
             T result = default(T);
             return result;

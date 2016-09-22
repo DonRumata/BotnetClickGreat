@@ -3,6 +3,38 @@
   dslVersion="1.0.0.0"
   Id="a9ed6ccf-7c81-4669-813e-de7e64f85035"
   name="ParserSchema" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="bf0f00ce-b01a-43ee-a4ca-de5f3e6f27ff">
+      <body>Число</body>
+      <annotatedElements>
+        <initialNodeMoniker
+          Id="c4979fd2-b93e-490e-8820-aeaea0170770"
+          LastKnownName="Initial1"
+          LastKnownLocation="ParserSchema.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="8c153881-99f9-42d1-8d94-1dc044f9fd05">
+      <body>Строка</body>
+      <annotatedElements>
+        <initialNodeMoniker
+          Id="9ebe6e7f-83e1-4ccd-ab3d-b66682eed3f5"
+          LastKnownName="Initial2"
+          LastKnownLocation="ParserSchema.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="6af07970-4c73-4d87-921b-2d359cc40ae4">
+      <body>Выражение</body>
+      <annotatedElements>
+        <initialNodeMoniker
+          Id="0ff53c0a-c9cd-46c0-bd1f-986ff2817373"
+          LastKnownName="Initial3"
+          LastKnownLocation="ParserSchema.uml" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
       Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b">
@@ -104,32 +136,109 @@
         isSingleExecution="false">
         <nodes>
           <initialNode
-            Id="e748a7c1-99f4-4ea2-b585-155eef7898f4"
+            Id="c4979fd2-b93e-490e-8820-aeaea0170770"
             name="Initial1"
+            isLeaf="false">
+            <flowNodeTargets>
+              <controlFlow
+                Id="75dcbd4d-fcdb-42e1-91fb-e25a3f7e2f3a"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="ca4ae8f7-2548-4b5d-85e7-cc34b523530b"
+                  LastKnownName="Число"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="a70a32be-5771-489c-ac08-c6f59812ac43"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="63093bfe-4118-495d-8dce-741fa6fc229e"
+                  LastKnownName="Число"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+            </flowNodeTargets>
+          </initialNode>
+          <opaqueAction
+            Id="ca4ae8f7-2548-4b5d-85e7-cc34b523530b"
+            name="Число"
             isLeaf="false" />
           <opaqueAction
-            Id="e6355038-a50a-49ff-9503-072c02a21292"
-            name="Проверка слова, согласно базовому общему свич"
+            Id="63093bfe-4118-495d-8dce-741fa6fc229e"
+            name="Число"
+            isLeaf="false">
+            <flowNodeTargets>
+              <controlFlow
+                Id="a96acb25-5514-4504-b041-78783ec7a855"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="6720fe81-d537-4cdf-9fc7-9223596f13c3"
+                  LastKnownName="Точка"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="8714d526-49c2-49a9-9da8-b2c507652a7c"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="4aea4d8e-c289-4bde-96d4-1e7ab931c1fd"
+                  LastKnownName="Число"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+            </flowNodeTargets>
+          </opaqueAction>
+          <opaqueAction
+            Id="4aea4d8e-c289-4bde-96d4-1e7ab931c1fd"
+            name="Число"
             isLeaf="false" />
           <opaqueAction
-            Id="639baaff-935c-4235-9858-3835ed58d338"
-            name="Задание токена"
+            Id="6720fe81-d537-4cdf-9fc7-9223596f13c3"
+            name="Точка"
             isLeaf="false" />
-          <forkNode
-            Id="0f5178e9-d0cb-4b29-9ad1-361094db5e61"
-            name="Fork1"
+          <initialNode
+            Id="9ebe6e7f-83e1-4ccd-ab3d-b66682eed3f5"
+            name="Initial2"
+            isLeaf="false">
+            <flowNodeTargets>
+              <controlFlow
+                Id="dd4aa00b-04e6-4531-9533-d69cb7e43787"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="91656920-577e-42fd-91fb-7b296e54a4d4"
+                  LastKnownName="Кавычка"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="a80fb41b-e3f8-4d7e-b7f4-acf099fb8a5f"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="ebc08f3f-c167-47f6-a4aa-c858466eadc6"
+                  LastKnownName="ЛюбыеСимволы"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="60a255a5-4b9d-4480-acc7-0cb2bf257b6d"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="80ec0973-33f8-46fb-9fd3-6dae2150be9d"
+                  LastKnownName="Кавычка"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+            </flowNodeTargets>
+          </initialNode>
+          <opaqueAction
+            Id="91656920-577e-42fd-91fb-7b296e54a4d4"
+            name="Кавычка"
             isLeaf="false" />
           <opaqueAction
-            Id="9b9a921c-57bf-47e2-ac0d-a5ab0e560adc"
-            name="Объявление функции"
+            Id="ebc08f3f-c167-47f6-a4aa-c858466eadc6"
+            name="ЛюбыеСимволы"
             isLeaf="false" />
           <opaqueAction
-            Id="c7a555da-433a-4492-8620-9892b5d16a36"
-            name="Override базового свича, согласно таблице возможных команд"
+            Id="80ec0973-33f8-46fb-9fd3-6dae2150be9d"
+            name="Кавычка"
             isLeaf="false" />
-          <opaqueAction
-            Id="b585d116-282c-4b20-b612-5d3bf56f4bc7"
-            name="Трансляция свича."
+          <initialNode
+            Id="0ff53c0a-c9cd-46c0-bd1f-986ff2817373"
+            name="Initial3"
             isLeaf="false" />
         </nodes>
       </activity>

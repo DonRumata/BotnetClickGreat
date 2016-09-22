@@ -11,7 +11,7 @@ namespace Tokens_Library
         public string Value { get; set; }
     }
 
-    public class Local_Variable : Variable
+    public sealed class Local_Variable : Variable
         /*Служит для обозначения локальных переменных и аргументов*/
     {
         public int Func_ID { get; set; } //Содержит в себе ID функции к которой принадлежит аргумент или локальная переменная
