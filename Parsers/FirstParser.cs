@@ -16,7 +16,17 @@ namespace Parsers
         Default=-1,
         DigitFormError=0,
         BeginDigit=1,
-        AriphmeticalExpr_founded =2,
+        WhichNextDigit =2,
+        DigitInStr=3,
+        DigitLogicalNext=4,
+        DigitAriphmeticalNext=5,
+        FormAriphmExpression=6,
+        FormLogicalExpression=7,
+        AfterArifmExpr=8,
+        LBracketDigit = 9,
+        FuncCallBegin =11,
+        FuncCallInStr=12,
+        
     }
     public enum Which_builder
     {
@@ -25,76 +35,108 @@ namespace Parsers
 
     class Builder
     {
-        Rules_Statement Magazine_sost;
+        Rules_Statement Magazine_state;
         private List<Token> Build_magazine_storage;
-        private Stack<Token> String_Translate_Builder;
+        private List<Token> Strange_names;
+        private Stack<Token> String_Translate_Stack;
         Token Stack_statement=null;
-
-        private Token Build_It(Which_builder Caser)
-        {
-            Token Resulter;
-            switch(Caser)
-            {
-
-            }
-            return Resulter;
-        }
-
-        private bool PossibleExprForAriph(out int PossibilityNum)
-        {
-            if (Stack_statement.Token_Group == Group_of_Tokens.Digit)
-            {
-                PossibilityNum = 1;
-                return true;
-            }
-            else if (Stack_statement.Token_Group == Group_of_Tokens.Function)
-            {
-                PossibilityNum = 2;
-                return true;
-            }
-            else if (Stack_statement.Token_Group == Group_of_Tokens.AriphmeticalExpression)
-            {
-                PossibilityNum = 3;
-                return true;
-            }
-            else
-            {
-                PossibilityNum = -1;
-                return false;
-            }
-        }
 
         public bool Rule_check(Token NewElement)
         {
             Token Resulter;
             int counter=0;
             int HInt = 0;
-            switch (NewElement.Token_Group)
+            dynamic Changer;
+            Group_of_Tokens NewElGroup = NewElement.Token_Group;
+            switch (Magazine_state)
             {
-                case Group_of_Tokens.Digit:
-                    if (Stack_statement == null)
+                case Rules_Statement.BeginDigit:  //Состояние при котором строка начинается с Digit 1
+                    if (NewElGroup == Group_of_Tokens.Digit)
                     {
-                        Stack_statement = NewElement;
-                        Build_magazine_storage.Add(NewElement);
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.WhichNextDigit;
                         return true;
                     }
-                    else if (Stack_statement.Token_Group == Group_of_Tokens.NoN)
+                    else
                         return false;
-                    else if (Magazine_sost == Rules_Statement.AriphmeticalExpr_founded)
+                case Rules_Statement.WhichNextDigit:  //Состояние проверки элементов после Digit 2
+                    if (NewElGroup == Group_of_Tokens.Ariphmetical) //Если арифметический символ
                     {
-                        Resulter = String_Translate_Builder.Pop();
-                        
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.FormAriphmExpression;
+                        return true;
                     }
-                    else return false;
-                case Group_of_Tokens.Ariphmetical:
-                    if (Stack_statement.Token_Group==Group_of_Tokens.AriphmeticalExpression)
+                    else if (NewElGroup == Group_of_Tokens.BooleanOperation) //Если символ логической операции
                     {
-                        String_Translate_Builder.Push(NewElement);
-                        Magazine_sost = Rules_Statement.AriphmeticalExpr_founded;
+                        Changer = (NewElement as Boolean_operation).get_group_of_token();
+                        if ((Changer == BooleanSymbol_ID.And) || (Changer == BooleanSymbol_ID.Or)) //Этот символ не && или ||
+                            return false;
+                        else
+                        {
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.FormLogicalExpression;
+                            return true;
+                        }
                     }
-
+                    else
+                        return false;
+                case Rules_Statement.FormAriphmExpression: //Состояние формирующее AriphmeticalExpression по возможности 6
+                    switch (NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit: //Если число
+                            String_Translate_Stack.Push(NewElement);
+                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression));
+                            Magazine_state = Rules_Statement.AfterArifmExpr;
+                            return true;
+                        case Group_of_Tokens.Delimeter: //Если разделитель
+                            Changer = (NewElement as Delimeter).get_group_of_token();
+                            if (Changer == Delimeters_ID.LBracket) //Разделитель открывающаяся скобка
+                            {
+                                Magazine_state = Rules_Statement.LBracketDigit;
+                                String_Translate_Stack.Push(NewElement);
+                                return true;
+                            }
+                            else if (Changer == Delimeters_ID.Equality) //Разделитель - равенство
+                                ;
+                                break;
+                        case Group_of_Tokens.Function: //Если функция
+                            Stack_To_list();
+                            Magazine_state = Rules_Statement.FuncCallInStr;
+                            String_Translate_Stack.Push(NewElement);
+                            return true;
+                        case Group_of_Tokens.Name: //Если неизвестное имя
+                            Strange_names.Add(NewElement);
+                            return false;
+                        default:
+                            return false;
+                    }
+                    break;
+                case Rules_Statement.DigitInStr:  //Состояние начала Digit внутри уже начавшейся строки 3
+                    break;
+                case Rules_Statement.FuncCallInStr: //Состояние начала FuncCall внутри уже начавшейся строки 12
+                    switch(NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit:
+                            break;
+                        case Group_of_Tokens.Function:
+                            break;
+                        case Group_of_Tokens.Name:
+                            break;
+                    }
+                    break;
+                case Rules_Statement.FormLogicalExpression: //Состояние формирующее LogicalExpression по возможности 7
                     break;
             }
+            return true;
+        }
+
+        private void Stack_To_list()
+        {
+            while (String_Translate_Stack.Count>0)
+            {
+                Build_magazine_storage.Add(String_Translate_Stack.Pop());
+            }
+            Build_magazine_storage.Add(new Token());
         }
 
         public int Get_magazine_count()
@@ -115,7 +157,7 @@ namespace Parsers
         Space = 6,
     }
 
-    class FirstParser
+    public class FirstParser
         /*Первый и главный парсер, преобразует входящий текст в список готовых к интерпретации токенов */
     {
         private List<AnyFunction> FuncStorage = null; //Хранилище функций.
@@ -124,7 +166,8 @@ namespace Parsers
         private string Text = null;                //Базовый текст программы
         private int RowCount = 0;                 //Счетчик строк программы
         HashSet<string> Type_definitions = new HashSet<string>() { "null", "void", "int", "float", "double", "point", "char", "string", "picture" }; //Хранит в себе зарезервированные имена типов.
-        HashSet<string> Built_In_Functions = new HashSet<string>() { };  //Хранит в себе имена встроенных функций
+        Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();
+        HashSet<string> Built_In_Functions = new HashSet<string>() { "testfunc" };  //Хранит в себе имена встроенных функций
         HashSet<string> Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };  //Хранит в себе имена зарезервированных конструкций
 
 
@@ -150,7 +193,7 @@ namespace Parsers
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
-                        i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i, PreviousCharID, CodeStorage, Input_Text, RowCount);
+                        i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i , CodeStorage, Input_Text, RowCount);
                         break;
                 }
             }
@@ -164,13 +207,6 @@ namespace Parsers
             Text = Input_Text;  //Копирует исходный текст программы
             PreTokenGroup nowcharID;  //Определяет ID текущего символа
             PreTokenGroup PreviousCharID = PreTokenGroup.NaN;  //Определяет ID предыдущего символа
-            bool[] Checker_storage = new bool[6] {false,false,false,false,false,false };
-            bool If_construct_translate = false;
-            bool If_then_body_translate = false;
-            bool If_else_body_translate = false;
-            bool Function_definition_translate = false;
-            bool Function_body_translate = false;
-            bool Procedure_definition_translate = false;
             CodeStorage = new List<Token>();
             char nowchar;
             int i = 0;
@@ -184,13 +220,13 @@ namespace Parsers
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
-                        i = Builder_function(c => getTypeChar(c) == nowcharID, i, PreviousCharID, CodeStorage, RowCount, Input_Text);
+                        i = Builder_function(c => getTypeChar(c) == nowcharID, i, CodeStorage, RowCount, Input_Text);
                         break;
                 }
             }
         }
 
-        private int Builder_function(Func<char,bool> Cycle_condition, int i_counter, Token PreviousID, List<Token> Word_List,int row_count, string input_text )
+        private int Builder_function(Func<char,bool> Cycle_condition, int i_counter, List<Token> Word_List,int row_count, string input_text )
         {
             int helper_counter = i_counter;
             string Data_former = "";
@@ -202,7 +238,7 @@ namespace Parsers
             return 1;
         }
 
-        private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, Token previous_ID, List<Token> Word_list, string input_text, int row_count)
+        private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, List<Token> Word_list, string input_text, int row_count)
         /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
         {
             int helper_counter = i_counter;
@@ -212,7 +248,8 @@ namespace Parsers
                 Data_former += input_text[helper_counter];
                 helper_counter++;
             }
-            Word_list.Add(GetToken(Data_former, second_cycle_condition, previous_ID, i_counter, helper_counter - 1));
+            Word_list.Add(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1));
+
             /*//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.*/
             return helper_counter - 1;
         }
@@ -281,8 +318,12 @@ namespace Parsers
                 }
             }
         }
+        private int TestFunc(IEnumerable<Local_Variable> Trulala)
+        {
+            return 1;
+        }
 
-        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue, out bool PreTranslater)
+        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue)
             /*Один из основных методов, определяет из входящей строки токен и создает его полную структуру
              inStr - входящая строка из которой формируется токен.
              preID - передает ID символов использованных для составления строки.
@@ -290,30 +331,34 @@ namespace Parsers
              FValue - содержит информацию о номере в строке первого символа
              SValue - содержит информацию о номере последнего в строке символа*/
         {
+            //Тестовые начало
+            HashSet<Local_Variable> Test = new HashSet<Local_Variable>();
+            
+            //Тестовые конец
             Token Resulter;
             bool space_resulter = ID_Of_previous.Data == " ";
-            PreTranslater = false;
             switch (preID)
             {
                 case PreTokenGroup.Alphabet: //Случай строки составленной из алфавитных символов
                     if (Construction_reservation.Contains(inStr))
-                        construction_translation(inStr);
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Construction, RowCount, FValue, SValue));
                     else if (Type_definitions.Contains(inStr))
-                        return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue);
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue));
                     else if (Built_In_Functions.Contains(inStr))
-                        ;
-                        break;
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Function, RowCount, FValue, SValue));
+                    else
+                        return null;
                 case PreTokenGroup.Delimeter: //Случай строки составленной из разделителей
                     Delimeters_ID DelimID;
                     Help_SymbolsID HSymbID;
                     if (Is_delimeter(inStr, out DelimID))
                         return (new Delimeter(inStr, space_resulter, RowCount, FValue, SValue, DelimID));
-                    else if (Is_Help_Symbol(inStr, out HSymbID))
-                        return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, HSymbID));
+                        else if (Is_Help_Symbol(inStr, out HSymbID))
+                            return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, HSymbID));
                     else
                         return null;
                 case PreTokenGroup.RuAlphabet:  //Случай строки составленной из кириллицы
-                    break;
+                    return null;
                 case PreTokenGroup.Symbol:  //Случай строки составленной из арифметических или логических символов
                     AriphmeticalSymbol_ID Ariphmetic_ID;
                     BooleanSymbol_ID Boolean_ID;
@@ -322,34 +367,12 @@ namespace Parsers
                         return (new Ariphmetical(inStr, space_resulter, RowCount, FValue, SValue, Ariphmetic_ID));
                     else if (Is_logical(inStr, out Boolean_ID))
                         return (new Boolean_operation(inStr, space_resulter, RowCount, FValue, SValue, Boolean_ID));
-                    break;
+                    return null;
                 case PreTokenGroup.Numeric:  //Случай строки составленной из цифр
                     return (new Token(inStr, space_resulter, Group_of_Tokens.Digit, RowCount, FValue, SValue));
+                default: return null;
             }
         }
-
-        private Token construction_translation(string construction_name) //В РАЗРАБОТКЕ!
-            /*Вспомогательный метод, формирует токены конструкций, необходим из-за сложности их формирования и недостаточности данных обычного GetToken*/
-        {
-            Token resulter = null;
-            switch (construction_name)
-            {
-                case "if": break;
-                case "while":break;
-                case "for":break;
-                case "function":
-                    
-                    break;
-                case "procedure":break;
-                case "repeat":break;
-                case "until":break;
-                case "begin":break;
-                case "end":break;
-                case "do":break;
-            }
-            return null;
-        }
-
 
 
         private bool Reserve_name_check(string Input)  //Вспомогательный метод, проверяет является ли входящая строка зарезервированным именем

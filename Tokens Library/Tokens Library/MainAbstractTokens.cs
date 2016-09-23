@@ -72,7 +72,7 @@ namespace Tokens_Library
         {
             Data = "";
             Space_check = false;
-            Token_Group = 0;
+            Token_Group = Group_of_Tokens.NoN;
             Row = 0;
             Range = null;
         }

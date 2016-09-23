@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tokens_Library
 {
-    public class Variable : Typecial, Token
+    public class Variable : Token
     {
         public string Value { get; set; }
     }
