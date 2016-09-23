@@ -33,12 +33,12 @@ namespace Parsers
         Digit=1,
     }
 
-    class Builder
+    public class Builder
     {
-        Rules_Statement Magazine_state;
-        private List<Token> Build_magazine_storage;
-        private List<Token> Strange_names;
-        private Stack<Token> String_Translate_Stack;
+        private Rules_Statement Magazine_state;
+        private List<Token> Build_magazine_storage=new List<Token>();
+        private List<Token> Strange_names=new List<Token>();
+        private Stack<Token> String_Translate_Stack=new Stack<Token>();
         Token Stack_statement=null;
 
         public bool Rule_check(Token NewElement)
@@ -143,6 +143,10 @@ namespace Parsers
         {
             return Build_magazine_storage.Count();
         }
+        public Builder()
+        {
+            Magazine_state = Rules_Statement.BeginDigit; //Test Condition
+        }
     }
 
     public enum PreTokenGroup  //Содержит в себе базовые типы предопределенного токена.
@@ -180,6 +184,9 @@ namespace Parsers
             PreTokenGroup nowcharID;
             PreTokenGroup PreviousCharID = PreTokenGroup.NaN;
             CodeStorage = new List<Token>();
+            //Тестовые
+            Builder Temp2 = new Builder();
+            //Конец тестовых
             int last_list_count = 0;
             int i = 0;
             char nowchar;
@@ -193,65 +200,31 @@ namespace Parsers
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
-                        i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i , CodeStorage, Input_Text, RowCount);
-                        break;
-                }
-            }
-        }
-        public void PARSETEXT(List<AnyFunction>InFunc, List<Variable>InVar, string Input_Text)
-            /*Главный метод парсера, запускает непосредственно сам процесс парсинга и трансляции кода
-             InFunc - передает вовнутрь хранилище функций*/
-        {
-            FuncStorage = InFunc; //Копирует внешнее хранилище функций
-            VarStorage = InVar;  //Копирует внешнее хранилище переменных
-            Text = Input_Text;  //Копирует исходный текст программы
-            PreTokenGroup nowcharID;  //Определяет ID текущего символа
-            PreTokenGroup PreviousCharID = PreTokenGroup.NaN;  //Определяет ID предыдущего символа
-            CodeStorage = new List<Token>();
-            char nowchar;
-            int i = 0;
-            while (i!=Input_Text.Length)  //Главный цикл парсера, идет по строке составляя из символов "слова" и задавая им первичные значения
-            {
-                nowchar = Input_Text[i];
-                nowcharID = getTypeChar(nowchar);
-                switch (nowcharID)
-                {
-                    case PreTokenGroup.Alphabet:
-                    case PreTokenGroup.Numeric:
-                    case PreTokenGroup.RuAlphabet:
-                    case PreTokenGroup.Symbol:
-                        i = Builder_function(c => getTypeChar(c) == nowcharID, i, CodeStorage, RowCount, Input_Text);
+                        i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i , CodeStorage, Input_Text, RowCount,Temp2);
                         break;
                 }
             }
         }
 
-        private int Builder_function(Func<char,bool> Cycle_condition, int i_counter, List<Token> Word_List,int row_count, string input_text )
-        {
-            int helper_counter = i_counter;
-            string Data_former = "";
-            while ((helper_counter!=input_text.Length)&&(Cycle_condition(input_text[helper_counter])))
-            {
-                Data_former += input_text[helper_counter];
-                helper_counter++;
-            }
-            return 1;
-        }
-
-        private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, List<Token> Word_list, string input_text, int row_count)
+        private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, List<Token> Word_list, string input_text, int row_count, Builder BldClass)
         /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
         {
             int helper_counter = i_counter;
             string Data_former = "";
+            
+            Token Temp; //Test Condition
             while ((helper_counter != input_text.Length) && (Cycle_condition(input_text[helper_counter])))  //Проходит циклом по тексту и формирует строку, пока входящая функция удовлетворяет второму условию
             {
                 Data_former += input_text[helper_counter];
                 helper_counter++;
             }
-            Word_list.Add(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1));
-
-            /*//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.*/
-            return helper_counter - 1;
+            if (Word_list.Count == 0)
+                Temp=(GetToken(Data_former, second_cycle_condition, null, i_counter, helper_counter - 1));
+            else
+                Temp=(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1));
+            if (BldClass.Rule_check(Temp))
+                Word_list.Add(Temp);//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.
+            return helper_counter + 1;
         }
 
         private bool Numeric_check(char symbol)  //Выполняет проверку, является ли символ цифрой.
@@ -333,10 +306,15 @@ namespace Parsers
         {
             //Тестовые начало
             HashSet<Local_Variable> Test = new HashSet<Local_Variable>();
-            
+            bool space_resulter;
             //Тестовые конец
             Token Resulter;
-            bool space_resulter = ID_Of_previous.Data == " ";
+            if (ID_Of_previous == null)
+            {
+                space_resulter = true;
+            }
+            else
+                space_resulter = ID_Of_previous.Data == " ";
             switch (preID)
             {
                 case PreTokenGroup.Alphabet: //Случай строки составленной из алфавитных символов
