@@ -28,6 +28,15 @@ namespace Tokens_Library
             Token Temp_tok;
             while (InputStr.Count>0)
             {
+                if (InputStr.Peek().get_group_of_token()==Group_of_Tokens.AriphmeticalExpression)
+                {
+                    Temp_tok = InputStr.Pop();
+                    RPN_Expression_data = (Temp_tok as Expression).RPN_Expression_data;
+                    Range = Temp_tok.Range;
+                    Data = Temp_tok.Data;
+                    Space_check = Temp_tok.Space_check;
+                    Row = Temp_tok.Row;
+                }
                 RPN_Expression_data.Add(InputStr.Pop());
                 Data += RPN_Expression_data.Last().Data;
             }

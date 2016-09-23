@@ -13,6 +13,7 @@ namespace Parsers
 
     public enum Rules_Statement
     {
+        DefaultInStr=-2,
         Default=-1,
         DigitFormError=0,
         BeginDigit=1,
@@ -92,17 +93,28 @@ namespace Parsers
                             Changer = (NewElement as Delimeter).get_group_of_token();
                             if (Changer == Delimeters_ID.LBracket) //Разделитель открывающаяся скобка
                             {
-                                Magazine_state = Rules_Statement.LBracketDigit;
                                 String_Translate_Stack.Push(NewElement);
+                                Magazine_state = Rules_Statement.LBracketDigit;
                                 return true;
+                            }
+                            else if (Changer==Delimeters_ID.RBracket)
+                            {
+                                if (CastBrackets())
+                                {
+                                    if()
+                                    Magazine_state = Rules_Statement.DefaultInStr;
+                                    return true;
+                                }
+                                else
+                                    return false;
                             }
                             else if (Changer == Delimeters_ID.Equality) //Разделитель - равенство
                                 ;
                                 break;
                         case Group_of_Tokens.Function: //Если функция
                             Stack_To_list();
-                            Magazine_state = Rules_Statement.FuncCallInStr;
                             String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.FuncCallInStr;
                             return true;
                         case Group_of_Tokens.Name: //Если неизвестное имя
                             Strange_names.Add(NewElement);
@@ -126,8 +138,44 @@ namespace Parsers
                     break;
                 case Rules_Statement.FormLogicalExpression: //Состояние формирующее LogicalExpression по возможности 7
                     break;
+                case Rules_Statement.LBracketDigit:
+                    switch(NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.AfterArifmExpr;
+                            break;
+                        case Group_of_Tokens.Function:
+                            break;
+                        case Group_of_Tokens.Name:
+                            break;
+                    }
+                    break;
+                case Rules_Statement.DefaultInStr:
+                    switch(NewElGroup)
+                    {
+                        
+                    }
+                    break;
             }
             return true;
+        }
+
+        private bool CastBrackets()
+        {
+            Token Temp;
+            List<Token> Expr_creator = new List<Token>();
+            Temp = new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression);
+            String_Translate_Stack.Pop();
+            String_Translate_Stack.Push(Temp);
+            if ((String_Translate_Stack.Count == 0)&&(Temp.Data!="("))
+                return false;
+            else
+            {
+                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression));
+                return true;
+            }
+            
         }
 
         private void Stack_To_list()
@@ -200,9 +248,11 @@ namespace Parsers
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
+                    case PreTokenGroup.Delimeter:
                         i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i , CodeStorage, Input_Text, RowCount,Temp2);
                         break;
                 }
+                i++;
             }
         }
 
@@ -224,7 +274,7 @@ namespace Parsers
                 Temp=(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1));
             if (BldClass.Rule_check(Temp))
                 Word_list.Add(Temp);//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.
-            return helper_counter + 1;
+            return helper_counter-1;
         }
 
         private bool Numeric_check(char symbol)  //Выполняет проверку, является ли символ цифрой.
