@@ -101,7 +101,7 @@ namespace Parsers
                             {
                                 if (CastBrackets())
                                 {
-                                    if()
+                                    
                                     Magazine_state = Rules_Statement.DefaultInStr;
                                     return true;
                                 }
@@ -164,18 +164,30 @@ namespace Parsers
         private bool CastBrackets()
         {
             Token Temp;
-            List<Token> Expr_creator = new List<Token>();
-            Temp = new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression);
-            String_Translate_Stack.Pop();
-            String_Translate_Stack.Push(Temp);
-            if ((String_Translate_Stack.Count == 0)&&(Temp.Data!="("))
-                return false;
-            else
+            Stack<Token> Expr_creator = new Stack<Token>();
+            Temp = String_Translate_Stack.Pop();
+            while (Temp.Data!="(")
+            {
+                
+            }
+            Expr_creator.Push(String_Translate_Stack.Pop());
+            Temp = Expr_creator.Peek();
+            Expr_creator.Push(String_Translate_Stack.Pop());
+            if (Temp.Token_Group == Group_of_Tokens.BooleanOperation)
+            {
+                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Logical_expression));
+                return true;
+            }
+            else if (Temp.Token_Group == Group_of_Tokens.Ariphmetical)
             {
                 String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression));
                 return true;
             }
-            
+            else
+            {
+                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Err));
+                return false;
+            }       
         }
 
         private void Stack_To_list()

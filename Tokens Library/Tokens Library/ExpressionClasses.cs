@@ -8,6 +8,7 @@ namespace Tokens_Library
 {
     public enum Expression_Type
     {
+        Err=-1,
         Ariphmetical_expression=1,
         Logical_expression=2,
         Function_body_expression=3,
@@ -25,6 +26,8 @@ namespace Tokens_Library
 
         public Expression(Stack<Token> InputStr, Expression_Type Input_Type_OFEXPR)
         {
+            RPN_Expression_data = new List<Token>();
+            EXPRType = new Expression_Type();
             Token Temp_tok;
             while (InputStr.Count>0)
             {
