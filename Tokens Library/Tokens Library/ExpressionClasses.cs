@@ -15,45 +15,56 @@ namespace Tokens_Library
     }
     public class Expression:Token
     {
-        public List<Token> RPN_Expression_data { get; private set; }
+        public LinkedList<Token> RPN_Expression_data { get; private set; }
         public Expression_Type EXPRType { get; private set; }
 
-        public Expression(List<Token>Input_RPN, Expression_Type Input_Type_OFEXPR)
-        {
-            RPN_Expression_data = Input_RPN;
-            EXPRType = Input_Type_OFEXPR;
-        }
-
         public Expression(Stack<Token> InputStr, Expression_Type Input_Type_OFEXPR)
+            /*Конструктор выражений, использует входной стек для формирования необходимого выражения*/
         {
-            RPN_Expression_data = new List<Token>();
+            RPN_Expression_data = new LinkedList<Token>();
             EXPRType = new Expression_Type();
-            Token Temp_tok;
-            while (InputStr.Count>0)
+            dynamic Temp_tok;
+            while ((InputStr.Count>0)&&(InputStr.Peek().Token_Group!=Group_of_Tokens.Delimeter)) //Цикл идущий по стеку до его конца или до первого разделителя
             {
-                if (InputStr.Peek().get_group_of_token()==Group_of_Tokens.AriphmeticalExpression)
+                if (InputStr.Peek().Token_Group==Group_of_Tokens.AriphmeticalExpression) //Условие для нахождения токенов формата AriphmeticalExpression
                 {
                     Temp_tok = InputStr.Pop();
-                    RPN_Expression_data = (Temp_tok as Expression).RPN_Expression_data;
+                    if (RPN_Expression_data.Count>0)
+                    {
+                        ReWriteRPNExpression(Temp_tok);
+                    }
+                    else
+                    {
+                        RPN_Expression_data = Temp_tok.RPN_Expression_data;
+                        Data = Temp_tok.Data;
+                    }
                     Range = Temp_tok.Range;
-                    Data = Temp_tok.Data;
                     Space_check = Temp_tok.Space_check;
                     Row = Temp_tok.Row;
                 }
-                RPN_Expression_data.Add(InputStr.Pop());
-                Data += RPN_Expression_data.Last().Data;
+                else
+                {
+                    RPN_Expression_data.AddFirst(InputStr.Pop());
+                    Data += RPN_Expression_data.First().Data;
+                }
             }
-            Temp_tok = RPN_Expression_data.Last();
+            Temp_tok = RPN_Expression_data.First() as Token;
             EXPRType = Input_Type_OFEXPR;
-            Range = new Tuple<int, int>(Temp_tok.Range.Item1, RPN_Expression_data.First().Range.Item2);
+            Range = new Tuple<int, int>(Temp_tok.Range.Item2, RPN_Expression_data.Last().Range.Item1);
             Space_check = Temp_tok.Space_check;
             Row = Temp_tok.Row;
             Token_Group = Group_of_Tokens.AriphmeticalExpression;
         }
 
-        public void ReConfigureEXPR()
+        private void ReWriteRPNExpression(Expression Tempe)
+            /*Переписывает значение встреченного выражения в ново создаваемое*/
         {
-
+            while(Tempe.RPN_Expression_data.Count>0)
+            {
+                RPN_Expression_data.AddFirst(Tempe.RPN_Expression_data.Last());
+                Data += RPN_Expression_data.First().Data;
+                Tempe.RPN_Expression_data.RemoveLast();
+            }
         }
     }
 }

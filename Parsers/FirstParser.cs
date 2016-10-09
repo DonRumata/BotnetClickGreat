@@ -25,9 +25,11 @@ namespace Parsers
         FormLogicalExpression=7,
         AfterArifmExpr=8,
         LBracketDigit = 9,
+        Cast = 10,
         FuncCallBegin =11,
         FuncCallInStr=12,
-        
+        EndOfString=13,
+        Equality=14,        
     }
     public enum Which_builder
     {
@@ -45,12 +47,15 @@ namespace Parsers
         public bool Rule_check(Token NewElement)
         {
             Token Resulter;
-            int counter=0;
+            int BracketCounter=0;
             int HInt = 0;
             dynamic Changer;
             Group_of_Tokens NewElGroup = NewElement.Token_Group;
             switch (Magazine_state)
             {
+                case Rules_Statement.FuncCallBegin:
+                    if()
+                    break;
                 case Rules_Statement.BeginDigit:  //Состояние при котором строка начинается с Digit 1
                     if (NewElGroup == Group_of_Tokens.Digit)
                     {
@@ -94,14 +99,14 @@ namespace Parsers
                             if (Changer == Delimeters_ID.LBracket) //Разделитель открывающаяся скобка
                             {
                                 String_Translate_Stack.Push(NewElement);
+                                BracketCounter++;
                                 Magazine_state = Rules_Statement.LBracketDigit;
                                 return true;
                             }
                             else if (Changer==Delimeters_ID.RBracket)
                             {
                                 if (CastBrackets())
-                                {
-                                    
+                                { 
                                     Magazine_state = Rules_Statement.DefaultInStr;
                                     return true;
                                 }
@@ -143,7 +148,7 @@ namespace Parsers
                     {
                         case Group_of_Tokens.Digit:
                             String_Translate_Stack.Push(NewElement);
-                            Magazine_state = Rules_Statement.AfterArifmExpr;
+                            Magazine_state = Rules_Statement.WhichNextDigit;
                             break;
                         case Group_of_Tokens.Function:
                             break;
@@ -157,22 +162,88 @@ namespace Parsers
                         
                     }
                     break;
+                case Rules_Statement.AfterArifmExpr:
+                    if ((NewElGroup == Group_of_Tokens.Ariphmetical)||(NewElGroup==Group_of_Tokens.BooleanOperation))
+                        goto case Rules_Statement.WhichNextDigit;
+                    else if (NewElGroup==Group_of_Tokens.Delimeter)
+                    {
+                        if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Semicolon)
+                        {
+                            Magazine_state = Rules_Statement.EndOfString;
+                            return true;
+                        }
+                        else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Equality)
+                            goto case Rules_Statement.Equality;
+                        else if((NewElement as Delimeter).DelimeterID==Delimeters_ID.RBracket)
+                        {
+                            CastBrackets();
+                            Magazine_state = Rules_Statement.AfterArifmExpr;
+                        }
+                    }
+                    
+                    break;
+                case Rules_Statement.Default:
+                    switch (NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit:
+                            break;
+                        case Group_of_Tokens.Function:
+                            break;
+                        case Group_of_Tokens.Construction:
+                            break;
+                    }
+                    break;
+                case Rules_Statement.EndOfString:
+                    Build_magazine_storage.Clear();
+                    if ((BracketCounter == 0)&&(String_Translate_Stack.Count==1))
+                    {
+                        String_Translate_Stack.Clear();
+                        BracketCounter = 0;
+                        Magazine_state = Rules_Statement.Default;
+                        return true;
+                    }
+                    else
+                        return false;
+                case Rules_Statement.Equality:
+                    break;
             }
             return true;
         }
 
+        private bool CheckPriority(Token NewEl)
+        {
+            if (String_Translate_Stack.Count == 0)
+            {
+                return true;
+            }
+            else if (NewEl.get_group_of_token() <= String_Translate_Stack.Peek().get_group_of_token())
+            {
+                return false;
+            }
+            else
+                return true;
+                
+        }
+
+        private int get_priority(Token NewE)
+        {
+            return 1;
+        }
+
         private bool CastBrackets()
+            /*Выполняет финальные/семифинальные свертки
+             Запускается исключительно для сверток со скобками*/
         {
             Token Temp;
-            Stack<Token> Expr_creator = new Stack<Token>();
+            Stack<Token> Expr_creator = new Stack<Token>();//Вспомогательный стек, позволяет получить диапазон свертки в пределах которого необходимо работать.
             Temp = String_Translate_Stack.Pop();
-            while (Temp.Data!="(")
+            while(Temp.Data!="(")  //Заполняет необходимый диапазон внутри скобок
             {
-                
+                Expr_creator.Push(Temp);
+                Temp = String_Translate_Stack.Pop();
             }
-            Expr_creator.Push(String_Translate_Stack.Pop());
-            Temp = Expr_creator.Peek();
-            Expr_creator.Push(String_Translate_Stack.Pop());
+            Temp = String_Translate_Stack.Peek();
+            //Дальше выполняется создание необходимого выражения в зависимости от символа.
             if (Temp.Token_Group == Group_of_Tokens.BooleanOperation)
             {
                 String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Logical_expression));
@@ -180,6 +251,8 @@ namespace Parsers
             }
             else if (Temp.Token_Group == Group_of_Tokens.Ariphmetical)
             {
+                Expr_creator.Push(String_Translate_Stack.Pop());
+                Expr_creator.Push(String_Translate_Stack.Pop());
                 String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression));
                 return true;
             }
@@ -219,6 +292,7 @@ namespace Parsers
         NaN = -1,
         Default = 0,
         Space = 6,
+        EndOfString = 7,
     }
 
     public class FirstParser
@@ -262,6 +336,15 @@ namespace Parsers
                     case PreTokenGroup.Symbol:
                     case PreTokenGroup.Delimeter:
                         i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i , CodeStorage, Input_Text, RowCount,Temp2);
+                        break;
+                    case PreTokenGroup.EndOfString:
+                        i++;
+                        CodeStorage.Add(new Delimeter(nowchar.ToString(), false, RowCount, i - 1, i, Delimeters_ID.New_string));
+                        if (!Temp2.Rule_check(CodeStorage.Last()))
+                            ;
+                        else
+                            ;
+                        RowCount++;
                         break;
                 }
                 i++;
@@ -340,8 +423,6 @@ namespace Parsers
                     case ']':
                     case '{':
                     case '}':
-                    case '\n':
-                    case '\r':
                     case '\"':
                     case '\'':
                     case ',':
@@ -349,6 +430,9 @@ namespace Parsers
                         return PreTokenGroup.Delimeter;
                     case ' ':
                         return PreTokenGroup.Space;
+                    case '\n':
+                    case '\r':
+                        return PreTokenGroup.EndOfString;
                     default: return PreTokenGroup.Default;
                 }
             }
