@@ -6,14 +6,26 @@ using System.Threading.Tasks;
 
 namespace Tokens_Library
 {
-    public class Variable : Token
+    public sealed class Variable : Token
     {
-        public string Value { get; set; }
-    }
+        public Token RPNValue { get; set; }
+        Typecial Type_Var_Data { get; set; }
 
-    public sealed class Local_Variable : Variable
-        /*Служит для обозначения локальных переменных и аргументов*/
-    {
-        public int Func_ID { get; set; } //Содержит в себе ID функции к которой принадлежит аргумент или локальная переменная
+        public Variable(Expression InValue, Typecial InType)
+        {
+            RPNValue = InValue;
+            Type_Var_Data = InType;
+        }
+
+        public Variable(Expression InValue)
+        {
+            RPNValue = InValue;
+            Type_Var_Data = new Typecial();
+        }
+
+        public Variable()
+        {
+
+        }
     }
 }

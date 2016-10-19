@@ -29,7 +29,11 @@ namespace Parsers
         FuncCallBegin =11,
         FuncCallInStr=12,
         EndOfString=13,
-        Equality=14,        
+        Equality=14,
+        FuncNameFounded=15,
+        ArgsOnCall=16,
+        WhichNextDigitArgs=17,
+        ArgsAfterAriphmetical=18,      
     }
     public enum Which_builder
     {
@@ -42,6 +46,7 @@ namespace Parsers
         private List<Token> Build_magazine_storage=new List<Token>();
         private List<Token> Strange_names=new List<Token>();
         private Stack<Token> String_Translate_Stack=new Stack<Token>();
+        int Comma_counter = 0;
         Token Stack_statement=null;
 
         public bool Rule_check(Token NewElement)
@@ -54,8 +59,16 @@ namespace Parsers
             switch (Magazine_state)
             {
                 case Rules_Statement.FuncCallBegin:
-                    if()
-                    break;
+                    if (NewElGroup == Group_of_Tokens.Function)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Build_magazine_storage.Add(NewElement);
+                        Magazine_state = Rules_Statement.FuncNameFounded;
+                        return true;
+                    }
+                    else return false;
+
+
                 case Rules_Statement.BeginDigit:  //Состояние при котором строка начинается с Digit 1
                     if (NewElGroup == Group_of_Tokens.Digit)
                     {
@@ -65,6 +78,7 @@ namespace Parsers
                     }
                     else
                         return false;
+
                 case Rules_Statement.WhichNextDigit:  //Состояние проверки элементов после Digit 2
                     if (NewElGroup == Group_of_Tokens.Ariphmetical) //Если арифметический символ
                     {
@@ -206,8 +220,159 @@ namespace Parsers
                         return false;
                 case Rules_Statement.Equality:
                     break;
+                case Rules_Statement.FuncNameFounded: //Состояние при котором строка начинается с вызова имени функции.
+                    if (NewElGroup == Group_of_Tokens.Delimeter)
+                        if (NewElement.get_group_of_token() == Delimeters_ID.LBracket)
+                        {
+                            Comma_counter = 0;
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.ArgsOnCall;
+                            return true;
+                        }                    
+                        else
+                            return false;
+                    else return false;
+
+                case Rules_Statement.ArgsOnCall:
+                    switch (NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.WhichNextDigitArgs;
+                            return true;
+                        case Group_of_Tokens.Function:
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Comma_counter = 0;
+                            Magazine_state = Rules_Statement.FuncNameFounded;
+                            break;
+                        case Group_of_Tokens.Delimeter:
+                            break;
+                        case Group_of_Tokens.Name:
+                            break;
+                    }
+                    break;
+                case Rules_Statement.WhichNextDigitArgs:
+                    if (NewElGroup == Group_of_Tokens.Delimeter)
+                        if (NewElement.get_group_of_token() == Delimeters_ID.RBracket)
+                        {
+                            Comma_counter++;
+                            if (Comma_counter > (Build_magazine_storage.Last() as AnyFunction).Args.Count)
+                                return false;
+                            else
+                                (Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
+                            CastArgsBrackets(Expression_Type.Ariphmetical_expression);
+                            return true;
+                        }
+                        else;
+                    else if (NewElGroup==Group_of_Tokens.Help_symbol)
+                        if (NewElement.get_group_of_token()==Help_SymbolsID.Comma)
+                        {
+                            Comma_counter++;
+                            if (Comma_counter > (Build_magazine_storage.Last() as AnyFunction).Args.Count)
+                                return false;
+                            else
+                            {
+                                (Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
+                                Magazine_state = Rules_Statement.ArgsOnCall;
+                            }
+                            return true;
+                        }
+                        else
+                        ;
+                    else if (NewElGroup==Group_of_Tokens.Ariphmetical)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        
+                        Magazine_state = Rules_Statement.ArgsAfterAriphmetical;
+                        return true;
+                    }
+                    break;
+                case Rules_Statement.ArgsAfterAriphmetical:
+                    if (NewElGroup==Group_of_Tokens.Digit)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression));
+                        Magazine_state = Rules_Statement.WhichNextDigitArgs;
+                        return true;
+                    }
+                    else if (NewElGroup==Group_of_Tokens.Function)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Build_magazine_storage.Add(NewElement);
+                        Magazine_state = Rules_Statement.FuncNameFounded;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
             }
             return true;
+        }
+
+        private int ReCountPreviousComm()
+        {
+            int Resulter = 0;
+            if (Build_magazine_storage.Count > 0)
+            {
+                while ((Build_magazine_storage.Last() as AnyFunction).Args[Resulter].RPNValue != null)
+                {
+                    Resulter++;
+                }
+            }
+            return Resulter;
+        }
+
+        private void CastArgsBrackets(Expression_Type Type_OF_expr)
+        {
+            Token Temp;
+            dynamic TypeConnection = Build_magazine_storage.Last();
+            String_Translate_Stack.Pop();
+            Temp =String_Translate_Stack.Pop();
+            if (String_Translate_Stack.Any())
+                Temp = String_Translate_Stack.Peek();
+            else
+            {
+                Comma_counter = 0;
+                String_Translate_Stack.Push(Temp);
+                Magazine_state = Rules_Statement.EndOfString;
+            }
+            switch (Temp.Token_Group)
+            {
+                case Group_of_Tokens.Ariphmetical:
+                    if (TypeConnection.GetDelegateMethodType() == 1)
+                    {
+                        String_Translate_Stack.Push(Build_magazine_storage.Last());
+                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression));
+                        Comma_counter -= TypeConnection.Args.Count;
+                        Magazine_state = Rules_Statement.WhichNextDigitArgs;
+                    }
+
+                    break;
+                case Group_of_Tokens.Delimeter:
+                    if (TypeConnection.GetDelegateMethodType()==1)
+                    {
+                        String_Translate_Stack.Push(TypeConnection);
+                        Magazine_state=Rules_Statement.WhichNextDigitArgs;
+                    }
+                    break;
+                case Group_of_Tokens.Help_symbol:
+                    if (Temp.get_group_of_token()==Help_SymbolsID.Comma)
+                    {
+                        if(Build_magazine_storage.Count>1)
+                        {
+                            String_Translate_Stack.Pop();
+                            if (Build_magazine_storage[Build_magazine_storage.Count-2]==String_Translate_Stack.Peek())
+                            {
+
+                            }
+                        }
+                    }
+                    break;
+            }
+            Build_magazine_storage.RemoveAt(Build_magazine_storage.Count - 1);
+            Comma_counter = ReCountPreviousComm();
         }
 
         private bool CheckPriority(Token NewEl)
@@ -278,7 +443,7 @@ namespace Parsers
         }
         public Builder()
         {
-            Magazine_state = Rules_Statement.BeginDigit; //Test Condition
+            Magazine_state = Rules_Statement.FuncCallBegin; //Test Condition
         }
     }
 
@@ -293,6 +458,7 @@ namespace Parsers
         Default = 0,
         Space = 6,
         EndOfString = 7,
+        HSymbols=8,
     }
 
     public class FirstParser
@@ -304,8 +470,7 @@ namespace Parsers
         private string Text = null;                //Базовый текст программы
         private int RowCount = 0;                 //Счетчик строк программы
         HashSet<string> Type_definitions = new HashSet<string>() { "null", "void", "int", "float", "double", "point", "char", "string", "picture" }; //Хранит в себе зарезервированные имена типов.
-        Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();
-        HashSet<string> Built_In_Functions = new HashSet<string>() { "testfunc" };  //Хранит в себе имена встроенных функций
+        Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();//Хранит в себе имена функций
         HashSet<string> Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };  //Хранит в себе имена зарезервированных конструкций
 
 
@@ -320,6 +485,13 @@ namespace Parsers
             CodeStorage = new List<Token>();
             //Тестовые
             Builder Temp2 = new Builder();
+            List<Variable> Temps = new List<Variable>(1);
+            List<Variable> Temps2 = new List<Variable>(2);
+            Temps2.Add(new Variable());
+            Temps2.Add(new Variable());
+            Temps.Add(new Variable());
+            Function_storage.Add("testfunc", new Built_InFunction<int>(TestFunc,Temps));
+            Function_storage.Add("testfuncs", new Built_InFunction<Token>(TestFunc2, Temps2));
             //Конец тестовых
             int last_list_count = 0;
             int i = 0;
@@ -334,7 +506,6 @@ namespace Parsers
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
-                    case PreTokenGroup.Delimeter:
                         i = While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i , CodeStorage, Input_Text, RowCount,Temp2);
                         break;
                     case PreTokenGroup.EndOfString:
@@ -345,6 +516,14 @@ namespace Parsers
                         else
                             ;
                         RowCount++;
+                        break;
+                    case PreTokenGroup.HSymbols:
+                    case PreTokenGroup.Delimeter:
+                        Token Temp;
+                        if (Temp2.Rule_check(Temp = GetToken(nowchar.ToString(), nowcharID, CodeStorage.Last(), i, i)))
+                            CodeStorage.Add(Temp);
+                        else
+                            ;
                         break;
                 }
                 i++;
@@ -417,29 +596,36 @@ namespace Parsers
                     case '^':
                     case '%':
                         return PreTokenGroup.Symbol;
+                    case '\"':
+                    case '\'':
                     case '(':
                     case ')':
                     case '[':
                     case ']':
                     case '{':
                     case '}':
-                    case '\"':
-                    case '\'':
-                    case ',':
-                    case '.':
                         return PreTokenGroup.Delimeter;
+                    
                     case ' ':
                         return PreTokenGroup.Space;
                     case '\n':
                     case '\r':
                         return PreTokenGroup.EndOfString;
+                    case ',':
+                    case '.':
+                        return PreTokenGroup.HSymbols;
                     default: return PreTokenGroup.Default;
                 }
             }
         }
-        private int TestFunc(IEnumerable<Local_Variable> Trulala)
+        private int TestFunc(IEnumerable<Variable> Trulala)
         {
             return 1;
+        }
+
+        private Token TestFunc2(IEnumerable<Variable> Trulala)
+        {
+            return new Token();
         }
 
         private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue)
@@ -451,8 +637,9 @@ namespace Parsers
              SValue - содержит информацию о номере последнего в строке символа*/
         {
             //Тестовые начало
-            HashSet<Local_Variable> Test = new HashSet<Local_Variable>();
+            HashSet<Variable> Test = new HashSet<Variable>();
             bool space_resulter;
+            dynamic IDer = null;
             //Тестовые конец
             Token Resulter;
             if (ID_Of_previous == null)
@@ -468,29 +655,33 @@ namespace Parsers
                         return (new Token(inStr, space_resulter, Group_of_Tokens.Construction, RowCount, FValue, SValue));
                     else if (Type_definitions.Contains(inStr))
                         return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue));
-                    else if (Built_In_Functions.Contains(inStr))
-                        return (new Token(inStr, space_resulter, Group_of_Tokens.Function, RowCount, FValue, SValue));
+                    else if (Function_storage.ContainsKey(inStr))
+                    {
+                        dynamic Tester = Function_storage[inStr];
+                        Tester.ReCreateToken(inStr, space_resulter, Group_of_Tokens.Function, RowCount, FValue, SValue);  // ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО С УКАЗАТЕЛЯМИ, ПЕРВИЧНЫЙ FUNCTION STORAGE НЕ ДОЛЖЕН МЕНЯТЬСЯ.
+                        return (Tester);
+                    }
                     else
                         return null;
+                case PreTokenGroup.HSymbols: //Cлучай строки составленной из вспомогательных символов
+                    if (Is_Help_Symbol(inStr, out IDer))
+                        return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, IDer));
+                    else return null;
                 case PreTokenGroup.Delimeter: //Случай строки составленной из разделителей
-                    Delimeters_ID DelimID;
-                    Help_SymbolsID HSymbID;
-                    if (Is_delimeter(inStr, out DelimID))
-                        return (new Delimeter(inStr, space_resulter, RowCount, FValue, SValue, DelimID));
-                        else if (Is_Help_Symbol(inStr, out HSymbID))
-                            return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, HSymbID));
+                    if (Is_delimeter(inStr, out IDer))
+                        return (new Delimeter(inStr, space_resulter, RowCount, FValue, SValue, IDer));
+                        else if (Is_Help_Symbol(inStr, out IDer))
+                            return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, IDer));
                     else
                         return null;
                 case PreTokenGroup.RuAlphabet:  //Случай строки составленной из кириллицы
                     return null;
                 case PreTokenGroup.Symbol:  //Случай строки составленной из арифметических или логических символов
-                    AriphmeticalSymbol_ID Ariphmetic_ID;
-                    BooleanSymbol_ID Boolean_ID;
                     bool Equalty_resulter;
-                    if (Is_ariphmetical(inStr, out Ariphmetic_ID, out Equalty_resulter))
-                        return (new Ariphmetical(inStr, space_resulter, RowCount, FValue, SValue, Ariphmetic_ID));
-                    else if (Is_logical(inStr, out Boolean_ID))
-                        return (new Boolean_operation(inStr, space_resulter, RowCount, FValue, SValue, Boolean_ID));
+                    if (Is_ariphmetical(inStr, out IDer, out Equalty_resulter))
+                        return (new Ariphmetical(inStr, space_resulter, RowCount, FValue, SValue, IDer));
+                    else if (Is_logical(inStr, out IDer))
+                        return (new Boolean_operation(inStr, space_resulter, RowCount, FValue, SValue, IDer));
                     return null;
                 case PreTokenGroup.Numeric:  //Случай строки составленной из цифр
                     return (new Token(inStr, space_resulter, Group_of_Tokens.Digit, RowCount, FValue, SValue));
@@ -506,7 +697,7 @@ namespace Parsers
             else return false;
         }
 
-        private bool Is_delimeter(string Input, out Delimeters_ID Delim_ID)  //Вспомогательный метод, проверяет является ли входящая строка разделителем
+        private bool Is_delimeter(string Input, out dynamic Delim_ID)  //Вспомогательный метод, проверяет является ли входящая строка разделителем
         {
             switch(Input)
             {
@@ -522,7 +713,7 @@ namespace Parsers
             }
         }
 
-        private bool Is_Help_Symbol(string Input, out Help_SymbolsID Help_Symbol_ID)  //Вспомогательный метод, проверяет является ли входящая строка вспомогательным символом.
+        private bool Is_Help_Symbol(string Input, out dynamic Help_Symbol_ID)  //Вспомогательный метод, проверяет является ли входящая строка вспомогательным символом.
             /*Вспомогательный метод, определяет */
         {
             switch(Input)
@@ -537,7 +728,7 @@ namespace Parsers
             }
         }
 
-        private bool Is_ariphmetical(string Input, out AriphmeticalSymbol_ID Ariphm_ID, out bool WasEquality)  //Вспомогательный метод, проверяет является ли входящая строка арифметическим символом
+        private bool Is_ariphmetical(string Input, out dynamic Ariphm_ID, out bool WasEquality)  //Вспомогательный метод, проверяет является ли входящая строка арифметическим символом
         {
             WasEquality = false;
             switch (Input)
@@ -570,7 +761,7 @@ namespace Parsers
             }
         }
 
-        private bool Is_logical(string Input, out BooleanSymbol_ID Bool_ID)  //Вспомогательный метод, проверяет является ли входящая строка логическим символом.
+        private bool Is_logical(string Input, out dynamic Bool_ID)  //Вспомогательный метод, проверяет является ли входящая строка логическим символом.
         {
             switch (Input)
             {
