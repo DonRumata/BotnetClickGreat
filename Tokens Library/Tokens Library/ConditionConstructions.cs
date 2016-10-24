@@ -9,15 +9,10 @@ namespace Tokens_Library
     abstract class Condition_Construction:Token
         /*Базовый класс конструкций с условиями*/
     {
-        private List<Token> Condition_code = null; //Хранит в себе код условия
-        public Condition_Construction()
+        private Token Condition_code = null; //Хранит в себе код условия
+        public Condition_Construction(Token InCondition)
         {
-            Condition_code = new List<Token>();
-        }
-
-        public void Add_Token_to_condition_code(Token AddingData)
-        {
-            Condition_code.Add(AddingData);
+            Condition_code = InCondition;
         }
     }
 
@@ -26,5 +21,11 @@ namespace Tokens_Library
     {
         private List<Token> Then_body = null;
         private List<Token> Else_body = null;
+
+        public If_Condition_construction(Token INCondition, List<Token> ThenBody, List<Token> ElseBody):base(INCondition)
+        {
+            Then_body = ThenBody;
+            Else_body = ElseBody;
+        }
     }
 }

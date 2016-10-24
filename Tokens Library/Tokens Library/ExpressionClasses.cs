@@ -18,13 +18,14 @@ namespace Tokens_Library
         public LinkedList<Token> RPN_Expression_data { get; private set; }
         public Expression_Type EXPRType { get; private set; }
 
-        public Expression(Stack<Token> InputStr, Expression_Type Input_Type_OFEXPR)
+        public Expression(Stack<Token> InputStr, Expression_Type Input_Type_OFEXPR, Func<Stack<Token>, bool> InWhileConditionDelegate)
             /*Конструктор выражений, использует входной стек для формирования необходимого выражения*/
         {
             RPN_Expression_data = new LinkedList<Token>();
             EXPRType = new Expression_Type();
             dynamic Temp_tok;
-            while ((InputStr.Count>0)&&(InputStr.Peek().Token_Group!=Group_of_Tokens.Delimeter)) //Цикл идущий по стеку до его конца или до первого разделителя
+            //(InputStr.Count > 0) && (InputStr.Peek().Token_Group != Group_of_Tokens.Delimeter) && (InputStr.Peek().Token_Group != Group_of_Tokens.BooleanOperation)
+            while (InWhileConditionDelegate.Invoke(InputStr)) //Цикл идущий по стеку до его конца или до первого разделителя
             {
                 if (InputStr.Peek().Token_Group==Group_of_Tokens.AriphmeticalExpression) //Условие для нахождения токенов формата AriphmeticalExpression
                 {

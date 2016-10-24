@@ -33,7 +33,14 @@ namespace Parsers
         FuncNameFounded=15,
         ArgsOnCall=16,
         WhichNextDigitArgs=17,
-        ArgsAfterAriphmetical=18,      
+        ArgsAfterAriphmetical=18,
+        AfterBoolOperation=19,
+        IfConstructionFounded=20,
+        CastBooleanExpression=21,
+        TypeDefinitionBegin=22,
+        MustBeNameVarDefinition=23,
+        AfterVarDefinition=24,
+        AfterVarDefEquality=25,     
     }
     public enum Which_builder
     {
@@ -54,10 +61,45 @@ namespace Parsers
             Token Resulter;
             int BracketCounter=0;
             int HInt = 0;
+            int BoperationsInProgress = 0;
             dynamic Changer;
             Group_of_Tokens NewElGroup = NewElement.Token_Group;
             switch (Magazine_state)
             {
+
+                case Rules_Statement.IfConstructionFounded:
+                    break;
+
+                case Rules_Statement.TypeDefinitionBegin:
+                    String_Translate_Stack.Push(NewElement);
+                    Magazine_state = Rules_Statement.MustBeNameVarDefinition;
+                    return true;
+
+                case Rules_Statement.MustBeNameVarDefinition:
+                    if (NewElGroup == Group_of_Tokens.Name)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.AfterVarDefinition;
+                        return true;
+                    }
+                    else
+                        return false;
+
+                case Rules_Statement.AfterVarDefinition:
+                    if (NewElGroup==Group_of_Tokens.BooleanOperation)
+                    {
+                        if ((NewElement as Boolean_operation).get_group_of_token() == BooleanSymbol_ID.Equality)
+                        {
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.AfterVarDefEquality;
+                        }
+                        else
+                        {
+                            String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                        }
+                    }
+                    break;
+
                 case Rules_Statement.FuncCallBegin:
                     if (NewElGroup == Group_of_Tokens.Function)
                     {
@@ -93,8 +135,9 @@ namespace Parsers
                             return false;
                         else
                         {
+                            BoperationsInProgress++;
                             String_Translate_Stack.Push(NewElement);
-                            Magazine_state = Rules_Statement.FormLogicalExpression;
+                            Magazine_state = Rules_Statement.AfterBoolOperation;
                             return true;
                         }
                     }
@@ -105,7 +148,7 @@ namespace Parsers
                     {
                         case Group_of_Tokens.Digit: //Если число
                             String_Translate_Stack.Push(NewElement);
-                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression));
+                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression,Inst=>((Inst.Count>0)&&(Inst.Peek().Token_Group!=Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation)));
                             Magazine_state = Rules_Statement.AfterArifmExpr;
                             return true;
                         case Group_of_Tokens.Delimeter: //Если разделитель
@@ -142,6 +185,32 @@ namespace Parsers
                             return false;
                     }
                     break;
+                case Rules_Statement.AfterBoolOperation: //Состояние анализа после boolean операции, для перехода на линейку создания удобочитаемого логического выражения 19
+                    
+                    switch (NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.WhichNextDigit;
+                            return true;
+                        case Group_of_Tokens.Delimeter:
+                            if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
+                            {
+                                String_Translate_Stack.Push(NewElement);
+                                Magazine_state = Rules_Statement.LBracketDigit;
+                                return true;
+                            }
+                            else return false;
+                        case Group_of_Tokens.Function:
+                            break;
+                        case Group_of_Tokens.Name:
+                            break;
+                    }
+                    break;
+
+                case Rules_Statement.CastBooleanExpression:
+
+                    break;
                 case Rules_Statement.DigitInStr:  //Состояние начала Digit внутри уже начавшейся строки 3
                     break;
                 case Rules_Statement.FuncCallInStr: //Состояние начала FuncCall внутри уже начавшейся строки 12
@@ -155,8 +224,7 @@ namespace Parsers
                             break;
                     }
                     break;
-                case Rules_Statement.FormLogicalExpression: //Состояние формирующее LogicalExpression по возможности 7
-                    break;
+                
                 case Rules_Statement.LBracketDigit:
                     switch(NewElGroup)
                     {
@@ -177,9 +245,16 @@ namespace Parsers
                     }
                     break;
                 case Rules_Statement.AfterArifmExpr:
-                    if ((NewElGroup == Group_of_Tokens.Ariphmetical)||(NewElGroup==Group_of_Tokens.BooleanOperation))
+                    if (NewElGroup == Group_of_Tokens.Ariphmetical)
                         goto case Rules_Statement.WhichNextDigit;
-                    else if (NewElGroup==Group_of_Tokens.Delimeter)
+                    else if (NewElGroup == Group_of_Tokens.BooleanOperation)
+                        if (BoperationsInProgress > 0)
+                            goto case Rules_Statement.CastBooleanExpression;
+                        else
+                        {
+                            goto case Rules_Statement.WhichNextDigit;
+                        }
+                    else if (NewElGroup == Group_of_Tokens.Delimeter)
                     {
                         if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Semicolon)
                         {
@@ -188,7 +263,7 @@ namespace Parsers
                         }
                         else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Equality)
                             goto case Rules_Statement.Equality;
-                        else if((NewElement as Delimeter).DelimeterID==Delimeters_ID.RBracket)
+                        else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.RBracket)
                         {
                             CastBrackets();
                             Magazine_state = Rules_Statement.AfterArifmExpr;
@@ -292,7 +367,7 @@ namespace Parsers
                     if (NewElGroup==Group_of_Tokens.Digit)
                     {
                         String_Translate_Stack.Push(NewElement);
-                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression));
+                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation)));
                         Magazine_state = Rules_Statement.WhichNextDigitArgs;
                         return true;
                     }
@@ -344,7 +419,7 @@ namespace Parsers
                     if (TypeConnection.GetDelegateMethodType() == 1)
                     {
                         String_Translate_Stack.Push(Build_magazine_storage.Last());
-                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression));
+                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation)));
                         Comma_counter -= TypeConnection.Args.Count;
                         Magazine_state = Rules_Statement.WhichNextDigitArgs;
                     }
@@ -411,19 +486,22 @@ namespace Parsers
             //Дальше выполняется создание необходимого выражения в зависимости от символа.
             if (Temp.Token_Group == Group_of_Tokens.BooleanOperation)
             {
-                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Logical_expression));
+                //Expr_creator.Push(String_Translate_Stack.Pop());
+                //Expr_creator.Push(String_Translate_Stack.Pop());
+                //String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Logical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)));
+                String_Translate_Stack.Push(Expr_creator.Pop());
                 return true;
             }
             else if (Temp.Token_Group == Group_of_Tokens.Ariphmetical)
             {
                 Expr_creator.Push(String_Translate_Stack.Pop());
                 Expr_creator.Push(String_Translate_Stack.Pop());
-                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression));
+                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation)));
                 return true;
             }
             else
             {
-                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Err));
+                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Err, Inst=>(Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)));
                 return false;
             }       
         }
@@ -443,7 +521,7 @@ namespace Parsers
         }
         public Builder()
         {
-            Magazine_state = Rules_Statement.FuncCallBegin; //Test Condition
+            Magazine_state = Rules_Statement.BeginDigit; //Test Condition
         }
     }
 
@@ -662,7 +740,7 @@ namespace Parsers
                         return (Tester);
                     }
                     else
-                        return null;
+                        return new Token(inStr, space_resulter, Group_of_Tokens.Name, RowCount, FValue, SValue);
                 case PreTokenGroup.HSymbols: //Cлучай строки составленной из вспомогательных символов
                     if (Is_Help_Symbol(inStr, out IDer))
                         return (new HelpSymbol(inStr, space_resulter, RowCount, FValue, SValue, IDer));

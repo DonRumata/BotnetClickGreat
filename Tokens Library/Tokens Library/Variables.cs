@@ -17,10 +17,23 @@ namespace Tokens_Library
             Type_Var_Data = InType;
         }
 
-        public Variable(Expression InValue)
+        public Variable(Stack<Token> InStack)
         {
-            RPNValue = InValue;
-            Type_Var_Data = new Typecial();
+            if (InStack.Peek().Token_Group!=Group_of_Tokens.Asignment)
+            {
+                RPNValue = InStack.Pop();
+            }
+            else
+            {
+                RPNValue = null;
+            }
+            InStack.Pop();
+            Data = InStack.Peek().Data;
+            Token_Group = Group_of_Tokens.Variable;
+            Row = InStack.Peek().Row;
+            InStack.Pop();
+            Type_Var_Data = new Typecial(InStack.Peek());
+            Range = new Tuple<int, int>(InStack.Peek().Range.Item1, RPNValue.Range.Item2);
         }
 
         public Variable()

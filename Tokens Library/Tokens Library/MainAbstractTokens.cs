@@ -21,8 +21,43 @@ namespace Tokens_Library
 
     public class Typecial
     {
-        protected string Type_Name;
-        protected ETypeTable Type_ID;
+        protected string Type_Name { get; }
+        public ETypeTable Type_ID { get; private set; }
+
+        public Typecial(string Type_name)
+        {
+            Type_Name = Type_name.ToLower();
+            Type_ID = GetETypeFromString(Type_Name);
+        }
+
+        public Typecial(Token InTok)
+        {
+            Type_Name = InTok.Data.ToLower();
+            Type_ID = GetETypeFromString(Type_Name);
+        }
+
+        private ETypeTable GetETypeFromString(string Name)
+        {
+            switch (Name)
+            {
+                case "int":
+                    return ETypeTable.Int;
+                case "float":
+                    return ETypeTable.Float;
+                case "double":
+                    return ETypeTable.Double;
+                case "point":
+                    return ETypeTable.Point;
+                case "char":
+                    return ETypeTable.Char;
+                case "string":
+                    return ETypeTable.String;
+                case "picture":
+                    return ETypeTable.Picture;
+                default:
+                    return ETypeTable.NULL;
+            }
+        }
 
         public ETypeTable Get_type()
         {
@@ -47,6 +82,8 @@ namespace Tokens_Library
         Function = 8,
         Type_Definition = 9,
         AriphmeticalExpression = 10,
+        Variable=11,
+        Asignment=12,
         NoN = 0,
     }
 
