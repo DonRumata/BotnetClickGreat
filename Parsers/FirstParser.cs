@@ -40,7 +40,14 @@ namespace Parsers
         TypeDefinitionBegin=22,
         MustBeNameVarDefinition=23,
         AfterVarDefinition=24,
-        AfterVarDefEquality=25,     
+        AfterVarDefEquality=25,
+        FuncDefinitionBegin=26,
+        FuncDefinitionFuncName=27,
+        LBracketFuncDefinition=28,
+        FuncDefinitionArgNameDefinition=29,
+        FuncDefinitionEqualityArgsDef=30,
+        FuncDefinitionArgTypeDefinition=31,
+        BodyFuncStarting=32,
     }
     public enum Which_builder
     {
@@ -55,13 +62,16 @@ namespace Parsers
         private Stack<Token> String_Translate_Stack=new Stack<Token>();
         int Comma_counter = 0;
         Token Stack_statement=null;
+        private int BoperationsInProgress = 0;
+        private bool VarDefinitionInProgress = false;
+        private bool FunctionBodyInProgress = false;
+
 
         public bool Rule_check(Token NewElement)
         {
             Token Resulter;
             int BracketCounter=0;
             int HInt = 0;
-            int BoperationsInProgress = 0;
             dynamic Changer;
             Group_of_Tokens NewElGroup = NewElement.Token_Group;
             switch (Magazine_state)
@@ -70,12 +80,92 @@ namespace Parsers
                 case Rules_Statement.IfConstructionFounded:
                     break;
 
-                case Rules_Statement.TypeDefinitionBegin:
+                case Rules_Statement.FuncDefinitionBegin:  //Положение в котором строка начинается со слова Function
+                    String_Translate_Stack.Push(NewElement);
+                    Magazine_state = Rules_Statement.FuncDefinitionFuncName;
+                    break;
+
+                case Rules_Statement.FuncDefinitionFuncName:
+                    if (NewElGroup == Group_of_Tokens.Name)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.LBracketFuncDefinition;
+                        return true;
+                    }
+                    else return false;
+
+                case Rules_Statement.LBracketFuncDefinition:
+                    if (NewElGroup == Group_of_Tokens.Delimeter)
+                        if ((NewElement as Delimeter).get_group_of_token() == Delimeters_ID.LBracket)
+                        {
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.FuncDefinitionArgTypeDefinition;
+                            return true;
+                        }
+                        else return false;
+                    else return false;
+
+                case Rules_Statement.FuncDefinitionArgTypeDefinition:
+                    if (NewElGroup == Group_of_Tokens.Type_Definition)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.FuncDefinitionArgNameDefinition;
+                        return true;
+                    }
+                    else  if (NewElGroup==Group_of_Tokens.Delimeter)
+                    {
+                        if ((NewElement as Delimeter).get_group_of_token() == Delimeters_ID.RBracket)
+                        {
+                            String_Translate_Stack.Push(new User_Function(String_Translate_Stack));
+                            Magazine_state = Rules_Statement.BodyFuncStarting;
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                    else return false;
+
+                case Rules_Statement.BodyFuncStarting:
+                    if (NewElGroup == Group_of_Tokens.Delimeter)
+                        if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBrace)
+                        {
+                            Magazine_state = Rules_Statement.DefaultInStr;
+                            FunctionBodyInProgress = true;
+                            return true;
+                        }
+                        else return false;
+                    else return false;
+
+                case Rules_Statement.FuncDefinitionArgNameDefinition:
+                    if (NewElGroup == Group_of_Tokens.Name)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.FuncDefinitionEqualityArgsDef;
+                        return true;
+                    }
+                    else return false;
+
+                case Rules_Statement.FuncDefinitionEqualityArgsDef:
+                    if (NewElGroup==Group_of_Tokens.Assignment)
+                    {
+
+                    }
+                    else if (NewElGroup==Group_of_Tokens.Help_symbol)
+                    {
+                        if ((NewElement as HelpSymbol).get_group_of_token()==Help_SymbolsID.Comma)
+                        {
+                            String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                            Magazine_state = Rules_Statement.FuncDefinitionArgTypeDefinition;
+                        }
+                    }
+                    break;
+
+                case Rules_Statement.TypeDefinitionBegin:  //Положение в котором строка начинается с имени типа(Type Definition).
                     String_Translate_Stack.Push(NewElement);
                     Magazine_state = Rules_Statement.MustBeNameVarDefinition;
                     return true;
 
-                case Rules_Statement.MustBeNameVarDefinition:
+                case Rules_Statement.MustBeNameVarDefinition:  //Положение в котором должно быть объявлено имя переменной
                     if (NewElGroup == Group_of_Tokens.Name)
                     {
                         String_Translate_Stack.Push(NewElement);
@@ -85,20 +175,49 @@ namespace Parsers
                     else
                         return false;
 
-                case Rules_Statement.AfterVarDefinition:
-                    if (NewElGroup==Group_of_Tokens.BooleanOperation)
+                case Rules_Statement.AfterVarDefinition: //Положение после объявления имени переменной.
+                    if (NewElGroup == Group_of_Tokens.Assignment) //Если дальше идет присваивание, то он сохраняет строку для дальнейшей свертки.
                     {
                         if ((NewElement as Boolean_operation).get_group_of_token() == BooleanSymbol_ID.Equality)
                         {
                             String_Translate_Stack.Push(NewElement);
                             Magazine_state = Rules_Statement.AfterVarDefEquality;
+                            return true;
                         }
-                        else
+                        else  //Если присваивания не идет, то формирует новую переменную из текущей строки, и переходит на состояние завершение строки.
                         {
                             String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                            Magazine_state = Rules_Statement.EndOfString;
+                            return true;
                         }
                     }
-                    break;
+                    else
+                        return false;
+
+                case Rules_Statement.AfterVarDefEquality:
+                    if (NewElGroup == Group_of_Tokens.Digit)
+                        goto case Rules_Statement.BeginDigit;
+                    else if (NewElGroup == Group_of_Tokens.Function)
+                        goto case Rules_Statement.FuncCallBegin;
+                    else if (NewElGroup == Group_of_Tokens.Delimeter)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.LBracketDigit;
+                        return true;
+                    }
+                    else if (NewElGroup == Group_of_Tokens.Variable)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                        Magazine_state = Rules_Statement.EndOfString;
+                        return true;
+                    }
+                    else if (NewElGroup == Group_of_Tokens.Name)
+                    {
+                        break;
+                    }
+                    else
+                        return false;
 
                 case Rules_Statement.FuncCallBegin:
                     if (NewElGroup == Group_of_Tokens.Function)

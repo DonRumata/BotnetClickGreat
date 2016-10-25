@@ -83,7 +83,7 @@ namespace Tokens_Library
         Type_Definition = 9,
         AriphmeticalExpression = 10,
         Variable=11,
-        Asignment=12,
+        Assignment=12,
         NoN = 0,
     }
 

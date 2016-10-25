@@ -63,14 +63,37 @@ namespace Tokens_Library
         }
     }
 
-    public sealed class User_Function<T>:AnyFunction where T:class 
+    public sealed class User_Function:AnyFunction
     {
         private List<Token> Function_code=null;
+        private Typecial ReturnTypeCode;
 
-        public T Interpretate(HashSet<Variable> Input_args)
+        public User_Function(Stack<Token> InStack)
         {
-            T result = default(T);
-            return result;
+            Args = new List<Variable>();
+            Token Named = InStack.Pop();
+            Range = new Tuple<int, int>(default, Named.Range.Item2);
+            while (Named.Token_Group==Group_of_Tokens.Variable)
+            {
+                Args.Add(Named as Variable);
+                Named = InStack.Pop();
+            }
+            InStack.Pop();
+            Data = InStack.Peek().Data;
+            Row = InStack.Pop().Row;
+            ReturnTypeCode = new Typecial(InStack.Pop());
+            Range = new Tuple<int, int>(InStack.Pop().Range.Item1, Range.Item2);
+            Function_code = new List<Token>();
+        }
+
+        public void AddNewFunctionBodyString(Token NewStringIn)
+        {
+            Function_code.Add(NewStringIn);
+        }
+
+        public dynamic Interpretate()
+        {
+            return 0;
         }
         public override void ReCreateToken(string NData, bool NSpace, Group_of_Tokens NGroup, int NRow, int NFRange, int NSRange)
         {

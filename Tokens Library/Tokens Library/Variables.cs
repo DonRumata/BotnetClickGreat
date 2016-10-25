@@ -19,7 +19,7 @@ namespace Tokens_Library
 
         public Variable(Stack<Token> InStack)
         {
-            if (InStack.Peek().Token_Group!=Group_of_Tokens.Asignment)
+            if (InStack.Peek().Token_Group!=Group_of_Tokens.Assignment)
             {
                 RPNValue = InStack.Pop();
             }
