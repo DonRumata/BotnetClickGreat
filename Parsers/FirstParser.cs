@@ -18,7 +18,6 @@ namespace Parsers
         DigitFormError=0,
         BeginDigit=1,
         WhichNextDigit =2,
-        DigitInStr=3,
         DigitLogicalNext=4,
         DigitAriphmeticalNext=5,
         FormAriphmExpression=6,
@@ -27,7 +26,6 @@ namespace Parsers
         LBracketDigit = 9,
         Cast = 10,
         FuncCallBegin =11,
-        FuncCallInStr=12,
         EndOfString=13,
         Equality=14,
         FuncNameFounded=15,
@@ -48,6 +46,8 @@ namespace Parsers
         FuncDefinitionEqualityArgsDef=30,
         FuncDefinitionArgTypeDefinition=31,
         BodyFuncStarting=32,
+        LBracketAfterIFConstruction=33,
+        DefaultInIFConstruction=34,
     }
     public enum Which_builder
     {
@@ -61,6 +61,7 @@ namespace Parsers
         private List<Token> Strange_names=new List<Token>();
         private Stack<Token> String_Translate_Stack=new Stack<Token>();
         int Comma_counter = 0;
+        private int BracketCounter = 0;
         Token Stack_statement=null;
         private int BoperationsInProgress = 0;
         private bool VarDefinitionInProgress = false;
@@ -70,7 +71,6 @@ namespace Parsers
         public bool Rule_check(Token NewElement)
         {
             Token Resulter;
-            int BracketCounter=0;
             int HInt = 0;
             dynamic Changer;
             Group_of_Tokens NewElGroup = NewElement.Token_Group;
@@ -78,14 +78,57 @@ namespace Parsers
             {
 
                 case Rules_Statement.IfConstructionFounded:
+                    String_Translate_Stack.Push(NewElement);
+                    Magazine_state = Rules_Statement.LBracketAfterIFConstruction;
+                    return true;
+
+                case Rules_Statement.LBracketAfterIFConstruction:
+                    if (NewElGroup == Group_of_Tokens.Delimeter)
+                        if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
+                        {
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.DefaultInIFConstruction;
+                            return true;
+                        }
+                        else return false;
+                    else return false;
+
+                case Rules_Statement.DefaultInIFConstruction:
+                    switch(NewElGroup)
+                    {
+                        case Group_of_Tokens.Digit:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.WhichNextDigit;
+                            break;
+                        case Group_of_Tokens.Function:
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Magazine_state = Rules_Statement.FuncNameFounded;
+                            break;
+                        case Group_of_Tokens.Variable:
+                            String_Translate_Stack.Push(NewElement);
+                            break;
+                        case Group_of_Tokens.Name:
+                            break;
+                        case Group_of_Tokens.Delimeter:
+                            if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
+                            {
+                                String_Translate_Stack.Push(NewElement);
+                                Magazine_state = Rules_Statement.LBracketDigit;
+                                return true;
+                            }
+                            else return false;
+                        default: return false;
+                    }
+
                     break;
 
                 case Rules_Statement.FuncDefinitionBegin:  //Положение в котором строка начинается со слова Function
                     String_Translate_Stack.Push(NewElement);
                     Magazine_state = Rules_Statement.FuncDefinitionFuncName;
-                    break;
+                    return true;
 
-                case Rules_Statement.FuncDefinitionFuncName:
+                case Rules_Statement.FuncDefinitionFuncName: //Положение в котором ожидается имя функции
                     if (NewElGroup == Group_of_Tokens.Name)
                     {
                         String_Translate_Stack.Push(NewElement);
@@ -94,7 +137,7 @@ namespace Parsers
                     }
                     else return false;
 
-                case Rules_Statement.LBracketFuncDefinition:
+                case Rules_Statement.LBracketFuncDefinition:  //Положение, ожидающее начала ввода аргументов функции.
                     if (NewElGroup == Group_of_Tokens.Delimeter)
                         if ((NewElement as Delimeter).get_group_of_token() == Delimeters_ID.LBracket)
                         {
@@ -105,7 +148,7 @@ namespace Parsers
                         else return false;
                     else return false;
 
-                case Rules_Statement.FuncDefinitionArgTypeDefinition:
+                case Rules_Statement.FuncDefinitionArgTypeDefinition:  //Положение записывающее аргументы функции и при их конце выполняющее свертку в функцию(без тела)
                     if (NewElGroup == Group_of_Tokens.Type_Definition)
                     {
                         String_Translate_Stack.Push(NewElement);
@@ -125,7 +168,7 @@ namespace Parsers
                     }
                     else return false;
 
-                case Rules_Statement.BodyFuncStarting:
+                case Rules_Statement.BodyFuncStarting:  //Положение в котором начинается трансляция тела функции, дальнейший код в фигурных скобках будет записываться в тело ранее объявленной функции
                     if (NewElGroup == Group_of_Tokens.Delimeter)
                         if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBrace)
                         {
@@ -136,7 +179,7 @@ namespace Parsers
                         else return false;
                     else return false;
 
-                case Rules_Statement.FuncDefinitionArgNameDefinition:
+                case Rules_Statement.FuncDefinitionArgNameDefinition:  //Положение объявления имени аргумента при объявлении функции.
                     if (NewElGroup == Group_of_Tokens.Name)
                     {
                         String_Translate_Stack.Push(NewElement);
@@ -145,7 +188,7 @@ namespace Parsers
                     }
                     else return false;
 
-                case Rules_Statement.FuncDefinitionEqualityArgsDef:
+                case Rules_Statement.FuncDefinitionEqualityArgsDef:  //Положение для перехода на начало задание default значения аргумента, или записи аргумента без default значения.
                     if (NewElGroup==Group_of_Tokens.Assignment)
                     {
 
@@ -293,9 +336,7 @@ namespace Parsers
                                 ;
                                 break;
                         case Group_of_Tokens.Function: //Если функция
-                            Stack_To_list();
-                            String_Translate_Stack.Push(NewElement);
-                            Magazine_state = Rules_Statement.FuncCallInStr;
+                            Magazine_state = Rules_Statement.FuncCallBegin;
                             return true;
                         case Group_of_Tokens.Name: //Если неизвестное имя
                             Strange_names.Add(NewElement);
@@ -328,21 +369,7 @@ namespace Parsers
                     break;
 
                 case Rules_Statement.CastBooleanExpression:
-
-                    break;
-                case Rules_Statement.DigitInStr:  //Состояние начала Digit внутри уже начавшейся строки 3
-                    break;
-                case Rules_Statement.FuncCallInStr: //Состояние начала FuncCall внутри уже начавшейся строки 12
-                    switch(NewElGroup)
-                    {
-                        case Group_of_Tokens.Digit:
-                            break;
-                        case Group_of_Tokens.Function:
-                            break;
-                        case Group_of_Tokens.Name:
-                            break;
-                    }
-                    break;
+                    //break;
                 
                 case Rules_Statement.LBracketDigit:
                     switch(NewElGroup)
@@ -350,9 +377,12 @@ namespace Parsers
                         case Group_of_Tokens.Digit:
                             String_Translate_Stack.Push(NewElement);
                             Magazine_state = Rules_Statement.WhichNextDigit;
-                            break;
+                            return true;
                         case Group_of_Tokens.Function:
-                            break;
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Magazine_state = Rules_Statement.FuncNameFounded;
+                            return true;
                         case Group_of_Tokens.Name:
                             break;
                     }
@@ -391,15 +421,27 @@ namespace Parsers
                     
                     break;
                 case Rules_Statement.Default:
-                    switch (NewElGroup)
+                    if (NewElGroup == Group_of_Tokens.Digit)
+                        goto case Rules_Statement.BeginDigit;
+                    else if (NewElGroup == Group_of_Tokens.Function)
+                        goto case Rules_Statement.FuncCallBegin;
+                    else if (NewElGroup == Group_of_Tokens.Construction)
                     {
-                        case Group_of_Tokens.Digit:
-                            break;
-                        case Group_of_Tokens.Function:
-                            break;
-                        case Group_of_Tokens.Construction:
-                            break;
+                        if (NewElement.GetID_of_Construction() == Constructions_ID.Function)
+                            goto case Rules_Statement.FuncDefinitionBegin;
+                        else if (NewElement.GetID_of_Construction() == Constructions_ID.If)
+                            goto case Rules_Statement.IfConstructionFounded;
+                        else if (NewElement.GetID_of_Construction() == Constructions_ID.While)
+                            ;
+                        else return false;
                     }
+                    else if (NewElGroup == Group_of_Tokens.Type_Definition)
+                        goto case Rules_Statement.TypeDefinitionBegin;
+                    else if (NewElGroup == Group_of_Tokens.Variable)
+                        ;
+                    else if (NewElGroup == Group_of_Tokens.Name)
+                        ;
+                    else return false;
                     break;
                 case Rules_Statement.EndOfString:
                     Build_magazine_storage.Clear();
@@ -640,7 +682,7 @@ namespace Parsers
         }
         public Builder()
         {
-            Magazine_state = Rules_Statement.BeginDigit; //Test Condition
+            Magazine_state = Rules_Statement.Default; //Test Condition
         }
     }
 

@@ -87,6 +87,8 @@ namespace Tokens_Library
         NoN = 0,
     }
 
+    
+
     public class Token
     {
         public Tuple<int, int> Range { get; protected set; } //расположение предтокена в строке (номер первого символа, номер последнего символа)
@@ -129,6 +131,23 @@ namespace Tokens_Library
             Range = new Tuple<int, int>(Range.Item1, In_list.Last().Range.Item2);
             Token_Group = New_Token_Group;
             return this;
+        }
+
+        public Constructions_ID GetID_of_Construction()
+        {
+            if (Token_Group == Group_of_Tokens.Construction)
+            {
+                switch (Data.ToLower())
+                {
+                    case "function": return Constructions_ID.Function;
+                    case "if": return Constructions_ID.If;
+                    case "for": return Constructions_ID.For;
+                    case "while": return Constructions_ID.While;
+                    case "repeat": return Constructions_ID.Repeat;
+                    default: return Constructions_ID.NoN;
+                }
+            }
+            else return Constructions_ID.NoN;
         }
     }
     

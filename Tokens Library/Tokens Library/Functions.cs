@@ -72,7 +72,7 @@ namespace Tokens_Library
         {
             Args = new List<Variable>();
             Token Named = InStack.Pop();
-            Range = new Tuple<int, int>(default, Named.Range.Item2);
+            Range = new Tuple<int, int>(-1, Named.Range.Item2);
             while (Named.Token_Group==Group_of_Tokens.Variable)
             {
                 Args.Add(Named as Variable);

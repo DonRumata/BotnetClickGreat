@@ -7,6 +7,16 @@ using System.Threading.Tasks;
 namespace Tokens_Library
 {
 
+    public enum Constructions_ID
+    {
+        Function = 1,
+        If = 2,
+        While = 3,
+        For = 4,
+        Repeat = 5,
+        NoN = 0,
+    }
+
     public enum AriphmeticalSymbol_ID //Обозначения для арифметических символов
     {
         Plus = 1,
