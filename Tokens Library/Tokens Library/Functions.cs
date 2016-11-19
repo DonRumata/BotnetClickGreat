@@ -63,6 +63,22 @@ namespace Tokens_Library
         }
     }
 
+    public class ComparerForArgVar:IEqualityComparer<Variable>
+    {
+        public bool Equals(Variable obj1, Variable obj2)
+        {
+            if (obj1.Data == obj2.Data)
+                return true;
+            else
+                return false;
+        }
+
+        public int GetHashCode(Variable obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
     public sealed class User_Function:AnyFunction
     {
         private List<Token> Function_code=null;
@@ -78,7 +94,7 @@ namespace Tokens_Library
                 Args.Add(Named as Variable);
                 Named = InStack.Pop();
             }
-            InStack.Pop();
+            Args.Reverse();
             Data = InStack.Peek().Data;
             Row = InStack.Pop().Row;
             ReturnTypeCode = new Typecial(InStack.Pop());
@@ -89,6 +105,46 @@ namespace Tokens_Library
         public void AddNewFunctionBodyString(Token NewStringIn)
         {
             Function_code.Add(NewStringIn);
+        }
+
+        public bool IsArgsContains(string Name,out Variable VarTypeName)
+        {
+            int i = 0;
+            VarTypeName = null;
+            while (i!=Args.Count)
+            {
+                if (Args[i].Data == Name)
+                {
+                    VarTypeName = Args[i];
+                    return true;
+                }
+                else
+                    i++;
+            }
+            return false;
+        }
+
+        public bool AddMethodToArgument(string ArgName, Token InValue, bool whichMethod)
+        {
+            int i = -1;
+            i=Args.FindIndex(argspred => argspred.Data == ArgName);
+            Args[i].AddMethodToQueue(whichMethod, InValue);
+        }
+
+        public Token IsArgsContains(string Name)
+        {
+           return Args.Find(argspis => argspis.Data == Name); 
+        }
+
+        public bool AddLocalArgument(Variable NewArgIn)
+        {
+            if (Args.Contains(NewArgIn, new ComparerForArgVar()))
+                return false;
+            else
+            {
+                Args.Add(NewArgIn);
+                return true;
+            }
         }
 
         public dynamic Interpretate()
