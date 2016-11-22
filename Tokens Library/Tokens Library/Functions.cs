@@ -128,7 +128,13 @@ namespace Tokens_Library
         {
             int i = -1;
             i=Args.FindIndex(argspred => argspred.Data == ArgName);
-            Args[i].AddMethodToQueue(whichMethod, InValue);
+            if (i != -1)
+            {
+                Args[i].AddMethodToQueue(whichMethod, InValue);
+                return true;
+            }
+            else
+                return false;
         }
 
         public Token IsArgsContains(string Name)

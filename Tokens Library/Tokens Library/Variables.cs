@@ -35,6 +35,10 @@ namespace Tokens_Library
 
         public void AddMethodToQueue(bool WhichOne, Token InsideArgument)
         {
+            if (CallQueue==null)
+            {
+                CallQueue = new Queue<VariableMethods>();
+            }
             if (WhichOne) //Get Method
             {
                 CallQueue.Enqueue(new VariableMethods(new Func<Token>(GetValueRPN), null));
