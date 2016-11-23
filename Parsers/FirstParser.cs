@@ -18,6 +18,7 @@ namespace Parsers
         DigitFormError=0,
         BeginDigit=1,
         WhichNextDigit =2,
+        FuncDefinitionReturnTypeDefinition=3,
         DigitLogicalNext=4,
         DigitAriphmeticalNext=5,
         FormAriphmExpression=6,
@@ -48,6 +49,9 @@ namespace Parsers
         BodyFuncStarting=32,
         LBracketAfterIFConstruction=33,
         DefaultInIFConstruction=34,
+        LBracketDefaultInStr=35,
+        VarCallFounded=36,
+        AfterVarGet=37,
     }
     public enum Which_builder
     {
@@ -60,12 +64,41 @@ namespace Parsers
         private List<Token> Build_magazine_storage=new List<Token>();
         private List<Token> Strange_names=new List<Token>();
         private Stack<Token> String_Translate_Stack=new Stack<Token>();
+        private Stack<Token> VariableCallStack = new Stack<Token>();
+        private List<Token> TranslateCode = new List<Token>();
         int Comma_counter = 0;
         private int BracketCounter = 0;
-        Token Stack_statement=null;
+        private int VarAssignmentInProgress = 0;
+        private Variable VarCallInProgress = null;
         private int BoperationsInProgress = 0;
         private bool VarDefinitionInProgress = false;
-        private bool FunctionBodyInProgress = false;
+        private User_Function FunctionBodyInProgress = null;
+        private bool IFConstructionInProgress = false;
+        private Rules_Statement WhichStateDefaultForBack;
+        private int IfBodyProgression = 0;
+        private If_Condition_construction NowBodyInProgression = null;
+
+        private bool AddMethodToQueue_OfVariable(string VarName, bool WhichOneMethod, Token AnyExpression)
+        {
+            if (FunctionBodyInProgress!=null)
+            {
+                return FunctionBodyInProgress.AddMethodToArgument(VarName, AnyExpression, WhichOneMethod);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public Token CheckArgLocalName(string CheckName)
+        {
+            if ((FunctionBodyInProgress!=null))
+            {
+                return FunctionBodyInProgress.IsArgsContains(CheckName);
+            }
+            else
+                return null;
+        }
 
 
         public bool Rule_check(Token NewElement)
@@ -86,12 +119,93 @@ namespace Parsers
                     if (NewElGroup == Group_of_Tokens.Delimeter)
                         if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
                         {
+                            BracketCounter++;
                             String_Translate_Stack.Push(NewElement);
                             Magazine_state = Rules_Statement.DefaultInIFConstruction;
                             return true;
                         }
                         else return false;
                     else return false;
+
+                case Rules_Statement.VarCallFounded:
+                    if (NewElGroup==Group_of_Tokens.Assignment)
+                    {
+                        VariableCallStack.Push(NewElement);
+                        VarAssignmentInProgress++;
+                        VarCallInProgress = NewElement as Variable;
+                        Magazine_state = Rules_Statement.DefaultInStr;
+                    }
+                    else
+                    {
+                        Token TempValue=String_Translate_Stack.Pop();
+                        String_Translate_Stack.Push(new Token(TempValue, Group_of_Tokens.VariableMethodCall));
+                        AddMethodToQueue_OfVariable(String_Translate_Stack.Peek().Data, true, null);
+                        switch (NewElGroup)
+                        {
+                            case Group_of_Tokens.Ariphmetical:
+                                String_Translate_Stack.Push(NewElement);
+                                Magazine_state = Rules_Statement.FormAriphmExpression;
+                                return true;
+                            case Group_of_Tokens.BooleanOperation:
+                                String_Translate_Stack.Push(NewElement);
+                                Magazine_state = Rules_Statement.AfterBoolOperation;
+                                return true;
+                            case Group_of_Tokens.Delimeter:
+                                if ((NewElement as Delimeter).DelimeterID==Delimeters_ID.LBracket)
+                                {
+                                    
+                                }
+                                else if(((NewElement as Delimeter).DelimeterID==Delimeters_ID.RBracket)&&(BracketCounter>0))
+                                {
+                                    CastBrackets(false);
+                                    if ((IFConstructionInProgress) && (BracketCounter != 0))
+                                        Magazine_state = Rules_Statement.AfterArifmExpr;
+                                    else
+                                        Magazine_state = Rules_Statement.EndOfString;
+                                }
+                                break;
+                        }
+                        Magazine_state=Rules_Statement.AfterVarGet;
+                    }
+                    break;
+
+                case Rules_Statement.AfterVarGet:
+                    if (NewElGroup == Group_of_Tokens.Ariphmetical)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.AfterArifmExpr;
+                    }
+                    else if (NewElGroup==Group_of_Tokens.BooleanOperation)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.AfterBoolOperation;
+                    }
+                    else if(NewElGroup==Group_of_Tokens.Delimeter)
+                    {
+                        if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
+                        {
+
+                        }
+                        else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.RBracket)
+                        {
+                            CastBrackets(false);
+                            if (IFConstructionInProgress)
+                                if (BracketCounter > 0)
+                                {
+                                    Magazine_state = Rules_Statement.DefaultInIFConstruction;
+                                    return true;
+                                }
+                                else Magazine_state = Rules_Statement.EndOfString;
+                            else
+                            {
+                                Magazine_state = Rules_Statement.AfterArifmExpr;
+                                return true;
+                            }
+                        }
+                    }
+
+                    break;
+
 
                 case Rules_Statement.DefaultInIFConstruction:
                     switch(NewElGroup)
@@ -107,13 +221,16 @@ namespace Parsers
                             break;
                         case Group_of_Tokens.Variable:
                             String_Translate_Stack.Push(NewElement);
-                            break;
+                            Magazine_state = Rules_Statement.VarCallFounded;
+                            return true;
                         case Group_of_Tokens.Name:
+
                             break;
                         case Group_of_Tokens.Delimeter:
                             if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
                             {
                                 String_Translate_Stack.Push(NewElement);
+                                BracketCounter++;
                                 Magazine_state = Rules_Statement.LBracketDigit;
                                 return true;
                             }
@@ -125,8 +242,17 @@ namespace Parsers
 
                 case Rules_Statement.FuncDefinitionBegin:  //Положение в котором строка начинается со слова Function
                     String_Translate_Stack.Push(NewElement);
-                    Magazine_state = Rules_Statement.FuncDefinitionFuncName;
+                    Magazine_state = Rules_Statement.FuncDefinitionReturnTypeDefinition;
                     return true;
+
+                case Rules_Statement.FuncDefinitionReturnTypeDefinition:
+                    if (NewElGroup == Group_of_Tokens.Type_Definition)
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.FuncDefinitionFuncName;
+                        return true;
+                    }
+                    else return false;
 
                 case Rules_Statement.FuncDefinitionFuncName: //Положение в котором ожидается имя функции
                     if (NewElGroup == Group_of_Tokens.Name)
@@ -173,11 +299,17 @@ namespace Parsers
                         if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBrace)
                         {
                             Magazine_state = Rules_Statement.DefaultInStr;
-                            FunctionBodyInProgress = true;
+                            FunctionBodyInProgress = String_Translate_Stack.Peek() as User_Function;
                             return true;
                         }
                         else return false;
-                    else return false;
+                    else if (NewElGroup == Group_of_Tokens.EndOfString)
+                        if (NewElement.Data==";")
+                            return false;
+                        else
+                            return true;
+                    else
+                        return false;
 
                 case Rules_Statement.FuncDefinitionArgNameDefinition:  //Положение объявления имени аргумента при объявлении функции.
                     if (NewElGroup == Group_of_Tokens.Name)
@@ -201,6 +333,15 @@ namespace Parsers
                             Magazine_state = Rules_Statement.FuncDefinitionArgTypeDefinition;
                         }
                     }
+                    else if (NewElGroup==Group_of_Tokens.Delimeter)
+                    {
+                        if ((NewElement as Delimeter).DelimeterID==Delimeters_ID.RBracket)
+                        {
+                            String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                            String_Translate_Stack.Push(new User_Function(String_Translate_Stack));
+                            Magazine_state = Rules_Statement.BodyFuncStarting;
+                        }
+                    }
                     break;
 
                 case Rules_Statement.TypeDefinitionBegin:  //Положение в котором строка начинается с имени типа(Type Definition).
@@ -221,21 +362,25 @@ namespace Parsers
                 case Rules_Statement.AfterVarDefinition: //Положение после объявления имени переменной.
                     if (NewElGroup == Group_of_Tokens.Assignment) //Если дальше идет присваивание, то он сохраняет строку для дальнейшей свертки.
                     {
-                        if ((NewElement as Boolean_operation).get_group_of_token() == BooleanSymbol_ID.Equality)
-                        {
-                            String_Translate_Stack.Push(NewElement);
-                            Magazine_state = Rules_Statement.AfterVarDefEquality;
-                            return true;
-                        }
-                        else  //Если присваивания не идет, то формирует новую переменную из текущей строки, и переходит на состояние завершение строки.
+                        VarDefinitionInProgress = true;
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.AfterVarDefEquality;
+                        return true;
+                    }
+                    else if (NewElGroup == Group_of_Tokens.BooleanOperation)
+                        if ((NewElement as Boolean_operation).BooleanID == BooleanSymbol_ID.Equality)
                         {
                             String_Translate_Stack.Push(new Variable(String_Translate_Stack));
-                            Magazine_state = Rules_Statement.EndOfString;
+                            VarDefinitionInProgress = true;
+                            String_Translate_Stack.Push(NewElement);
                             return true;
                         }
+                        else return false;
+                    else if (NewElGroup == Group_of_Tokens.Ariphmetical)
+                    {
+                        return true;
                     }
-                    else
-                        return false;
+                    else return false;
 
                 case Rules_Statement.AfterVarDefEquality:
                     if (NewElGroup == Group_of_Tokens.Digit)
@@ -303,6 +448,17 @@ namespace Parsers
                             return true;
                         }
                     }
+                    else if (NewElGroup==Group_of_Tokens.EndOfString)
+                    {
+                        if (VarDefinitionInProgress)
+                        {
+                            /*VarDefinitionInProgress = false;
+                            String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                            Magazine_state = Rules_Statement.DefaultInStr;*/
+                            goto case Rules_Statement.EndOfString;
+                        }
+                        else return false;
+                    }
                     else
                         return false;
                 case Rules_Statement.FormAriphmExpression: //Состояние формирующее AriphmeticalExpression по возможности 6
@@ -310,7 +466,6 @@ namespace Parsers
                     {
                         case Group_of_Tokens.Digit: //Если число
                             String_Translate_Stack.Push(NewElement);
-                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression,Inst=>((Inst.Count>0)&&(Inst.Peek().Token_Group!=Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation)));
                             Magazine_state = Rules_Statement.AfterArifmExpr;
                             return true;
                         case Group_of_Tokens.Delimeter: //Если разделитель
@@ -324,7 +479,7 @@ namespace Parsers
                             }
                             else if (Changer==Delimeters_ID.RBracket)
                             {
-                                if (CastBrackets())
+                                if (CastBrackets(false))
                                 { 
                                     Magazine_state = Rules_Statement.DefaultInStr;
                                     return true;
@@ -336,8 +491,15 @@ namespace Parsers
                                 ;
                                 break;
                         case Group_of_Tokens.Function: //Если функция
-                            Magazine_state = Rules_Statement.FuncCallBegin;
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Magazine_state = Rules_Statement.FuncNameFounded;
                             return true;
+                        case Group_of_Tokens.Variable:
+                            String_Translate_Stack.Push(new Token(NewElement, Group_of_Tokens.VariableMethodCall));
+                            AddMethodToQueue_OfVariable(NewElement.Data, true, null);
+                            Magazine_state = Rules_Statement.AfterVarGet;
+                            break;
                         case Group_of_Tokens.Name: //Если неизвестное имя
                             Strange_names.Add(NewElement);
                             return false;
@@ -346,25 +508,45 @@ namespace Parsers
                     }
                     break;
                 case Rules_Statement.AfterBoolOperation: //Состояние анализа после boolean операции, для перехода на линейку создания удобочитаемого логического выражения 19
-                    
+
                     switch (NewElGroup)
                     {
-                        case Group_of_Tokens.Digit:
+                        case Group_of_Tokens.Help_symbol:
+                            break;
+                        case Group_of_Tokens.Digit: //Если число
                             String_Translate_Stack.Push(NewElement);
                             Magazine_state = Rules_Statement.WhichNextDigit;
                             return true;
-                        case Group_of_Tokens.Delimeter:
-                            if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.LBracket)
+                        case Group_of_Tokens.Delimeter: //Если разделитель
+                            Changer = (NewElement as Delimeter).get_group_of_token();
+                            if (Changer == Delimeters_ID.LBracket) //Разделитель открывающаяся скобка
                             {
                                 String_Translate_Stack.Push(NewElement);
+                                BracketCounter++;
                                 Magazine_state = Rules_Statement.LBracketDigit;
                                 return true;
                             }
+                            else if (Changer == Delimeters_ID.RBracket)
+                            {
+                                if (CastBrackets(false))
+                                {
+                                    Magazine_state = Rules_Statement.DefaultInStr;
+                                    return true;
+                                }
+                                else
+                                    return false;
+                            }
                             else return false;
-                        case Group_of_Tokens.Function:
-                            break;
-                        case Group_of_Tokens.Name:
-                            break;
+                        case Group_of_Tokens.Function: //Если функция
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Magazine_state = Rules_Statement.FuncNameFounded;
+                            return true;
+                        case Group_of_Tokens.Name: //Если неизвестное имя
+                            Strange_names.Add(NewElement);
+                            return false;
+                        default:
+                            return false;
                     }
                     break;
 
@@ -387,10 +569,81 @@ namespace Parsers
                             break;
                     }
                     break;
+
+                case Rules_Statement.LBracketDefaultInStr:
+                    break;
+
                 case Rules_Statement.DefaultInStr:
+                    dynamic InStrChanger = NewElement;
                     switch(NewElGroup)
                     {
-                        
+                        case Group_of_Tokens.Digit:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.WhichNextDigit;
+                            return true;
+
+                        case Group_of_Tokens.Function:
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Magazine_state = Rules_Statement.FuncNameFounded;
+                            return true;
+
+                        case Group_of_Tokens.EndOfString:
+                            return true;
+
+                        case Group_of_Tokens.Variable:
+                            String_Translate_Stack.Push(NewElement);
+                            break;
+
+                        case Group_of_Tokens.Name:
+
+                            break;
+                        case Group_of_Tokens.Delimeter:
+                            if (InStrChanger.DelimeterID==Delimeters_ID.LBracket)
+                            {
+                                String_Translate_Stack.Push(NewElement);
+                                BracketCounter++;
+                                Magazine_state = Rules_Statement.LBracketDefaultInStr;
+                            }
+                            else if (InStrChanger.DelimeterID==Delimeters_ID.RBrace)
+                            {
+
+                            }
+                            break;
+                        case Group_of_Tokens.Help_symbol:
+                            if (InStrChanger.SymbolID == Help_SymbolsID.Quotes)
+                            {
+
+                            }
+                            else if (InStrChanger.SymbolID == Help_SymbolsID.Apostrophe)
+                            {
+
+                            }
+                            else return false;
+                            break;
+                        case Group_of_Tokens.Construction:
+                            switch(NewElement.GetID_of_Construction())
+                            {
+                                case Constructions_ID.Function:
+                                    return false;
+                                case Constructions_ID.For:
+                                    return true;
+                                case Constructions_ID.If:
+                                    IFConstructionInProgress = true;
+                                    String_Translate_Stack.Push(NewElement);
+                                    Magazine_state = Rules_Statement.LBracketAfterIFConstruction;
+                                    return true;
+                                case Constructions_ID.Repeat:
+                                    return true;
+                                case Constructions_ID.While:
+                                    return true;
+                                default: return false;
+                            }
+                            break;
+                        case Group_of_Tokens.Type_Definition:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.MustBeNameVarDefinition;
+                            return true;
                     }
                     break;
                 case Rules_Statement.AfterArifmExpr:
@@ -405,18 +658,18 @@ namespace Parsers
                         }
                     else if (NewElGroup == Group_of_Tokens.Delimeter)
                     {
-                        if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Semicolon)
-                        {
-                            Magazine_state = Rules_Statement.EndOfString;
-                            return true;
-                        }
-                        else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Equality)
+                        if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Equality)
                             goto case Rules_Statement.Equality;
                         else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.RBracket)
                         {
-                            CastBrackets();
+                            CastBrackets(false);
                             Magazine_state = Rules_Statement.AfterArifmExpr;
                         }
+                    }
+                    else if (NewElGroup==Group_of_Tokens.EndOfString)
+                    {
+                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment)));
+                        goto case Rules_Statement.EndOfString;
                     }
                     
                     break;
@@ -443,12 +696,50 @@ namespace Parsers
                         ;
                     else return false;
                     break;
+
                 case Rules_Statement.EndOfString:
-                    Build_magazine_storage.Clear();
-                    if ((BracketCounter == 0)&&(String_Translate_Stack.Count==1))
+                    dynamic Temp;
+                    if (IFConstructionInProgress)
                     {
+                        String_Translate_Stack.Push(new If_Condition_construction(String_Translate_Stack));
+                        IFConstructionInProgress = false;
+                        IfBodyProgression++;
+                        NowBodyInProgression = String_Translate_Stack.Peek() as If_Condition_construction;
+                    }
+                    if (VarDefinitionInProgress)
+                    {
+                        if (BoperationsInProgress == 1)
+                        {
+                            BoperationsInProgress--;
+                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Logical_expression, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment)));
+                        }
+                        String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                        VarDefinitionInProgress = false;
+                    }
+                    if (FunctionBodyInProgress!=null)
+                    {
+                        if (BracketCounter == 0)
+                        {
+                            Temp = String_Translate_Stack.Pop();
+                            if (Temp.Token_Group==Group_of_Tokens.Variable)
+                            {
+                                if (!FunctionBodyInProgress.AddLocalArgument(Temp))
+                                {
+                                    return false;
+                                }
+                            }
+                            FunctionBodyInProgress.AddNewFunctionBodyString(Temp);
+                            TranslateCode.Add(String_Translate_Stack.Peek());
+                            Build_magazine_storage.Clear();
+                            Magazine_state = Rules_Statement.DefaultInStr;
+                            return true;
+                        }
+                        else return false;
+                    }
+                    else if ((BracketCounter == 0)&&(String_Translate_Stack.Count==1))
+                    {
+                        TranslateCode.Add(String_Translate_Stack.Pop());
                         String_Translate_Stack.Clear();
-                        BracketCounter = 0;
                         Magazine_state = Rules_Statement.Default;
                         return true;
                     }
@@ -523,6 +814,10 @@ namespace Parsers
                         Magazine_state = Rules_Statement.ArgsAfterAriphmetical;
                         return true;
                     }
+                    else if(NewElGroup==Group_of_Tokens.EndOfString)
+                    {
+                        goto case Rules_Statement.EndOfString;
+                    }
                     break;
                 case Rules_Statement.ArgsAfterAriphmetical:
                     if (NewElGroup==Group_of_Tokens.Digit)
@@ -545,6 +840,14 @@ namespace Parsers
                     }
             }
             return true;
+        }
+
+        private void CastFunctionDefinition()
+        {
+            while (String_Translate_Stack.Peek().Token_Group==Group_of_Tokens.Variable)
+            {
+                
+            } 
         }
 
         private int ReCountPreviousComm()
@@ -631,7 +934,21 @@ namespace Parsers
             return 1;
         }
 
-        private bool CastBrackets()
+        private void CastIFBrackets()
+        {
+            Token Temp;
+            Stack<Token> Expr_creator = new Stack<Token>();
+            Temp = String_Translate_Stack.Pop();
+            while (Temp.Data!="(")
+            {
+                Expr_creator.Push(Temp);
+                Temp = String_Translate_Stack.Pop();
+            }
+            String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment)));
+
+        }
+
+        private bool CastBrackets(bool LikeBool)
             /*Выполняет финальные/семифинальные свертки
              Запускается исключительно для сверток со скобками*/
         {
@@ -643,28 +960,23 @@ namespace Parsers
                 Expr_creator.Push(Temp);
                 Temp = String_Translate_Stack.Pop();
             }
-            Temp = String_Translate_Stack.Peek();
-            //Дальше выполняется создание необходимого выражения в зависимости от символа.
-            if (Temp.Token_Group == Group_of_Tokens.BooleanOperation)
+            if (LikeBool)
             {
-                //Expr_creator.Push(String_Translate_Stack.Pop());
-                //Expr_creator.Push(String_Translate_Stack.Pop());
-                //String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Logical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)));
-                String_Translate_Stack.Push(Expr_creator.Pop());
-                return true;
-            }
-            else if (Temp.Token_Group == Group_of_Tokens.Ariphmetical)
-            {
-                Expr_creator.Push(String_Translate_Stack.Pop());
-                Expr_creator.Push(String_Translate_Stack.Pop());
-                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation)));
                 return true;
             }
             else
             {
-                String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Err, Inst=>(Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)));
-                return false;
-            }       
+                if (Expr_creator.Count==1)
+                {
+                    String_Translate_Stack.Push(Expr_creator.Pop());
+                }
+                else
+                {
+                    String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment)));
+                }
+                BracketCounter--;
+                return true;
+            }
         }
 
         private void Stack_To_list()
@@ -698,6 +1010,7 @@ namespace Parsers
         Space = 6,
         EndOfString = 7,
         HSymbols=8,
+        Equality=9,
     }
 
     public class FirstParser
@@ -708,7 +1021,7 @@ namespace Parsers
         private List<Token> CodeStorage = null;     //Выходной код, по факту явялется выходным списком кода.
         private string Text = null;                //Базовый текст программы
         private int RowCount = 0;                 //Счетчик строк программы
-        HashSet<string> Type_definitions = new HashSet<string>() { "null", "void", "int", "float", "double", "point", "char", "string", "picture" }; //Хранит в себе зарезервированные имена типов.
+        HashSet<string> Type_definitions = new HashSet<string>() { "null", "void", "int", "float", "double", "point", "char", "string", "picture", "bool" }; //Хранит в себе зарезервированные имена типов.
         Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();//Хранит в себе имена функций
         HashSet<string> Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };  //Хранит в себе имена зарезервированных конструкций
 
@@ -741,7 +1054,12 @@ namespace Parsers
                 nowcharID = getTypeChar(nowchar);
                 switch(nowcharID)
                 {
+                    case PreTokenGroup.Equality:
+                        i= While_delegate_function(c => getTypeChar(c) == nowcharID, nowcharID, i, CodeStorage, Input_Text, RowCount, Temp2);
+                        break;
                     case PreTokenGroup.Alphabet:
+                        i = While_delegate_function(CycleCondition_forAlphabet, nowcharID, i, CodeStorage, Input_Text, RowCount, Temp2);
+                        break;
                     case PreTokenGroup.Numeric:
                     case PreTokenGroup.RuAlphabet:
                     case PreTokenGroup.Symbol:
@@ -749,7 +1067,7 @@ namespace Parsers
                         break;
                     case PreTokenGroup.EndOfString:
                         i++;
-                        CodeStorage.Add(new Delimeter(nowchar.ToString(), false, RowCount, i - 1, i, Delimeters_ID.New_string));
+                        CodeStorage.Add(new Token(nowchar.ToString(), false, Group_of_Tokens.EndOfString,RowCount,i-1,i));
                         if (!Temp2.Rule_check(CodeStorage.Last()))
                             ;
                         else
@@ -759,7 +1077,7 @@ namespace Parsers
                     case PreTokenGroup.HSymbols:
                     case PreTokenGroup.Delimeter:
                         Token Temp;
-                        if (Temp2.Rule_check(Temp = GetToken(nowchar.ToString(), nowcharID, CodeStorage.Last(), i, i)))
+                        if (Temp2.Rule_check(Temp = GetToken(nowchar.ToString(), nowcharID, CodeStorage.Last(), i, i,Temp2)))
                             CodeStorage.Add(Temp);
                         else
                             ;
@@ -769,12 +1087,18 @@ namespace Parsers
             }
         }
 
+        private bool CycleCondition_forAlphabet(char inCh)
+        {
+            if ((getTypeChar(inCh) == PreTokenGroup.Alphabet) || (getTypeChar(inCh) == PreTokenGroup.Numeric))
+                return true;
+            else return false;
+        }
+
         private int While_delegate_function(Func<char, bool> Cycle_condition, PreTokenGroup second_cycle_condition, int i_counter, List<Token> Word_list, string input_text, int row_count, Builder BldClass)
         /* Делегирует функцию, для сокращения кода похожих циклов While в коде*/
         {
             int helper_counter = i_counter;
             string Data_former = "";
-            
             Token Temp; //Test Condition
             while ((helper_counter != input_text.Length) && (Cycle_condition(input_text[helper_counter])))  //Проходит циклом по тексту и формирует строку, пока входящая функция удовлетворяет второму условию
             {
@@ -782,9 +1106,9 @@ namespace Parsers
                 helper_counter++;
             }
             if (Word_list.Count == 0)
-                Temp=(GetToken(Data_former, second_cycle_condition, null, i_counter, helper_counter - 1));
+                Temp=(GetToken(Data_former, second_cycle_condition, null, i_counter, helper_counter - 1, BldClass));
             else
-                Temp=(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1));
+                Temp=(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1,BldClass));
             if (BldClass.Rule_check(Temp))
                 Word_list.Add(Temp);//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.
             return helper_counter-1;
@@ -825,7 +1149,6 @@ namespace Parsers
                 {
                     case '+':
                     case '-':
-                    case '=':
                     case '*':
                     case '/':
                     case '&':
@@ -835,6 +1158,9 @@ namespace Parsers
                     case '^':
                     case '%':
                         return PreTokenGroup.Symbol;
+
+                    case '=':
+                        return PreTokenGroup.Equality;
                     case '\"':
                     case '\'':
                     case '(':
@@ -849,6 +1175,7 @@ namespace Parsers
                         return PreTokenGroup.Space;
                     case '\n':
                     case '\r':
+                    //case ';':
                         return PreTokenGroup.EndOfString;
                     case ',':
                     case '.':
@@ -867,7 +1194,7 @@ namespace Parsers
             return new Token();
         }
 
-        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue)
+        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue, Builder bld)
             /*Один из основных методов, определяет из входящей строки токен и создает его полную структуру
              inStr - входящая строка из которой формируется токен.
              preID - передает ID символов использованных для составления строки.
@@ -889,16 +1216,27 @@ namespace Parsers
                 space_resulter = ID_Of_previous.Data == " ";
             switch (preID)
             {
+                case PreTokenGroup.Equality:
+                    if (FValue == SValue)
+                        return (new Token(inStr, space_resulter, Group_of_Tokens.Assignment, RowCount, FValue, SValue));
+                    else if (FValue == SValue - 1)
+                        return (new Boolean_operation(inStr, space_resulter, RowCount, FValue, SValue, BooleanSymbol_ID.Equality));
+                    else return null;
+
                 case PreTokenGroup.Alphabet: //Случай строки составленной из алфавитных символов
-                    if (Construction_reservation.Contains(inStr))
+                    if (Construction_reservation.Contains(inStr.ToLower()))
                         return (new Token(inStr, space_resulter, Group_of_Tokens.Construction, RowCount, FValue, SValue));
-                    else if (Type_definitions.Contains(inStr))
+                    else if (Type_definitions.Contains(inStr.ToLower()))
                         return (new Token(inStr, space_resulter, Group_of_Tokens.Type_Definition, RowCount, FValue, SValue));
                     else if (Function_storage.ContainsKey(inStr))
                     {
                         dynamic Tester = Function_storage[inStr];
                         Tester.ReCreateToken(inStr, space_resulter, Group_of_Tokens.Function, RowCount, FValue, SValue);  // ПОТЕНЦИАЛЬНОЕ БАГОДЕРЬМО С УКАЗАТЕЛЯМИ, ПЕРВИЧНЫЙ FUNCTION STORAGE НЕ ДОЛЖЕН МЕНЯТЬСЯ.
                         return (Tester);
+                    }
+                    else if(bld.CheckArgLocalName(inStr)!=null)
+                    {
+                        return new Variable(bld.CheckArgLocalName(inStr) as Variable, RowCount, Group_of_Tokens.Variable, FValue, SValue);
                     }
                     else
                         return new Token(inStr, space_resulter, Group_of_Tokens.Name, RowCount, FValue, SValue);

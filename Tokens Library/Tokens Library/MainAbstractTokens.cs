@@ -17,6 +17,7 @@ namespace Tokens_Library
         Char = 5,
         String = 6,
         Picture = 7,
+        boolean=8,
     }
 
     public class Typecial
@@ -54,6 +55,8 @@ namespace Tokens_Library
                     return ETypeTable.String;
                 case "picture":
                     return ETypeTable.Picture;
+                case "bool":
+                    return ETypeTable.boolean;
                 default:
                     return ETypeTable.NULL;
             }
@@ -84,7 +87,17 @@ namespace Tokens_Library
         AriphmeticalExpression = 10,
         Variable=11,
         Assignment=12,
+        EndOfString=13,
+        VariableMethodCall=14,
         NoN = 0,
+    }
+
+    public enum EndOfStringID
+    {
+        NewString=1,
+        Enter=2,
+        Semicolon=3,
+        NaN=0,
     }
 
     
@@ -116,6 +129,24 @@ namespace Tokens_Library
             Range = null;
         }
 
+        public Token(Token InCopy, Group_of_Tokens New_Token_Group)
+        {
+            Data = InCopy.Data;
+            Row = InCopy.Row;
+            Space_check = InCopy.Space_check;
+            Token_Group = New_Token_Group;
+            Range = InCopy.Range;
+        }
+
+        public Token(Token InCopy, string data, int SRange_value)
+        {
+            Data = InCopy.Data+data;
+            Row = InCopy.Row;
+            Space_check = InCopy.Space_check;
+            Token_Group = InCopy.Token_Group;
+            Range = new Tuple<int, int>(InCopy.Range.Item1, SRange_value);
+        }
+
         public virtual dynamic get_group_of_token()
         {
             return Token_Group;
@@ -131,6 +162,21 @@ namespace Tokens_Library
             Range = new Tuple<int, int>(Range.Item1, In_list.Last().Range.Item2);
             Token_Group = New_Token_Group;
             return this;
+        }
+
+        public EndOfStringID GetEOS_ID()
+        {
+            if (Token_Group == Group_of_Tokens.EndOfString)
+            {
+                switch (Data)
+                {
+                    case ";": return EndOfStringID.Semicolon;
+                    case "\n": return EndOfStringID.NewString;
+                    case "\r": return EndOfStringID.Enter;
+                    default: return EndOfStringID.NaN;
+                }
+            }
+            else return EndOfStringID.NaN;
         }
 
         public Constructions_ID GetID_of_Construction()
