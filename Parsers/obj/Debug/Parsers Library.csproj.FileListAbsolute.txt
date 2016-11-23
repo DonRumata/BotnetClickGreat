@@ -1,0 +1,18 @@
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\obj\Debug\Parsers.dll
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\obj\Debug\Parsers.pdb
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Parsers.dll
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Parsers.pdb
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\obj\Debug\Parsers Library.csprojResolveAssemblyReference.cache
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Exceptions Library.dll
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Tokens Library.dll
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Exceptions Library.pdb
+C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Tokens Library.pdb
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\obj\Debug\Parsers Library.csprojResolveAssemblyReference.cache
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\obj\Debug\Parsers.dll
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\obj\Debug\Parsers.pdb
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Parsers.dll
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Parsers.pdb
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Exceptions Library.dll
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Tokens Library.dll
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Exceptions Library.pdb
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Parsers\bin\Debug\Tokens Library.pdb

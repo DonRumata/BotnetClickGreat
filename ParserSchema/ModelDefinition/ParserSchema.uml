@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner"
+  dslVersion="1.0.0.0"
+  Id="a9ed6ccf-7c81-4669-813e-de7e64f85035"
+  name="ParserSchema" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="bf0f00ce-b01a-43ee-a4ca-de5f3e6f27ff">
+      <body>Число</body>
+      <annotatedElements>
+        <initialNodeMoniker
+          Id="c4979fd2-b93e-490e-8820-aeaea0170770"
+          LastKnownName="Initial1"
+          LastKnownLocation="ParserSchema.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="8c153881-99f9-42d1-8d94-1dc044f9fd05">
+      <body>Строка</body>
+      <annotatedElements>
+        <initialNodeMoniker
+          Id="9ebe6e7f-83e1-4ccd-ab3d-b66682eed3f5"
+          LastKnownName="Initial2"
+          LastKnownLocation="ParserSchema.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="6af07970-4c73-4d87-921b-2d359cc40ae4">
+      <body>Выражение</body>
+      <annotatedElements>
+        <initialNodeMoniker
+          Id="0ff53c0a-c9cd-46c0-bd1f-986ff2817373"
+          LastKnownName="Initial3"
+          LastKnownLocation="ParserSchema.uml" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
+  <profileInstances>
+    <packageHasProfileInstances
+      Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b">
+      <profileInstance
+        Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791"
+        name="StandardProfileL2" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances
+      Id="29349502-908c-4fda-9054-c48619c59ed0">
+      <profileInstance
+        Id="532ea607-fb19-44b8-8502-3351b05452be"
+        name="StandardProfileL3" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="89cf804f-3f1c-4188-a4af-7bd8418e33cd"
+        name="RPN String Parser"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="31b74ff9-2a14-4917-8ff8-ceae51565c4e"
+        name="TypeCalcParser"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="a684422f-c87d-4583-a0a9-a8a7c5666a57"
+        LastKnownName="Package1"
+        LastKnownLocation="Package_1558.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="be5387c6-d325-4d17-a43f-1855a5b3d8fc"
+        LastKnownName="Package2"
+        LastKnownLocation="Package_1559.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="4eb0ff13-7547-43f7-a829-bd89219f4cf6"
+        LastKnownName="ParsersLibrary"
+        LastKnownLocation="Package_1600.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <interaction
+        Id="c79aa380-cf51-4a0e-89a4-f8ce950d2285"
+        name="Sequence1"
+        collapseFragmentsFlag="false"
+        isActiveClass="false"
+        isAbstract="false"
+        isLeaf="false"
+        isReentrant="false">
+        <lifelines>
+          <lifeline
+            Id="a73d5878-e799-4f89-837e-4af322f229d5"
+            name="Lifeline1"
+            isActor="false"
+            lifelineDisplayName="Lifeline1" />
+        </lifelines>
+      </interaction>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <activity
+        Id="930b8a32-54ba-4669-b486-b986f17feaa7"
+        name="Activity1"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false"
+        isReentrant="false"
+        isReadOnly="false"
+        isSingleExecution="false">
+        <nodes>
+          <initialNode
+            Id="c5a5a7b8-0163-4a24-9c44-384114c30230"
+            name="Initial1"
+            isLeaf="false" />
+          <opaqueAction
+            Id="c937fb27-52fd-4f34-9e07-62075f59b30f"
+            name="Action1"
+            isLeaf="false" />
+        </nodes>
+      </activity>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <activity
+        Id="d9fac5b3-9722-4b2e-9bc0-23e31ac50786"
+        name="AutomateDiagram CodeMap"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false"
+        isReentrant="false"
+        isReadOnly="false"
+        isSingleExecution="false">
+        <nodes>
+          <initialNode
+            Id="c4979fd2-b93e-490e-8820-aeaea0170770"
+            name="Initial1"
+            isLeaf="false">
+            <flowNodeTargets>
+              <controlFlow
+                Id="75dcbd4d-fcdb-42e1-91fb-e25a3f7e2f3a"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="ca4ae8f7-2548-4b5d-85e7-cc34b523530b"
+                  LastKnownName="Число"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="a70a32be-5771-489c-ac08-c6f59812ac43"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="63093bfe-4118-495d-8dce-741fa6fc229e"
+                  LastKnownName="Число"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+            </flowNodeTargets>
+          </initialNode>
+          <opaqueAction
+            Id="ca4ae8f7-2548-4b5d-85e7-cc34b523530b"
+            name="Число"
+            isLeaf="false" />
+          <opaqueAction
+            Id="63093bfe-4118-495d-8dce-741fa6fc229e"
+            name="Число"
+            isLeaf="false">
+            <flowNodeTargets>
+              <controlFlow
+                Id="a96acb25-5514-4504-b041-78783ec7a855"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="6720fe81-d537-4cdf-9fc7-9223596f13c3"
+                  LastKnownName="Точка"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="8714d526-49c2-49a9-9da8-b2c507652a7c"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="4aea4d8e-c289-4bde-96d4-1e7ab931c1fd"
+                  LastKnownName="Число"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+            </flowNodeTargets>
+          </opaqueAction>
+          <opaqueAction
+            Id="4aea4d8e-c289-4bde-96d4-1e7ab931c1fd"
+            name="Число"
+            isLeaf="false" />
+          <opaqueAction
+            Id="6720fe81-d537-4cdf-9fc7-9223596f13c3"
+            name="Точка"
+            isLeaf="false" />
+          <initialNode
+            Id="9ebe6e7f-83e1-4ccd-ab3d-b66682eed3f5"
+            name="Initial2"
+            isLeaf="false">
+            <flowNodeTargets>
+              <controlFlow
+                Id="dd4aa00b-04e6-4531-9533-d69cb7e43787"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="91656920-577e-42fd-91fb-7b296e54a4d4"
+                  LastKnownName="Кавычка"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="a80fb41b-e3f8-4d7e-b7f4-acf099fb8a5f"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="ebc08f3f-c167-47f6-a4aa-c858466eadc6"
+                  LastKnownName="ЛюбыеСимволы"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+              <controlFlow
+                Id="60a255a5-4b9d-4480-acc7-0cb2bf257b6d"
+                isLeaf="false">
+                <opaqueActionMoniker
+                  Id="80ec0973-33f8-46fb-9fd3-6dae2150be9d"
+                  LastKnownName="Кавычка"
+                  LastKnownLocation="ParserSchema.uml" />
+              </controlFlow>
+            </flowNodeTargets>
+          </initialNode>
+          <opaqueAction
+            Id="91656920-577e-42fd-91fb-7b296e54a4d4"
+            name="Кавычка"
+            isLeaf="false" />
+          <opaqueAction
+            Id="ebc08f3f-c167-47f6-a4aa-c858466eadc6"
+            name="ЛюбыеСимволы"
+            isLeaf="false" />
+          <opaqueAction
+            Id="80ec0973-33f8-46fb-9fd3-6dae2150be9d"
+            name="Кавычка"
+            isLeaf="false" />
+          <initialNode
+            Id="0ff53c0a-c9cd-46c0-bd1f-986ff2817373"
+            name="Initial3"
+            isLeaf="false" />
+        </nodes>
+      </activity>
+    </packageHasNamedElement>
+  </packagedElements>
+  <primitiveType
+    Id="220a3521-e091-4221-bae9-3ef9018e845c"
+    name="Integer"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+    name="Boolean"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+    name="String"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="3ab42e7d-4969-445a-b209-471f5cb8209c"
+    name="UnlimitedNatural"
+    isAbstract="false"
+    isLeaf="false" />
+</modelStoreModel>

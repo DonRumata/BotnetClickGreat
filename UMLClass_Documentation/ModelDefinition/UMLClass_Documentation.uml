@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="342ef531-fe77-430a-9664-477a03393dad"
+  name="UMLClass_Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <profileInstances>
+    <packageHasProfileInstances
+      Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b">
+      <profileInstance
+        Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791"
+        name="StandardProfileL2" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances
+      Id="29349502-908c-4fda-9054-c48619c59ed0">
+      <profileInstance
+        Id="532ea607-fb19-44b8-8502-3351b05452be"
+        name="StandardProfileL3" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <packageHasNamedElement>
+      <enumeration
+        Id="9a374b09-4f37-4a8d-bf59-62239336f6ee"
+        name="AriphmDelimeters ID"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="5bb183f2-57b6-42fd-812c-3086ddf825b2"
+            name="Literal1" />
+          <enumerationLiteral
+            Id="8855b450-ddc4-4f42-b430-ece2735914cc"
+            name="Literal2" />
+          <enumerationLiteral
+            Id="6945f5cb-5012-4136-8d52-67683f6be529"
+            name="Literal3" />
+          <enumerationLiteral
+            Id="363bb850-f56b-4029-ad82-23ef052cb327"
+            name="Literal4" />
+          <enumerationLiteral
+            Id="2b8efe33-dd66-4123-99b4-71b5a2f9b939"
+            name="Literal5" />
+          <enumerationLiteral
+            Id="53daa0f9-c532-45b5-a626-67ed4e10c8ca"
+            name="Literal6" />
+        </ownedLiterals>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="d2098be0-77fb-4aed-8eeb-cc7d6138298d"
+        name="Enumeration1"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="07116467-6b07-47ea-9d8d-cdb04c5952d7"
+        name="Name"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="c842800f-b270-4101-9202-75a6c07782f3"
+            isSubstitutable="false">
+            <classMoniker
+              Id="698c4281-0b45-45a4-98e1-c8d75d2beed6"
+              LastKnownName="Token"
+              LastKnownLocation="Package_1559.uml" />
+          </generalization>
+          <generalization
+            Id="5ccb305f-a87d-482b-806b-255eb0530411"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d3f09fda-33a3-4c5c-b16a-28f6a63819b8"
+              LastKnownName="Typecial"
+              LastKnownLocation="Package_1559.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="9b80d239-88cd-4693-9a3c-a9771e3c31ce"
+            name="NameType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <enumerationMoniker
+                Id="adbf7b75-2ff5-4e41-8634-723509c3c10a"
+                LastKnownName="ENameType"
+                LastKnownLocation="Package_1559.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="a5d4b8bd-16e9-4fae-8b55-f841131ae06c"
+            name="Name_data"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <primitiveTypeMoniker
+                Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                LastKnownName="String"
+                LastKnownLocation="UMLClass_Documentation.uml" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="4cc37186-cb4a-482c-af64-bc7c9c59aceb"
+            name="GetName"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ef5085db-c024-4f79-96f7-aee646660a30"
+                  direction="Return">
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="UMLClass_Documentation.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="f3aa7815-01b3-4149-b674-b6dff6dbbd49"
+        name="Enumeration2"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9469e336-d25a-4b4f-b52c-9228af0d08df"
+        name="Construction"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f925844f-4f78-41f2-96e2-37549320361c"
+        name="Global_Variable"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="843aabbf-89cc-486a-9662-2ccad5024ef0"
+            isSubstitutable="false">
+            <classMoniker
+              Id="22ee4792-9cbf-4a41-af53-f4457b216af6"
+              LastKnownName="Variable"
+              LastKnownLocation="Package_1559.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="2accc336-d5ae-414b-b83d-fb6880ba5182"
+        name="Argument"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="8e680a82-0633-470c-a99a-65041bf3a02b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="22ee4792-9cbf-4a41-af53-f4457b216af6"
+              LastKnownName="Variable"
+              LastKnownLocation="Package_1559.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="499ce398-3b96-4777-bf52-24ceef50d649"
+        name="Class1"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="ff43bb8b-1d88-4793-9a2a-d99973f8ce69"
+        LastKnownName="Package1"
+        LastKnownLocation="Package_1558.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="1bc4c8d2-4d83-45d2-8070-4a35a2625da2"
+        LastKnownName="TokenLibrary"
+        LastKnownLocation="Package_1559.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="039a6be6-e927-471a-82b8-8aa72ec7e973"
+        LastKnownName="ParsersLibrary"
+        LastKnownLocation="Package_1601.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="4cafaff5-5cfb-4a53-b011-c6c8f84a1fa3"
+        LastKnownName="ParsersLibrary"
+        LastKnownLocation="Package1_1601.uml" />
+    </packageHasNamedElement>
+  </packagedElements>
+  <primitiveType
+    Id="220a3521-e091-4221-bae9-3ef9018e845c"
+    name="Integer"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+    name="Boolean"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+    name="String"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="3ab42e7d-4969-445a-b209-471f5cb8209c"
+    name="UnlimitedNatural"
+    isAbstract="false"
+    isLeaf="false" />
+</modelStoreModel>

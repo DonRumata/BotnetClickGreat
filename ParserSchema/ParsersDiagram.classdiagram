@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="dc686f37-3e8a-4b65-913a-ac0c4b4015a1" name="ParsersDiagram" linkedPackageId="ef0cb373-5208-4b5f-9d28-25f711176962" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <packagedElements>
+    <packageHasNamedElement>
+      <referencedType Id="01ae5067-cd16-48cc-b07e-cb244a69c724" name="String" isAbstract="false" isLeaf="false" cachedFullName="String">
+        <elementDefinition Id="59259974-6d55-42c6-b7bd-763d77ac8ef9" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="ede84773-57fb-4565-9f81-69d3dfec568a" name="Integer" isAbstract="false" isLeaf="false" cachedFullName="Integer">
+        <elementDefinition Id="220a3521-e091-4221-bae9-3ef9018e845c" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class Id="4f85a22d-b3ec-4230-95c8-2c199b4794c0" name="MainProgramClass" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f2f0a257-f692-4a38-94a7-d73cc21c2fbb" />
+        <ownedAttributesInternal>
+          <property Id="40400c52-68af-437b-a0e1-a6fada5623dc" name="FunctionStorage" visibility="Protected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7d2f0690-c69a-4c19-99b3-b95e4ebcd8e3" />
+          </property>
+          <property Id="83650ed3-b67e-40ce-bd7a-9d419f3950d2" name="VariableStorage" visibility="Protected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="e45e668c-9400-45e1-a244-530af94a97d4" />
+          </property>
+          <property Id="af0b245c-768e-4199-8651-c2a2735a936a" name="InputText" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="4024bc32-f149-47f6-b500-c13821111259" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="01ae5067-cd16-48cc-b07e-cb244a69c724" LastKnownName="String" />
+            </type_NamedElement>
+          </property>
+          <property Id="a329c834-ae67-4bf5-9f5c-0217c80682c3" name="TokenListText" visibility="Protected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="4804bd4f-8a71-41f3-a104-3003a8b49769" />
+          </property>
+          <property Id="3b1a218f-5b86-46f4-8bee-68670227eb46" name="NumOfRows" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="3e41cd17-4b6c-4871-b803-a76ea3a50f03" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="ede84773-57fb-4565-9f81-69d3dfec568a" LastKnownName="Integer" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="48953371-25ad-4c02-a7fd-ddfdf3114250" name="InitializeTranslation" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="b497365a-9099-4162-9111-c3ce380b0c4e" />
+          </operation>
+          <operation Id="48426f87-be0e-4038-97a4-36bbcde47242" name="InitializeBuiltINFunctionStorage" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="7cc68bc3-c12a-4284-a436-08365a4ea99d" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class Id="de156f8d-71ee-46bf-bdde-f77ad7ea014c" name="FirstParser" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a035395b-7827-4753-a40c-f0f1e7566c82" />
+        <suppliersInternal>
+          <dependency Id="84fa3f52-6ede-4218-8648-0bf423ac4eaf">
+            <classMoniker Id="4f85a22d-b3ec-4230-95c8-2c199b4794c0" LastKnownName="MainProgramClass" />
+            <elementDefinition Id="26911ca6-f5bb-42b6-9315-c8f12582c880" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="1f294591-98ab-4d47-bae1-54f13f760a3a" name="VarStorage" visibility="Private" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="be850ac4-f96e-4ac2-92f4-0e1c92362e23" />
+          </property>
+          <property Id="6c66df36-c66f-4a1e-b93d-ba36592597e9" name="FuncStorage" visibility="Private" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7d75be99-5715-49b4-bae2-a09a89078883" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="52e8df42-14ed-4dc2-8b60-a1db19b2d6a0" name="GetTypeChar" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="a2df37b7-f1c1-4512-b313-9e2a5c37a378" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="15f21bb3-8ebd-4e34-8aab-7cb2dbdd2d88" name="Symbol" direction="In">
+                  <elementDefinition Id="d96d9d48-ab7e-4e12-a3d8-a2f65ba2c851" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="01ae5067-cd16-48cc-b07e-cb244a69c724" LastKnownName="String" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="b9cc9b2c-eef2-434f-acc0-cd12e1491cc0" name="GetTokenFromWord" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="c42d3c1f-76a7-4e5c-9166-075bda6d9f61" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="c20dfb5f-a294-44f9-93f0-f9992c5c9396" name="Word" direction="In">
+                  <elementDefinition Id="022725e8-06ef-425a-a841-263684b150a4" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="01ae5067-cd16-48cc-b07e-cb244a69c724" LastKnownName="String" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="7710dc42-255c-4dc3-9839-768051cde70c" name="PARSETEXT" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="69284c40-0070-49d3-acd4-5980cb7b26e0" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="df335a2a-6116-413f-ab93-c4a15c7c612f" name="Input_Text" direction="In">
+                  <elementDefinition Id="5fba28b9-5a32-447b-ab16-a5c3d4400871" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="01ae5067-cd16-48cc-b07e-cb244a69c724" LastKnownName="String" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="aee7568a-7abf-41c7-acbf-9497dc7a5f00" name="InFunc" direction="In">
+                  <elementDefinition Id="5f174839-c2c2-42b6-8ad6-88b691595160" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="a1fb24e5-5fb8-4a5d-bf59-8e1a185c9852" name="InVar" direction="In">
+                  <elementDefinition Id="351c8449-d4a0-463a-a596-ab27ffa6f22a" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="ac106778-c2b6-46cf-a47d-087d0897cfda" name="NumericCheck" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="4c8334c5-ba69-46aa-b562-27b2ed0a66ac" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="00640a9c-b0ba-4daa-9de0-cb41f1c40eaa" direction="Return">
+                  <elementDefinition Id="3aaf9f31-9d0b-4d45-a00f-9bfbb78249f9" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="18434021-3c03-49d2-a293-7a98f2e838ae" LastKnownName="Boolean" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="e4589d4b-80f0-4140-b771-e7ec676842d0" name="Symbol" direction="In">
+                  <elementDefinition Id="29801648-0c93-4467-9df1-f85c31d46715" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="01ae5067-cd16-48cc-b07e-cb244a69c724" LastKnownName="String" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="f801c690-25c4-4034-88c5-69569967c7ed" name="AlphabetCheck" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="915767e3-754e-4dd7-88e6-4de9428e618a" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="9394769d-415b-46d6-964d-3580157857c1" direction="Return">
+                  <elementDefinition Id="6176c8cd-3809-4c74-8478-1f179e2b3521" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="bd109e28-1f6f-4495-ade5-1bcbba0d924b" LastKnownName="Integer" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="823e5f48-146a-4100-a33a-03bd3e963a58" name="Symbol" direction="In">
+                  <elementDefinition Id="d1cdd88f-963f-448d-b64b-0406e1bdb022" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="01ae5067-cd16-48cc-b07e-cb244a69c724" LastKnownName="String" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="18434021-3c03-49d2-a293-7a98f2e838ae" name="Boolean" isAbstract="false" isLeaf="false" cachedFullName="Boolean">
+        <elementDefinition Id="8943dc84-709e-4f62-b15a-a3273aa6f165" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="bd109e28-1f6f-4495-ade5-1bcbba0d924b" name="Integer" isAbstract="false" isLeaf="false" cachedFullName="Integer">
+        <elementDefinition Id="220a3521-e091-4221-bae9-3ef9018e845c" />
+      </referencedType>
+    </packageHasNamedElement>
+  </packagedElements>
+  <package Id="ef0cb373-5208-4b5f-9d28-25f711176962" name="ParserSchema">
+    <elementDefinition Id="a9ed6ccf-7c81-4669-813e-de7e64f85035" />
+    <profileInstances>
+      <packageHasProfileInstances Id="e7ac896a-7dd3-4a98-9b25-c6e99ab667ea">
+        <profileInstance Id="d507517b-d575-436b-b7b6-a94c15bc87e0" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="04c19910-dac0-4db6-a1c0-c5dca7c94c87">
+        <profileInstance Id="e77fab83-1997-4f80-8249-4226cd5e731a" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</logicalClassDesignerModel>
