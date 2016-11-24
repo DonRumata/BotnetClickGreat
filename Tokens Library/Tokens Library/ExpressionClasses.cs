@@ -11,7 +11,6 @@ namespace Tokens_Library
         Err=-1,
         Ariphmetical_expression=1,
         Logical_expression=2,
-        Function_body_expression=3,
     }
     public class Expression:Token
     {
@@ -49,12 +48,12 @@ namespace Tokens_Library
                     Data += RPN_Expression_data.First().Data;
                 }
             }
-            Temp_tok = RPN_Expression_data.First() as Token;
-            EXPRType = Input_Type_OFEXPR;
-            Range = new Tuple<int, int>(Temp_tok.Range.Item2, RPN_Expression_data.Last().Range.Item1);
-            Space_check = Temp_tok.Space_check;
-            Row = Temp_tok.Row;
-            Token_Group = Group_of_Tokens.AriphmeticalExpression;
+                Temp_tok = RPN_Expression_data.First() as Token;
+                EXPRType = Input_Type_OFEXPR;
+                Range = new Tuple<int, int>(Temp_tok.Range.Item2, RPN_Expression_data.Last().Range.Item1);
+                Space_check = Temp_tok.Space_check;
+                Row = Temp_tok.Row;
+                Token_Group = Group_of_Tokens.AriphmeticalExpression;
         }
 
         private void ReWriteRPNExpression(Expression Tempe)
