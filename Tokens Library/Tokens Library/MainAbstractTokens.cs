@@ -109,7 +109,25 @@ namespace Tokens_Library
         public bool Space_check { get; protected set; }      //флаг наличия пробела до предтокена
         public string Data { get; protected set; }           //сам предтокен
         public Group_of_Tokens Token_Group { get; protected set; } //Номер типа токена
+        public int Priority { get; protected set; }         //Приоритет токена может изменятся в зависимости от положения токена в строке.
 
+        private void GetBasePriority()
+        {
+            switch(Token_Group)
+            {
+
+            }
+        }
+
+        public void IncreasePriority()
+        {
+            Priority++;
+        }
+
+        public void DecreasePriority()
+        {
+            Priority--;
+        }
 
         public Token(string data, bool space, Group_of_Tokens id, int row, int FRange_value, int SRange_value) //Конструктор для создания класса Word, сразу со всеми первоначальными данными
         {

@@ -1,14 +1,5 @@
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\Tokens Library\Tokens Library\bin\Debug\Tokens Library.dll
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\Tokens Library\Tokens Library\bin\Debug\Tokens Library.pdb
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\Tokens Library\Tokens Library\obj\Debug\Tokens Library.dll
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\Tokens Library\Tokens Library\obj\Debug\Tokens Library.pdb
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\bin\Debug\Tokens Library.dll
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\bin\Debug\Tokens Library.pdb
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.dll
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.pdb
-C:\Users\Rumata\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.csprojResolveAssemblyReference.cache
-C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.dll
-C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.pdb
 C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\bin\Debug\Tokens Library.dll
 C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\bin\Debug\Tokens Library.pdb
 C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.csprojResolveAssemblyReference.cache
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.dll
+C:\Users\don_k\Documents\Visual Studio 2015\Projects\BotnetClickGreat\Tokens Library\Tokens Library\obj\Debug\Tokens Library.pdb
