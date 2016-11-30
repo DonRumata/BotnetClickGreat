@@ -32,7 +32,6 @@ namespace Tokens_Library
     {
         private List<Token> Then_body = null;
         private List<Token> Else_body = null;
-
         public If_Condition_construction(Stack<Token> DataIN):base(DataIN, Group_of_Tokens.Construction)
         {
             Then_body = new List<Token>();
