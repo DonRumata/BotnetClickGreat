@@ -13,6 +13,7 @@ namespace Parsers
 
     public enum Rules_Statement
     {
+        NoN=-3,
         DefaultInStr=-2,
         Default=-1,
         DigitFormError=0,
@@ -53,7 +54,8 @@ namespace Parsers
         VarCallFounded=36,
         AfterVarGet=37,
         AfterVarGetArgs=38,
-        DefaultInIfConstructionAfterDigit=39,
+        DefaultInIFBody=39,
+        EmptyEndOfString=40,
     }
     public enum Which_builder
     {
@@ -80,6 +82,7 @@ namespace Parsers
         private bool IFConstructionInProgress = false;
         private int IfBodyProgression = 0;
         private If_Condition_construction NowBodyInProgression = null;
+        private int BraceCounter = 0;
 
         private bool AddMethodToQueue_OfVariable(string VarName, bool WhichOneMethod, Token AnyExpression)
         {
@@ -160,7 +163,8 @@ namespace Parsers
                                 }
                                 else if(((NewElement as Delimeter).DelimeterID==Delimeters_ID.RBracket)&&(StructureBracketCounter>0))
                                 {
-                                    CastBrackets(false);
+                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter))));
+                                    CastArgsBrackets(Expression_Type.Ariphmetical_expression, false);
                                     if ((IFConstructionInProgress) && (StructureBracketCounter != 0))
                                         Magazine_state = Rules_Statement.FormAriphmExpression;
                                     else
@@ -168,7 +172,6 @@ namespace Parsers
                                 }
                                 break;
                         }
-                        Magazine_state=Rules_Statement.AfterVarGet;
                     }
                     break;
 
@@ -714,14 +717,76 @@ namespace Parsers
                     else return false;
                     break;
 
+                case Rules_Statement.DefaultInIFBody:
+                    switch(NewElGroup)
+                    {
+                        case Group_of_Tokens.Delimeter:
+                            if (NewElement.get_group_of_token() == Delimeters_ID.LBrace)
+                            {
+                                BraceCounter++;
+                                String_Translate_Stack.Push(NewElement);
+                            }
+                            else if (NewElement.get_group_of_token() == Delimeters_ID.Semicolon)
+                            {
+
+                            }
+                            else if (NewElement.get_group_of_token() == Delimeters_ID.LBracket)
+                            {
+
+                            }
+                            else return false;
+                            break;
+                        case Group_of_Tokens.Digit:
+                            String_Translate_Stack.Push(NewElement);
+                            Magazine_state = Rules_Statement.WhichNextDigit;
+                            break;
+                        case Group_of_Tokens.EndOfString:
+                            if ((String_Translate_Stack.Peek().Token_Group==Group_of_Tokens.Delimeter)&&(String_Translate_Stack.Peek().get_group_of_token()==Delimeters_ID.LBrace))
+                            {
+                                return true;
+                            }
+                            break;
+                        case Group_of_Tokens.Construction:
+                            Magazine_state=IFDefaultBodyConstructionRECLAIMER(NewElement.get_group_of_token());
+                            if (Magazine_state == Rules_Statement.NoN)
+                                return false;
+                            else
+                                return true;
+                        case Group_of_Tokens.Help_symbol:
+                            if (NewElement.get_group_of_token() == Help_SymbolsID.Apostrophe)
+                            {
+
+                            }
+                            else if (NewElement.get_group_of_token() == Help_SymbolsID.Quotes)
+                            {
+
+                            }
+                            else
+                                return false;
+                            break;
+                        case Group_of_Tokens.Function:
+                            break;
+                        case Group_of_Tokens.Variable:
+                            String_Translate_Stack.Push(new Token(NewElement, Group_of_Tokens.VariableMethodCall));
+                            AddMethodToQueue_OfVariable(NewElement.Data, false, null);
+                            Magazine_state = Rules_Statement.AfterVarGet;
+                            break;
+                        case Group_of_Tokens.Name:
+                            break;
+                    }
+                    break;
+
                 case Rules_Statement.EndOfString:
                     dynamic Temp;
+                    bool StateSetter = true;
                     if (IFConstructionInProgress)
                     {
                         String_Translate_Stack.Push(new If_Condition_construction(String_Translate_Stack));
                         IFConstructionInProgress = false;
                         IfBodyProgression++;
                         NowBodyInProgression = String_Translate_Stack.Peek() as If_Condition_construction;
+                        Magazine_state = Rules_Statement.DefaultInIFBody;
+                        StateSetter = false;
                     }
                     if (VarDefinitionInProgress)
                     {
@@ -733,27 +798,33 @@ namespace Parsers
                         String_Translate_Stack.Push(new Variable(String_Translate_Stack));
                         VarDefinitionInProgress = false;
                     }
-                    if (FunctionBodyInProgress!=null)
+                    if (FunctionBodyInProgress != null)
                     {
-                        if (InlineBracketCounter == 0)
+                        if (IfBodyProgression == 0)
                         {
-                            Temp = String_Translate_Stack.Pop();
-                            if (Temp.Token_Group==Group_of_Tokens.Variable)
+                            if (InlineBracketCounter == 0)
                             {
-                                if (!FunctionBodyInProgress.AddLocalArgument(Temp))
+
+                                Temp = String_Translate_Stack.Pop();
+                                if (Temp.Token_Group == Group_of_Tokens.Variable)
                                 {
-                                    return false;
+                                    if (!FunctionBodyInProgress.AddLocalArgument(Temp))
+                                    {
+                                        return false;
+                                    }
                                 }
+                                FunctionBodyInProgress.AddNewFunctionBodyString(Temp);
+                                TranslateCode.Add(String_Translate_Stack.Peek());
+                                Build_magazine_storage.Clear();
+                                Magazine_state = Rules_Statement.DefaultInStr;
+                                return true;
                             }
-                            FunctionBodyInProgress.AddNewFunctionBodyString(Temp);
-                            TranslateCode.Add(String_Translate_Stack.Peek());
-                            Build_magazine_storage.Clear();
-                            Magazine_state = Rules_Statement.DefaultInStr;
-                            return true;
+                            else return false;
                         }
-                        else return false;
+                        else
+                            return true;
                     }
-                    else if ((InlineBracketCounter == 0)&&(String_Translate_Stack.Count==1)&&(StructureBracketCounter==0))
+                    else if ((InlineBracketCounter == 0) && (String_Translate_Stack.Count == 1) && (StructureBracketCounter == 0))
                     {
                         TranslateCode.Add(String_Translate_Stack.Pop());
                         String_Translate_Stack.Clear();
@@ -1061,6 +1132,23 @@ namespace Parsers
 
         }
 
+        private Rules_Statement IFDefaultBodyConstructionRECLAIMER(Constructions_ID IDOFConstruction)
+        {
+            switch (IDOFConstruction)
+            {
+                case Constructions_ID.If:
+                    break;
+                case Constructions_ID.For:
+                    break;
+                case Constructions_ID.While:
+                    break;
+                case Constructions_ID.Repeat:
+                    break;
+                default: break;
+            }
+            return Rules_Statement.Default;
+        }
+
         private bool CastBrackets(bool LikeBool)
             /*Выполняет финальные/семифинальные свертки
              Запускается исключительно для сверток со скобками*/
@@ -1297,6 +1385,7 @@ namespace Parsers
                 }
             }
         }
+
         private int TestFunc(IEnumerable<Variable> Trulala)
         {
             return 1;
