@@ -56,6 +56,7 @@ namespace Parsers
         AfterVarGetArgs=38,
         DefaultInIFBody=39,
         EmptyEndOfString=40,
+        AfterVarSet=41,
     }
     public enum Which_builder
     {
@@ -95,6 +96,16 @@ namespace Parsers
             {
                 return false;
             }
+        }
+
+        private bool ChangeLastMethodTypeInQueue(Token InVariable, Token InExpression)
+        {
+            if (FunctionBodyInProgress != null)
+            {
+                return FunctionBodyInProgress.ChangeMethodOfArgument(InVariable.Data, InExpression);
+            }
+            else
+                return false;
         }
 
         public Token CheckArgLocalName(string CheckName)
@@ -212,9 +223,35 @@ namespace Parsers
                     }
                     else if(NewElGroup==Group_of_Tokens.Assignment)
                     {
-                        
+                        SetVarInProgress++;
+                        String_Translate_Stack.Push(NewElement);
+                        Magazine_state = Rules_Statement.AfterVarSet;
                     }
 
+                    break;
+
+                case Rules_Statement.AfterVarSet:
+                    if (NewElGroup == Group_of_Tokens.Digit)
+                    {
+
+                    }
+                    else if (NewElGroup == Group_of_Tokens.Name)
+                    {
+
+                    }
+                    else if (NewElGroup == Group_of_Tokens.Variable)
+                    {
+
+                    }
+                    else if (NewElGroup == Group_of_Tokens.Delimeter)
+                    {
+
+                    }
+                    else if (NewElGroup == Group_of_Tokens.Function)
+                    {
+
+                    }
+                    else return false;
                     break;
 
 
@@ -773,7 +810,7 @@ namespace Parsers
                             break;
                         case Group_of_Tokens.Variable:
                             String_Translate_Stack.Push(new Token(NewElement, Group_of_Tokens.VariableMethodCall));
-                            AddMethodToQueue_OfVariable(NewElement.Data, false, null);
+                            AddMethodToQueue_OfVariable(NewElement.Data, true, null);
                             Magazine_state = Rules_Statement.AfterVarGet;
                             break;
                         case Group_of_Tokens.Name:
@@ -1303,7 +1340,7 @@ namespace Parsers
                     case PreTokenGroup.HSymbols:
                     case PreTokenGroup.Delimeter:
                         Token Temp;
-                        if (Temp2.Rule_check(Temp = GetToken(nowchar.ToString(), nowcharID, CodeStorage.Last(), i, i,Temp2)))
+                        if (Temp2.Rule_check(Temp = GetToken(nowchar.ToString(), nowcharID, CodeStorage.Last(), i, i,Temp2,Input_Text)))
                             CodeStorage.Add(Temp);
                         else
                             ;
@@ -1332,9 +1369,9 @@ namespace Parsers
                 helper_counter++;
             }
             if (Word_list.Count == 0)
-                Temp=(GetToken(Data_former, second_cycle_condition, null, i_counter, helper_counter - 1, BldClass));
+                Temp=(GetToken(Data_former, second_cycle_condition, null, i_counter, helper_counter - 1, BldClass,input_text));
             else
-                Temp=(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1,BldClass));
+                Temp=(GetToken(Data_former, second_cycle_condition, Word_list.Last(), i_counter, helper_counter - 1,BldClass,input_text));
             if (BldClass.Rule_check(Temp))
                 Word_list.Add(Temp);//Сформировав строку, вызывает метод определения и составления токена для слова, после чего добавляет его в хранилище кода программы.
             return helper_counter-1;
@@ -1421,7 +1458,7 @@ namespace Parsers
             return new Token();
         }
 
-        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue, Builder bld)
+        private Token GetToken(string inStr, PreTokenGroup preID, Token ID_Of_previous, int FValue, int SValue, Builder bld, string BigInString)
             /*Один из основных методов, определяет из входящей строки токен и создает его полную структуру
              inStr - входящая строка из которой формируется токен.
              preID - передает ID символов использованных для составления строки.

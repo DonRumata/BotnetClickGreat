@@ -19,6 +19,17 @@ namespace Tokens_Library
             InvokeParameterIfNeeded = ParamIfNeeded;
         }
 
+        public void ReCreateMethod(Delegate InFunc, Token InParam)
+        {
+            InsideFunction = InFunc;
+            InvokeParameterIfNeeded = InParam;
+        }
+
+        public string GetMethodReturnTypeName()
+        {
+            return InsideFunction.Method.ReturnType.Name;
+        }
+
     }
 
     public sealed class Variable : Token
@@ -45,6 +56,21 @@ namespace Tokens_Library
             }
             else //Set Method
                 CallQueue.Enqueue(new VariableMethods(new Action<Token>(SetValueRPN),InsideArgument));
+        }
+
+        public void ChangeLastMethodInQueue(Token InsideArgument)
+        {
+            if (CallQueue != null)
+            {
+                if(CallQueue.Last().GetMethodReturnTypeName()=="void")
+                {
+                    CallQueue.Last().ReCreateMethod(new Func<Token>(GetValueRPN), null);
+                }
+                else
+                {
+                    CallQueue.Last().ReCreateMethod(new Action<Token>(SetValueRPN), InsideArgument);
+                }
+            }
         }
 
 

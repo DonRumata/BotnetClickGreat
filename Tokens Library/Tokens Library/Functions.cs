@@ -137,6 +137,19 @@ namespace Tokens_Library
                 return false;
         }
 
+        public bool ChangeMethodOfArgument(string InToken, Token InValue)
+        {
+            int i = -1;
+            i = Args.FindIndex(argspred => argspred.Data == InToken);
+            if (i != -1)
+            {
+                Args[i].ChangeLastMethodInQueue(InValue);
+                return true;
+            }
+            else
+                return false;
+        }
+
         public Token IsArgsContains(string Name)
         {
            return Args.Find(argspis => argspis.Data == Name); 
