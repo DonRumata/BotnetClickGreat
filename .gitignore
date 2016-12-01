@@ -283,3 +283,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /BotnetClickGreat/BOTNETGREAT/
+*.dll
+*.pdb
+Parsers/obj/Debug/Parsers Library.csprojResolveAssemblyReference.cache
