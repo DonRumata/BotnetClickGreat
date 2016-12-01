@@ -39,5 +39,13 @@ namespace Tokens_Library
             //try
         }
 
+        public void AddMethodToBody(bool ThenBody, Token InExpression)
+        {
+            if (ThenBody)
+                Then_body.Add(InExpression);
+            else
+                Else_body.Add(InExpression);
+        }
+
     }
 }

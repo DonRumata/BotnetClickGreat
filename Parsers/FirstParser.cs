@@ -71,7 +71,7 @@ namespace Parsers
         private Stack<Token> VariableCallStack = new Stack<Token>();
         private Stack<Token> RuleStatementBackStack = new Stack<Token>();
         private List<Token> TranslateCode = new List<Token>();
-        int Comma_counter = 0;
+        private int Comma_counter = 0;
         private int StructureBracketCounter = 0;
         private int InlineBracketCounter = 0;
         private int VarAssignmentInProgress = 0;
@@ -83,6 +83,7 @@ namespace Parsers
         private int IfBodyProgression = 0;
         private If_Condition_construction NowBodyInProgression = null;
         private int BraceCounter = 0;
+        private int SetVarInProgress = 0;
 
         private bool AddMethodToQueue_OfVariable(string VarName, bool WhichOneMethod, Token AnyExpression)
         {
@@ -208,6 +209,10 @@ namespace Parsers
                                 return true;
                             }
                         }
+                    }
+                    else if(NewElGroup==Group_of_Tokens.Assignment)
+                    {
+                        
                     }
 
                     break;
@@ -798,7 +803,15 @@ namespace Parsers
                         String_Translate_Stack.Push(new Variable(String_Translate_Stack));
                         VarDefinitionInProgress = false;
                     }
-                    if (FunctionBodyInProgress != null)
+                    if(IfBodyProgression>0)
+                    {
+                        if(StateSetter)
+                            NowBodyInProgression.AddMethodToBody(true, String_Translate_Stack.Pop());
+                        Magazine_state = Rules_Statement.DefaultInIFBody;
+                        StateSetter = true;
+                        return true;
+                    }
+                    else if (FunctionBodyInProgress != null)
                     {
                         if (IfBodyProgression == 0)
                         {
@@ -906,6 +919,7 @@ namespace Parsers
                                 String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter))));
                                 (Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
                                 CastArgsBrackets(Expression_Type.Ariphmetical_expression,true);
+                                return true;
                             }
                         }
                         else
@@ -1007,6 +1021,13 @@ namespace Parsers
                         else
                             return false;
                     }
+                    else if(NewElGroup==Group_of_Tokens.Variable)
+                    {
+                        String_Translate_Stack.Push(new Token(NewElement, Group_of_Tokens.VariableMethodCall));
+                        AddMethodToQueue_OfVariable(NewElement.Data, true, null);
+                        Magazine_state = Rules_Statement.AfterVarGetArgs;
+                        return true;
+                    }
                     else
                     {
                         return false;
@@ -1092,6 +1113,10 @@ namespace Parsers
                     Magazine_state = Rules_Statement.AfterVarDefEquality;
                 }
                 else if(IFConstructionInProgress)
+                {
+                    Magazine_state = Rules_Statement.AfterArifmExpr;
+                }
+                else if(IfBodyProgression>0)
                 {
                     Magazine_state = Rules_Statement.AfterArifmExpr;
                 }

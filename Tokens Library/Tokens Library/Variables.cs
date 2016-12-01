@@ -43,7 +43,7 @@ namespace Tokens_Library
             {
                 CallQueue.Enqueue(new VariableMethods(new Func<Token>(GetValueRPN), null));
             }
-            else
+            else //Set Method
                 CallQueue.Enqueue(new VariableMethods(new Action<Token>(SetValueRPN),InsideArgument));
         }
 
