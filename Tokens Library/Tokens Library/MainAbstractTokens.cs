@@ -115,7 +115,14 @@ namespace Tokens_Library
         {
             switch(Token_Group)
             {
-
+                case Group_of_Tokens.Ariphmetical:
+                    break;
+                case Group_of_Tokens.Assignment:
+                    break;
+                case Group_of_Tokens.BooleanOperation:
+                    break;
+                case Group_of_Tokens.Construction:
+                    break;
             }
         }
 
@@ -208,6 +215,7 @@ namespace Tokens_Library
                     case "for": return Constructions_ID.For;
                     case "while": return Constructions_ID.While;
                     case "repeat": return Constructions_ID.Repeat;
+                    case "else": return Constructions_ID.Else;
                     default: return Constructions_ID.NoN;
                 }
             }

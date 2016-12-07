@@ -56,7 +56,6 @@ namespace Parsers
         AfterVarGetArgs=38,
         DefaultInIFBody=39,
         EmptyEndOfString=40,
-        AfterVarSet=41,
     }
     public enum Which_builder
     {
@@ -66,11 +65,10 @@ namespace Parsers
     public class Builder
     {
         private Rules_Statement Magazine_state;
+        private Stack<If_Condition_construction> IFBuild_magazine_storage = new Stack<If_Condition_construction>();
         private List<Token> Build_magazine_storage=new List<Token>();
         private List<Token> Strange_names=new List<Token>();
         private Stack<Token> String_Translate_Stack=new Stack<Token>();
-        private Stack<Token> VariableCallStack = new Stack<Token>();
-        private Stack<Token> RuleStatementBackStack = new Stack<Token>();
         private List<Token> TranslateCode = new List<Token>();
         private int Comma_counter = 0;
         private int StructureBracketCounter = 0;
@@ -83,8 +81,8 @@ namespace Parsers
         private bool IFConstructionInProgress = false;
         private int IfBodyProgression = 0;
         private If_Condition_construction NowBodyInProgression = null;
-        private int BraceCounter = 0;
         private int SetVarInProgress = 0;
+        private bool IgnoreCase = false;
 
         private bool AddMethodToQueue_OfVariable(string VarName, bool WhichOneMethod, Token AnyExpression)
         {
@@ -148,7 +146,6 @@ namespace Parsers
                 case Rules_Statement.VarCallFounded:
                     if (NewElGroup==Group_of_Tokens.Assignment)
                     {
-                        VariableCallStack.Push(NewElement);
                         VarAssignmentInProgress++;
                         VarCallInProgress = NewElement as Variable;
                         Magazine_state = Rules_Statement.DefaultInStr;
@@ -225,33 +222,15 @@ namespace Parsers
                     {
                         SetVarInProgress++;
                         String_Translate_Stack.Push(NewElement);
-                        Magazine_state = Rules_Statement.AfterVarSet;
+                        VarDefinitionInProgress = true;
+                        Magazine_state = Rules_Statement.AfterVarDefEquality;
+                        return true;
                     }
-
-                    break;
-
-                case Rules_Statement.AfterVarSet:
-                    if (NewElGroup == Group_of_Tokens.Digit)
+                    else if (NewElGroup==Group_of_Tokens.EndOfString)
                     {
-
+                        goto case Rules_Statement.EndOfString;
                     }
-                    else if (NewElGroup == Group_of_Tokens.Name)
-                    {
 
-                    }
-                    else if (NewElGroup == Group_of_Tokens.Variable)
-                    {
-
-                    }
-                    else if (NewElGroup == Group_of_Tokens.Delimeter)
-                    {
-
-                    }
-                    else if (NewElGroup == Group_of_Tokens.Function)
-                    {
-
-                    }
-                    else return false;
                     break;
 
 
@@ -444,9 +423,9 @@ namespace Parsers
                     }
                     else if (NewElGroup == Group_of_Tokens.Variable)
                     {
-                        String_Translate_Stack.Push(NewElement);
-                        String_Translate_Stack.Push(new Variable(String_Translate_Stack));
-                        Magazine_state = Rules_Statement.EndOfString;
+                        String_Translate_Stack.Push(new Token(NewElement, Group_of_Tokens.VariableMethodCall));
+                        AddMethodToQueue_OfVariable(NewElement.Data, true, null);
+                        Magazine_state = Rules_Statement.AfterVarGet;
                         return true;
                     }
                     else if (NewElGroup == Group_of_Tokens.Name)
@@ -765,8 +744,10 @@ namespace Parsers
                         case Group_of_Tokens.Delimeter:
                             if (NewElement.get_group_of_token() == Delimeters_ID.LBrace)
                             {
-                                BraceCounter++;
+                                NowBodyInProgression.IncreaseBraceCount();
+                                IgnoreCase = true;
                                 String_Translate_Stack.Push(NewElement);
+                                return true;
                             }
                             else if (NewElement.get_group_of_token() == Delimeters_ID.Semicolon)
                             {
@@ -776,24 +757,61 @@ namespace Parsers
                             {
 
                             }
-                            else return false;
+                            else if (NewElement.get_group_of_token() == Delimeters_ID.RBrace)
+                            {
+                                if (NowBodyInProgression.BraceCount > 0)
+                                {
+                                    NowBodyInProgression.DecreaseBraceCount();
+                                    String_Translate_Stack.Pop();
+                                    if(NowBodyInProgression.BraceCount==0)
+                                    {
+                                        if (NowBodyInProgression.ThenInTranslation == false)
+                                        {
+                                            IfBodyProgression--;
+                                            String_Translate_Stack.Pop();
+                                            String_Translate_Stack.Push(NowBodyInProgression);
+                                            Magazine_state = Rules_Statement.EndOfString;
+                                        }
+                                        else
+                                            return true;
+                                    }
+                                    else if(NowBodyInProgression.BraceCount<0)
+                                    {
+
+                                    }
+                                    return true;
+                                }
+                            }
+                            else
+                            return false;
                             break;
                         case Group_of_Tokens.Digit:
                             String_Translate_Stack.Push(NewElement);
                             Magazine_state = Rules_Statement.WhichNextDigit;
                             break;
                         case Group_of_Tokens.EndOfString:
-                            if ((String_Translate_Stack.Peek().Token_Group==Group_of_Tokens.Delimeter)&&(String_Translate_Stack.Peek().get_group_of_token()==Delimeters_ID.LBrace))
+                            if (((String_Translate_Stack.Peek().Token_Group==Group_of_Tokens.Delimeter)&&(String_Translate_Stack.Peek().get_group_of_token()==Delimeters_ID.LBrace))||(IgnoreCase))
                             {
+                                IgnoreCase = false;
                                 return true;
                             }
                             break;
                         case Group_of_Tokens.Construction:
-                            Magazine_state=IFDefaultBodyConstructionRECLAIMER(NewElement.get_group_of_token());
-                            if (Magazine_state == Rules_Statement.NoN)
-                                return false;
+                            if(NewElement.GetID_of_Construction()==Constructions_ID.Else)
+                            {
+                                if ((NowBodyInProgression.ThenInTranslation == true) && (NowBodyInProgression.BraceCount == 0))
+                                {
+                                    NowBodyInProgression.ThenInTranslation = false;
+                                    IgnoreCase = true;
+                                    return true;
+                                }
+                                else
+                                    return false;
+                            }
                             else
-                                return true;
+                            {
+                                return false;
+                            }
                         case Group_of_Tokens.Help_symbol:
                             if (NewElement.get_group_of_token() == Help_SymbolsID.Apostrophe)
                             {
@@ -807,6 +825,9 @@ namespace Parsers
                                 return false;
                             break;
                         case Group_of_Tokens.Function:
+                            String_Translate_Stack.Push(NewElement);
+                            Build_magazine_storage.Add(NewElement);
+                            Magazine_state = Rules_Statement.FuncNameFounded;
                             break;
                         case Group_of_Tokens.Variable:
                             String_Translate_Stack.Push(new Token(NewElement, Group_of_Tokens.VariableMethodCall));
@@ -821,12 +842,21 @@ namespace Parsers
                 case Rules_Statement.EndOfString:
                     dynamic Temp;
                     bool StateSetter = true;
+                    if(SetVarInProgress>0)
+                    {
+                        Temp=(new Expression(String_Translate_Stack, Expression_Type.Logical_expression, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment)));
+                        String_Translate_Stack.Pop();
+                        ChangeLastMethodTypeInQueue(String_Translate_Stack.Peek(), Temp);
+                        SetVarInProgress--;
+                        VarDefinitionInProgress = false;
+                    }
                     if (IFConstructionInProgress)
                     {
                         String_Translate_Stack.Push(new If_Condition_construction(String_Translate_Stack));
                         IFConstructionInProgress = false;
                         IfBodyProgression++;
                         NowBodyInProgression = String_Translate_Stack.Peek() as If_Condition_construction;
+                        IFBuild_magazine_storage.Push(NowBodyInProgression);    
                         Magazine_state = Rules_Statement.DefaultInIFBody;
                         StateSetter = false;
                     }
@@ -842,10 +872,13 @@ namespace Parsers
                     }
                     if(IfBodyProgression>0)
                     {
-                        if(StateSetter)
-                            NowBodyInProgression.AddMethodToBody(true, String_Translate_Stack.Pop());
+                        if ((String_Translate_Stack.Peek().Token_Group != Group_of_Tokens.Delimeter) && (StateSetter))
+                        {
+                            NowBodyInProgression.AddMethodToBody(String_Translate_Stack.Pop());
+                            IFBuild_magazine_storage.Pop();
+                            IFBuild_magazine_storage.Push(NowBodyInProgression);
+                        }   
                         Magazine_state = Rules_Statement.DefaultInIFBody;
-                        StateSetter = true;
                         return true;
                     }
                     else if (FunctionBodyInProgress != null)
@@ -854,7 +887,6 @@ namespace Parsers
                         {
                             if (InlineBracketCounter == 0)
                             {
-
                                 Temp = String_Translate_Stack.Pop();
                                 if (Temp.Token_Group == Group_of_Tokens.Variable)
                                 {
@@ -1198,6 +1230,8 @@ namespace Parsers
         {
             switch (IDOFConstruction)
             {
+                case Constructions_ID.Else:
+                    break;
                 case Constructions_ID.If:
                     break;
                 case Constructions_ID.For:
@@ -1286,7 +1320,7 @@ namespace Parsers
         private int RowCount = 0;                 //Счетчик строк программы
         HashSet<string> Type_definitions = new HashSet<string>() { "null", "void", "int", "float", "double", "point", "char", "string", "picture", "bool" }; //Хранит в себе зарезервированные имена типов.
         Dictionary<string, AnyFunction> Function_storage = new Dictionary<string, AnyFunction>();//Хранит в себе имена функций
-        HashSet<string> Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end" };  //Хранит в себе имена зарезервированных конструкций
+        HashSet<string> Construction_reservation = new HashSet<string>() { "if", "while", "for", "function", "procedure", "do", "repeat", "until", "begin", "end", "else" };  //Хранит в себе имена зарезервированных конструкций
 
 
         public void First_Parse(List<AnyFunction>InFunc, List<Variable>InVar, string Input_Text)

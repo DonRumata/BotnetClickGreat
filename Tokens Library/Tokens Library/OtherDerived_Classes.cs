@@ -14,6 +14,7 @@ namespace Tokens_Library
         While = 3,
         For = 4,
         Repeat = 5,
+        Else=6,
         NoN = 0,
     }
 
