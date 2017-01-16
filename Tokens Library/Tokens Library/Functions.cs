@@ -33,6 +33,16 @@ namespace Tokens_Library
             Args = InsideCopy.Args;
         }*/
 
+        public override void BaseSetPriority()
+        {
+            Priority = 12;
+        }
+
+        public override bool Is_Terminal()
+        {
+            return false;
+        }
+
         public T Interpretate()  //Вызывает хранимый делегат.
         {
             return Interpretation_code.Invoke(Args);

@@ -73,6 +73,11 @@ namespace Tokens_Library
             }
         }
 
+        public override void BaseSetPriority()
+        {
+            Priority = 1;
+        }
+
 
         public Token GetValueRPN()
         {

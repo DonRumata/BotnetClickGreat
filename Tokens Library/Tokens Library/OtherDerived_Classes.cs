@@ -62,6 +62,7 @@ namespace Tokens_Library
         NotEqual = 6,
         And = 7,
         Or = 8,
+        Not = 9,
         NaN = 0,
     }
 
@@ -102,6 +103,26 @@ namespace Tokens_Library
             Inside_Type_info = InInfo;
             Is_fracture = Fractured;
         }
+
+        public Digit(string Ndata, bool Nspace, Group_of_Tokens Nid, int Nrow, int NFRange_value, int NSRange_value, bool Fractured):base(Ndata,Nspace,Nid,Nrow,NFRange_value,NSRange_value)
+        {
+            Is_fracture = Fractured;
+        }
+
+        public override void BaseSetPriority()
+        {
+            Priority = 1;
+        }
+
+        public override bool Is_Terminal()
+        {
+            return false;
+        }
+
+        private Typecial GetDigitValueType()
+        {
+            return (new Typecial("double"));
+        }
     }
 
     public sealed class Ariphmetical : Token
@@ -116,6 +137,37 @@ namespace Tokens_Library
         public override dynamic get_group_of_token()
         {
             return AriphmeticalID;
+        }
+
+        public override bool Is_Terminal()
+        {
+            return true;
+        }
+
+        public override void BaseSetPriority()
+        {
+            switch (AriphmeticalID)
+            {
+                case AriphmeticalSymbol_ID.Division:
+                    Priority = 10;
+                    return;
+                case AriphmeticalSymbol_ID.Involution:
+                    Priority = 11;
+                    return;
+                case AriphmeticalSymbol_ID.Minus:
+                    Priority = 8;
+                    return;
+                case AriphmeticalSymbol_ID.Mod:
+                    Priority = 0;
+                    return;
+                case AriphmeticalSymbol_ID.Multiplication:
+                    Priority = 9;
+                    return;
+                case AriphmeticalSymbol_ID.Plus:
+                    Priority = 7;
+                    return;
+                default:Priority = 0; return;
+            }
         }
     }
 
@@ -147,5 +199,39 @@ namespace Tokens_Library
         {
             return BooleanID;
         }
+
+        public override void BaseSetPriority()
+        {
+            switch(BooleanID)
+            {
+                case BooleanSymbol_ID.Or:
+                    Priority = 2;
+                    return;
+                case BooleanSymbol_ID.And:
+                    Priority = 3;
+                    return;
+                case BooleanSymbol_ID.Not:
+                    Priority = 4;
+                    return;
+                case BooleanSymbol_ID.LessOrEqual:
+                case BooleanSymbol_ID.GreaterOrEqual:
+                case BooleanSymbol_ID.NotEqual:
+                case BooleanSymbol_ID.Equality:
+                    Priority = 5;
+                    return;
+                case BooleanSymbol_ID.Greater:
+                case BooleanSymbol_ID.Less:
+                    Priority = 6;
+                    return;
+                default:Priority = 0; return;
+            }
+        }
+
+        public override bool Is_Terminal()
+        {
+            return true;
+        }
+
+
     }
 }

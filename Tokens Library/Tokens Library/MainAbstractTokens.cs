@@ -37,6 +37,11 @@ namespace Tokens_Library
             Type_ID = GetETypeFromString(Type_Name);
         }
 
+        public Typecial(string ByValue, bool[] AnyBoolFlags)
+        {
+
+        }
+
         private ETypeTable GetETypeFromString(string Name)
         {
             switch (Name)
@@ -123,6 +128,10 @@ namespace Tokens_Library
                     break;
                 case Group_of_Tokens.Construction:
                     break;
+                case Group_of_Tokens.Function:
+                    break;
+                case Group_of_Tokens.Variable:
+                    break;
             }
         }
 
@@ -134,6 +143,21 @@ namespace Tokens_Library
         public void DecreasePriority()
         {
             Priority--;
+        }
+
+        public virtual void BaseSetPriority()
+        {
+
+        }
+
+        public virtual bool Is_Terminal()
+        {
+            return false;
+        }
+
+        public virtual int get_priority()
+        {
+            return Priority;
         }
 
         public Token(string data, bool space, Group_of_Tokens id, int row, int FRange_value, int SRange_value) //Конструктор для создания класса Word, сразу со всеми первоначальными данными

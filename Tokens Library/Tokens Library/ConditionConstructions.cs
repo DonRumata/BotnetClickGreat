@@ -50,6 +50,10 @@ namespace Tokens_Library
             else
                 Else_body.Add(InExpression);
         }
+        public override void BaseSetPriority()
+        {
+            Priority = 14;
+        }
 
         public bool ThenBodyContains()
         {
