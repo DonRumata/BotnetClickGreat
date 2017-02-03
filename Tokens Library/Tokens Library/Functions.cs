@@ -14,6 +14,7 @@ namespace Tokens_Library
         public AnyFunction(string Ndata, bool Nspace, Group_of_Tokens Ngroup, int Nrow, int NFRange, int NSRange) : base(Ndata, Nspace, Ngroup, Nrow, NFRange, NSRange) { }
         public AnyFunction() { }
         public abstract void ReCreateToken(string NData, bool NSpace, Group_of_Tokens NGroup, int NRow, int NFRange, int NSRange);
+        public abstract bool AddArgument(Token InArg, int ArgNumber, ETypeGroup InGroup);
     }
 
     public sealed class Built_InFunction<T> : AnyFunction 
@@ -32,6 +33,13 @@ namespace Tokens_Library
             Interpretation_code = InsideCopy.Interpretation_code;
             Args = InsideCopy.Args;
         }*/
+
+        public override bool AddArgument(Token InArg, int ArgNumber, ETypeGroup InGroup)
+        {
+            if(InGroup==Typecial.GetTypeGroup(Args[ArgNumber].GetTypeOfToken()))
+            Args[ArgNumber].RPNValue = InArg;
+            return true;
+        }
 
         public override void BaseSetPriority()
         {
@@ -110,6 +118,11 @@ namespace Tokens_Library
             ReturnTypeCode = new Typecial(InStack.Pop());
             Range = new Tuple<int, int>(InStack.Pop().Range.Item1, Range.Item2);
             Function_code = new List<Token>();
+        }
+
+        public override bool AddArgument(Token InArg, int ArgNumber, ETypeGroup InGroup)
+        {
+            return false;
         }
 
         public void AddNewFunctionBodyString(Token NewStringIn)

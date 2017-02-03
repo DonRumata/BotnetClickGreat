@@ -9,16 +9,43 @@ namespace Tokens_Library
 
     public enum ETypeTable
     {
+        NonStarted=-5,
+        Delimeter=-4,
+        BoolTerminal=-3,
+        AriphmeticTerminal=-2,
+        ERR=-1,
         NULL = 0,
-        Int = 1,
-        Float = 2,
-        Double = 3,
-        Point = 4,
-        Char = 5,
-        String = 6,
-        Picture = 7,
-        boolean=8,
+        Byte=1,
+        Short=2,
+        Int = 3,
+        Long=4,
+        Float = 5,
+        Double = 6,
+        Point = 7,
+        Char = 8,
+        String = 9,
+        Overflowed = 10,
+        Picture = 11,
+        Boolean=12,
     }
+
+    public enum ETypeGroup
+    {
+        IntegerGroup=0,
+        StringGroup=1,
+    }
+
+    //public enum ETypeGroup
+    //{
+    //    NULLGROUP=-3,
+    //    AriphmeticalOperandGroup = -2,
+    //    BoolOperandGroup =-1,
+    //    DelimeterGroup=0,
+    //    DigitGroup =1,
+    //    PictureGroup=2,
+    //    StringGroup=3,
+    //    UniversalGroup=4,
+    //}
 
     public class Typecial
     {
@@ -31,23 +58,82 @@ namespace Tokens_Library
             Type_ID = GetETypeFromString(Type_Name);
         }
 
+        //private static ETypeGroup GetTypeGroup(ETypeTable InType)
+        //{
+        //    switch(InType)
+        //    {
+        //        case ETypeTable.Short:
+        //        case ETypeTable.Int:
+        //        case ETypeTable.Long:
+        //        case ETypeTable.Float:
+        //        case ETypeTable.Double:
+        //            return ETypeGroup.DigitGroup;
+        //        case ETypeTable.Char:
+        //        case ETypeTable.String:
+        //            return ETypeGroup.StringGroup;
+        //        case ETypeTable.Delimeter:
+        //            return ETypeGroup.DelimeterGroup;
+        //        case ETypeTable.BoolTerminal:
+        //            return ETypeGroup.BoolOperandGroup;
+        //        case ETypeTable.AriphmeticTerminal:
+        //            return ETypeGroup.AriphmeticalOperandGroup;
+        //        case ETypeTable.Byte:
+        //        case ETypeTable.Overflowed:
+        //        case ETypeTable.Point:
+        //            return ETypeGroup.UniversalGroup;
+        //        case ETypeTable.Picture:
+        //            return ETypeGroup.PictureGroup;
+        //        default: return ETypeGroup.NULLGROUP;
+        //    }
+        //}
+
+        public static ETypeGroup GetTypeGroup(ETypeTable InType)
+        {
+            switch(InType)
+            {
+                case ETypeTable.Byte:
+                case ETypeTable.Short:
+                case ETypeTable.Int:
+                case ETypeTable.Long:
+                case ETypeTable.Float:
+                case ETypeTable.Double:
+                    return ETypeGroup.IntegerGroup;
+                case ETypeTable.String:
+                case ETypeTable.Overflowed:
+                    return ETypeGroup.StringGroup;
+                default: return ETypeGroup.StringGroup;
+            }
+        }
+
         public Typecial(Token InTok)
         {
             Type_Name = InTok.Data.ToLower();
             Type_ID = GetETypeFromString(Type_Name);
         }
 
+        public Typecial(ETypeTable InType_ID)
+        {
+            Type_ID = InType_ID;
+            Type_Name = GetTypeNameFromEType(Type_ID);
+        }
+
         public Typecial(string ByValue, bool[] AnyBoolFlags)
         {
-
+            
         }
 
         private ETypeTable GetETypeFromString(string Name)
         {
             switch (Name)
             {
+                case "byte":
+                    return ETypeTable.Byte;
+                case "short":
+                    return ETypeTable.Short;
                 case "int":
                     return ETypeTable.Int;
+                case "long":
+                    return ETypeTable.Long;
                 case "float":
                     return ETypeTable.Float;
                 case "double":
@@ -61,15 +147,48 @@ namespace Tokens_Library
                 case "picture":
                     return ETypeTable.Picture;
                 case "bool":
-                    return ETypeTable.boolean;
+                    return ETypeTable.Boolean;
+                case "overflowed":
+                    return ETypeTable.Overflowed;
                 default:
                     return ETypeTable.NULL;
             }
         }
 
-        public ETypeTable Get_type()
+        private string GetTypeNameFromEType(ETypeTable Type_id)
         {
-            return Type_ID;
+            switch (Type_id)
+            {
+                case ETypeTable.Byte:
+                    return "byte";
+                case ETypeTable.Short:
+                    return "short";
+                case ETypeTable.Int:
+                    return "int";
+                case ETypeTable.Long:
+                    return "long";
+                case ETypeTable.Float:
+                    return "float";
+                case ETypeTable.Double:
+                    return "double";
+                case ETypeTable.Point:
+                    return "point";
+                case ETypeTable.Char:
+                    return "char";
+                case ETypeTable.String:
+                    return "string";
+                case ETypeTable.Picture:
+                    return "picture";
+                case ETypeTable.Boolean:
+                    return "bool";
+                case ETypeTable.Overflowed:
+                    return "overflowed";
+                case ETypeTable.NULL:
+                    return "null";
+                default:
+                case ETypeTable.ERR:
+                    return "ERR";
+            }
         }
 
         public string Get_TypeName()
@@ -133,6 +252,11 @@ namespace Tokens_Library
                 case Group_of_Tokens.Variable:
                     break;
             }
+        }
+
+        public virtual ETypeTable GetTypeOfToken()
+        {
+            return ETypeTable.NULL;
         }
 
         public void IncreasePriority()

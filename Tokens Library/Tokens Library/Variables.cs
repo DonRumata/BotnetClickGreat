@@ -126,9 +126,19 @@ namespace Tokens_Library
             Data = InVarData.Data;
         }
 
+        public Variable(ETypeTable InTypeName)
+        {
+            Type_Var_Data = new Typecial(InTypeName);
+        }
+
         public Variable()
         {
 
+        }
+
+        public override ETypeTable GetTypeOfToken()
+        {
+            return Type_Var_Data.Type_ID;
         }
     }
 }

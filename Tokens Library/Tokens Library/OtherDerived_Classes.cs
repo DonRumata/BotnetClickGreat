@@ -88,11 +88,17 @@ namespace Tokens_Library
         {
             return DelimeterID;
         }
+
+        public override ETypeTable GetTypeOfToken()
+        {
+            return ETypeTable.Delimeter;
+        }
     }
 
     public sealed class Digit : Token
     {
         public Typecial Inside_Type_info { get; private set; }
+        public dynamic ParsedValue { get; private set; }
         public bool Is_fracture { get; private set; }
 
         public Digit(bool Fractured, Typecial InInfo, Token InValue)
@@ -107,6 +113,7 @@ namespace Tokens_Library
         public Digit(string Ndata, bool Nspace, Group_of_Tokens Nid, int Nrow, int NFRange_value, int NSRange_value, bool Fractured):base(Ndata,Nspace,Nid,Nrow,NFRange_value,NSRange_value)
         {
             Is_fracture = Fractured;
+            Inside_Type_info = SetDigitValueType();
         }
 
         public override void BaseSetPriority()
@@ -119,9 +126,75 @@ namespace Tokens_Library
             return false;
         }
 
-        private Typecial GetDigitValueType()
+        public override ETypeTable GetTypeOfToken()
         {
-            return (new Typecial("double"));
+            return Inside_Type_info.Type_ID;
+        }
+
+        private Typecial SetDigitValueType()
+        {
+            byte ByteParseResultValue;
+            short ShortParseResultValue;
+            int IntParseResultValue;
+            long LongParseResultValue;
+            float FloatParseResultValue;
+            double DoubleParseResultValue;
+            if (Is_fracture)
+            {
+                if (float.TryParse(Data, out FloatParseResultValue))
+                {
+                    ParsedValue = FloatParseResultValue;
+                    return new Typecial(ETypeTable.Float);
+                }
+                else if (double.TryParse(Data, out DoubleParseResultValue))
+                {
+                    ParsedValue = DoubleParseResultValue;
+                    return new Typecial(ETypeTable.Double);
+                }
+                else
+                {
+                    try
+                    {
+                        checked { double.Parse(Data); }
+                    }
+                    catch (OverflowException) { ParsedValue = Data; return new Typecial(ETypeTable.Overflowed); }
+                    ParsedValue = null;
+                    return new Typecial(ETypeTable.NULL);
+                }
+            }
+            else
+            {
+                if (byte.TryParse(Data, out ByteParseResultValue))
+                {
+                    ParsedValue = ByteParseResultValue;
+                    return new Typecial(ETypeTable.Byte);
+                }
+                else if (Int16.TryParse(Data, out ShortParseResultValue))
+                {
+                    ParsedValue = ShortParseResultValue;
+                    return new Typecial(ETypeTable.Short);
+                }
+                else if (Int32.TryParse(Data, out IntParseResultValue))
+                {
+                    ParsedValue = IntParseResultValue;
+                    return new Typecial(ETypeTable.Int);
+                }
+                else if(Int64.TryParse(Data, out LongParseResultValue))
+                {
+                    ParsedValue = LongParseResultValue;
+                    return new Typecial(ETypeTable.Long);
+                }
+                else
+                {
+                    try
+                    {
+                        checked { long.Parse(Data); }
+                    }
+                    catch (OverflowException) { ParsedValue = Data;return new Typecial(ETypeTable.Overflowed); }
+                    ParsedValue = null;
+                    return new Typecial(ETypeTable.NULL);
+                }
+            }
         }
     }
 
@@ -136,7 +209,7 @@ namespace Tokens_Library
 
         public override dynamic get_group_of_token()
         {
-            return AriphmeticalID;
+            return Group_of_Tokens.Ariphmetical;
         }
 
         public override bool Is_Terminal()
@@ -169,6 +242,11 @@ namespace Tokens_Library
                 default:Priority = 0; return;
             }
         }
+        public override ETypeTable GetTypeOfToken()
+        {
+            return ETypeTable.AriphmeticTerminal;
+        }
+
     }
 
     public sealed class HelpSymbol:Token
@@ -225,6 +303,11 @@ namespace Tokens_Library
                     return;
                 default:Priority = 0; return;
             }
+        }
+
+        public override ETypeTable GetTypeOfToken()
+        {
+            return ETypeTable.BoolTerminal;
         }
 
         public override bool Is_Terminal()
