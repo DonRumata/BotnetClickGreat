@@ -84,11 +84,4 @@ namespace Parsers
 
 
     }
-
-
-    class Message : MyAppException
-    {
-        protected string message = "";
-
-    }
 }

@@ -8,6 +8,7 @@ namespace Tokens_Library
 {
     public enum Expression_Type
     {
+        NaN=-2,
         Err=-1,
         Ariphmetical_expression=1,
         Logical_expression=2,
@@ -16,16 +17,16 @@ namespace Tokens_Library
     public class Expression : Token
     {
         public Queue<Token> RPN_Expression_data { get; private set; }
-        public Expression_Type EXPRType { get; private set; }
+        public ETypeTable ExpressionTypeResult { get; private set; }
+        public bool Check_Semantical { get; private set; }
 
-        public Expression(Stack<Token> InputStr, Expression_Type Input_Type_OFEXPR, Func<Stack<Token>, bool> InWhileConditionDelegate, bool WithFinalReverse)
+        public Expression(Stack<Token> InputStr, Func<Stack<Token>, bool> InWhileConditionDelegate, bool WithFinalReverse, bool SemanticalCheck=false, dynamic SemanticalParser=null)
         /*Конструктор выражений, использует входной стек для формирования необходимого выражения*/
         {
             RPN_Expression_data = new Queue<Token>();
-            EXPRType = new Expression_Type();
             Stack<Token> OperandStack = new Stack<Token>();
             Queue<Token> TempList = new Queue<Token>();
-            EXPRType = Input_Type_OFEXPR;
+            Check_Semantical = false;
             Token_Group = Group_of_Tokens.AriphmeticalExpression;
             while (InWhileConditionDelegate.Invoke(InputStr))
             {
@@ -57,15 +58,31 @@ namespace Tokens_Library
                         RPN_Expression_data.Enqueue(TempList.Dequeue());
                 }
             }
-            while (OperandStack.Count>0)
+            while (OperandStack.Count > 0)
             {
                 RPN_Expression_data.Enqueue(OperandStack.Pop());
             }
+            if (SemanticalCheck)
+            {
+                ExpressionTypeResult = SemanticalParser.String_semantical_check(this);
+            }
+                
         }
+
         private void ReWriteRPNExpression(Expression Tempe)
             /*Переписывает значение встреченного выражения в ново создаваемое*/
         {
             RPN_Expression_data= new Queue<Token>(RPN_Expression_data.Concat(Tempe.RPN_Expression_data));
+        }
+
+        public void SemanticalWasChecked()
+        {
+            Check_Semantical = true;
+        }
+
+        public void SetExpressionResultType(ETypeTable SettingType)
+        {
+            ExpressionTypeResult = SettingType;
         }
     }
 }

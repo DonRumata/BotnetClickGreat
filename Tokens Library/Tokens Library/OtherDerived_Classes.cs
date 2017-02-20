@@ -275,7 +275,7 @@ namespace Tokens_Library
 
         public override dynamic get_group_of_token()
         {
-            return BooleanID;
+            return Group_of_Tokens.BooleanOperation;
         }
 
         public override void BaseSetPriority()

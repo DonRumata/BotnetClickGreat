@@ -10,11 +10,12 @@ namespace Tokens_Library
     public abstract class AnyFunction : Token
     {
         public List<Variable> Args { protected set; get; } =new List<Variable>();
+        public ETypeTable ReturnType;
 
         public AnyFunction(string Ndata, bool Nspace, Group_of_Tokens Ngroup, int Nrow, int NFRange, int NSRange) : base(Ndata, Nspace, Ngroup, Nrow, NFRange, NSRange) { }
         public AnyFunction() { }
         public abstract void ReCreateToken(string NData, bool NSpace, Group_of_Tokens NGroup, int NRow, int NFRange, int NSRange);
-        public abstract bool AddArgument(Token InArg, int ArgNumber, ETypeGroup InGroup);
+        public abstract bool AddArgument(Token InArg, int ArgNumber, ETypeTable InType);
     }
 
     public sealed class Built_InFunction<T> : AnyFunction 
@@ -22,10 +23,12 @@ namespace Tokens_Library
     {
         public delegate T Inside_function (List<Variable> arguments);  //Определение динамического делегата, создание которого зависит от типа указанного при создании класса
         private Inside_function Interpretation_code;  //Переменная хранит в себе метод, делегированый при составлении класса.
-        public Built_InFunction(Inside_function Delegation_code, List<Variable> Arguments)  //Базовый конструктор, записывает базовые локальные переменные и делегат исполняемого метода
+        
+        public Built_InFunction(Inside_function Delegation_code, List<Variable> Arguments, ETypeTable InType)  //Базовый конструктор, записывает базовые локальные переменные и делегат исполняемого метода
         {
             Interpretation_code = Delegation_code;
             Args = Arguments;
+            ReturnType = InType;
         }
 
         /*public Built_InFunction(dynamic InsideCopy,string NData, bool NSpace, Group_of_Tokens NGroup, int NRow, int NFRAnge, int NSRAnge)
@@ -34,11 +37,22 @@ namespace Tokens_Library
             Args = InsideCopy.Args;
         }*/
 
-        public override bool AddArgument(Token InArg, int ArgNumber, ETypeGroup InGroup)
+        public override bool AddArgument(Token InArg, int ArgNumber, ETypeTable InType)
         {
-            if(InGroup==Typecial.GetTypeGroup(Args[ArgNumber].GetTypeOfToken()))
-            Args[ArgNumber].RPNValue = InArg;
-            return true;
+            if (Typecial.GetTypeGroup(InType) == Typecial.GetTypeGroup(Args[ArgNumber].GetTypeOfToken()))
+                if (InType < Args[ArgNumber].GetTypeOfToken())
+                {
+                    Args[ArgNumber].RPNValue = InArg;
+                    return true;
+                }   
+                else return false;
+            else
+                return false;
+        }
+
+        public override ETypeTable GetTypeOfToken()
+        {
+            return ReturnType;
         }
 
         public override void BaseSetPriority()
@@ -120,7 +134,7 @@ namespace Tokens_Library
             Function_code = new List<Token>();
         }
 
-        public override bool AddArgument(Token InArg, int ArgNumber, ETypeGroup InGroup)
+        public override bool AddArgument(Token InArg, int ArgNumber, ETypeTable InGroup)
         {
             return false;
         }

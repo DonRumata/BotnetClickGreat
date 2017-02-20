@@ -14,42 +14,136 @@ namespace Parsers
     public class SemanticalParser
     {
         private List<ETypeTable> IntegerTypePriorityList = new List<ETypeTable>() { ETypeTable.Byte, ETypeTable.Short, ETypeTable.Int, ETypeTable.Long, ETypeTable.Float, ETypeTable.Double };
-        Queue<Token> TempStacker = new Queue<Token>();
-        Group_of_Tokens TempSwitcher;
+
         public ETypeTable String_semantical_check(dynamic ExpressionForCheck)
         {
+            Queue<Token> TempStacker = new Queue<Token>();
+            Group_of_Tokens TempSwitcher;
             TempSwitcher = ExpressionForCheck.get_group_of_token();
-            Token NowItem;
-            ETypeTable Resulter = ETypeTable.NonStarted;
-            Stack<Token> TempSolutionStack = new Stack<Token>();
+
             switch (TempSwitcher)
             {
                 case Group_of_Tokens.AriphmeticalExpression:
                     TempStacker = new Queue<Token>(ExpressionForCheck.RPN_Expression_data);
-                    while (TempStacker.Count != 0)
-                    {
-                        NowItem = TempStacker.Dequeue();
-                        TempSwitcher = NowItem.get_group_of_token();
-                        switch(TempSwitcher)
-                        {
-                            case Group_of_Tokens.Digit:
-                                TempSolutionStack.Push(NowItem);
-                                break;
-                            case Group_of_Tokens.Ariphmetical:
-                                if (Resulter == ETypeTable.NonStarted)
-                                    Resulter = CountTypes(TempSolutionStack.Pop().GetTypeOfToken(), TempSolutionStack.Pop().GetTypeOfToken(), NowItem);
-                                else
-                                    Resulter = CountTypes(TempSolutionStack.Pop().GetTypeOfToken(), Resulter, NowItem);
-                                break;
-                            case Group_of_Tokens.AriphmeticalExpression:
-                                break;
-                            case Group_of_Tokens.Function:
-                                break;
-                        }
-                    }
-                    break;
+                    ExpressionForCheck.SemanticalWasChecked();
+                    return BaseRPN_SemanticalParse(TempStacker, TempSwitcher);
+                case Group_of_Tokens.Variable:
+                    ETypeTable TempResulter;
+                    TempStacker = new Queue<Token>(ExpressionForCheck.RPNValue.RPN_Expression_data);
+                    if (!ExpressionForCheck.RPNValue.Check_Semantical)
+                        ExpressionForCheck.RPNValue.SetExpressionResultType(BaseRPN_SemanticalParse(TempStacker, TempSwitcher));
+                    if (TwoType_AutoReassignment_Ability_check(ExpressionForCheck.GetTypeOfToken(), ExpressionForCheck.RPNValue.ExpressionTypeResult))
+                        return ExpressionForCheck.GetTypeOfToken();
+                    else return ETypeTable.ERR;
+            }
+            return ETypeTable.NULL;
+        }
+
+        private ETypeTable BaseRPN_SemanticalParse(Queue<Token> InTempStacker, Group_of_Tokens InTempSwitcher)
+        {
+            Token NowItem;
+            ETypeTable Resulter = ETypeTable.NonStarted;
+            Stack<Token> TempSolutionStack = new Stack<Token>();
+            while (InTempStacker.Count != 0)
+            {
+                NowItem = InTempStacker.Dequeue();
+                InTempSwitcher = NowItem.get_group_of_token();
+                switch (InTempSwitcher)
+                {
+                    case Group_of_Tokens.Digit:
+                    case Group_of_Tokens.Function:
+                        TempSolutionStack.Push(NowItem);
+                        break;
+                    case Group_of_Tokens.Ariphmetical:
+                        if (Resulter == ETypeTable.NonStarted)
+                            Resulter = CountTypes(TempSolutionStack.Pop().GetTypeOfToken(), TempSolutionStack.Pop().GetTypeOfToken(), NowItem);
+                        else
+                            Resulter = CountTypes(TempSolutionStack.Pop().GetTypeOfToken(), Resulter, NowItem);
+                        break;
+                    case Group_of_Tokens.AriphmeticalExpression:
+                        break;
+                    case Group_of_Tokens.BooleanOperation:
+                        if (Resulter == ETypeTable.NonStarted)
+                            Resulter = TwoTypeBoolOperation_AbilityCheck(TempSolutionStack.Pop().GetTypeOfToken(), TempSolutionStack.Pop().GetTypeOfToken(), NowItem);
+                        else
+                            Resulter = TwoTypeBoolOperation_AbilityCheck(TempSolutionStack.Pop().GetTypeOfToken(), Resulter, NowItem);
+                        break;
+                        
+                }
             }
             return Resulter;
+        }
+
+        private ETypeTable TwoTypeBoolOperation_AbilityCheck(ETypeTable FirstOperandType, ETypeTable SecondOperantType, Token BoolOperation)
+        {
+            if (TwoType_AutoReassignment_Ability_check(FirstOperandType, SecondOperantType))
+            {
+                return ETypeTable.Boolean;
+            }
+            else
+                return ETypeTable.ERR;
+        }
+
+        private bool TwoType_AutoReassignment_Ability_check(ETypeTable ResultingType, ETypeTable TypeForReassignment)
+        {
+            ETypeGroup ResGroupType=Typecial.GetTypeGroup(ResultingType);
+            ETypeGroup InGroupType = Typecial.GetTypeGroup(TypeForReassignment);
+            if(ResGroupType==InGroupType)
+            {
+                if (ResultingType >= TypeForReassignment)
+                    return true;
+                else
+                {
+                    switch (ResGroupType)
+                    {
+                        case ETypeGroup.IntegerGroup:
+                            //создание предупреждения о потере данных и автоматическое приведение
+                            return true;
+                        case ETypeGroup.StringGroup:
+                            if (ResultingType == ETypeTable.String)
+                            {
+                                return true;
+                            }
+                            else
+                                return false;
+                        default:
+                            return false;
+                    }
+                }
+            }
+            else
+            {
+                switch(ResGroupType)
+                {
+                    case ETypeGroup.IntegerGroup:
+                        switch(TypeForReassignment)
+                        {
+                            case ETypeTable.String:
+                                break;
+                            case ETypeTable.Overflowed:
+                                break;
+                            case ETypeTable.Point:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case ETypeGroup.StringGroup:
+                        if (ResultingType==ETypeTable.String)
+                        {
+                            //Вызов метода tostring.
+                        }
+                        else
+                        {
+                            switch(ResultingType)
+                            {
+
+                            }
+                        }
+                        break;
+                }
+                return false;
+            }
         }
 
         private ETypeTable Integer_IntegerTypicalCount(ETypeTable FirstType, ETypeTable SecondType, Token Operation)
@@ -298,7 +392,7 @@ namespace Parsers
                                 }
                                 else if(((NewElement as Delimeter).DelimeterID==Delimeters_ID.RBracket)&&(StructureBracketCounter>0))
                                 {
-                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
+                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
                                     CastArgsBrackets(Expression_Type.Ariphmetical_expression, false);
                                     if ((IFConstructionInProgress) && (StructureBracketCounter != 0))
                                         Magazine_state = Rules_Statement.FormAriphmExpression;
@@ -591,7 +685,7 @@ namespace Parsers
                     }
                     else if (NewElGroup == Group_of_Tokens.BooleanOperation) //Если символ логической операции
                     {
-                        Changer = (NewElement as Boolean_operation).get_group_of_token();
+                        Changer = (NewElement as Boolean_operation).BooleanID;
                         if ((Changer == BooleanSymbol_ID.And) || (Changer == BooleanSymbol_ID.Or)) //Этот символ не && или ||
                             return false;
                         else
@@ -669,7 +763,7 @@ namespace Parsers
                             break;
                         case Group_of_Tokens.Digit: //Если число
                             String_Translate_Stack.Push(NewElement);
-                            Magazine_state = Rules_Statement.WhichNextDigit;
+                            Magazine_state = Rules_Statement.AfterArifmExpr;
                             return true;
                         case Group_of_Tokens.Delimeter: //Если разделитель
                             Changer = (NewElement as Delimeter).get_group_of_token();
@@ -824,7 +918,7 @@ namespace Parsers
                         {
                             if((InlineBracketCounter == 0)&&(StructureBracketCounter>0))
                             {
-                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
+                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
                                 CastArgsBrackets(Expression_Type.Ariphmetical_expression, false);
                             }
                             else
@@ -834,9 +928,8 @@ namespace Parsers
                     }
                     else if (NewElGroup==Group_of_Tokens.EndOfString)
                     {
-                        goto case Rules_Statement.EndOfString;
                         if(!IFConstructionInProgress)
-                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment), true));
+                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment), true));
                         goto case Rules_Statement.EndOfString;
                     }
 
@@ -970,9 +1063,10 @@ namespace Parsers
                 case Rules_Statement.EndOfString:
                     dynamic Temp;
                     bool StateSetter = true;
+                    bool SemanticalIsChecked = false;
                     if(SetVarInProgress>0)
                     {
-                        Temp=(new Expression(String_Translate_Stack, Expression_Type.Logical_expression, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment),true));
+                        Temp=(new Expression(String_Translate_Stack, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment),true));
                         String_Translate_Stack.Pop();
                         ChangeLastMethodTypeInQueue(String_Translate_Stack.Peek(), Temp);
                         SetVarInProgress--;
@@ -991,11 +1085,10 @@ namespace Parsers
                     if (VarDefinitionInProgress)
                     {
                         if (BoperationsInProgress == 1)
-                        {
                             BoperationsInProgress--;
-                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Logical_expression, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment),true));
-                        }
                         String_Translate_Stack.Push(new Variable(String_Translate_Stack));
+                        Semantical.String_semantical_check(String_Translate_Stack.Peek());
+                        SemanticalIsChecked = true;
                         VarDefinitionInProgress = false;
                     }
                     if(IfBodyProgression>0)
@@ -1027,7 +1120,8 @@ namespace Parsers
                                 TranslateCode.Add(String_Translate_Stack.Peek());
                                 Build_magazine_storage.Clear();
                                 Magazine_state = Rules_Statement.DefaultInStr;
-                                Semantical.String_semantical_check(String_Translate_Stack.Peek());
+                                if (!SemanticalIsChecked)
+                                    Semantical.String_semantical_check(String_Translate_Stack.Peek());
                                 return true;
                             }
                             else return false;
@@ -1045,7 +1139,7 @@ namespace Parsers
                     }
                     else
                     {
-                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0), true));
+                        String_Translate_Stack.Push(new Expression(String_Translate_Stack, Inst => (Inst.Count > 0), true, SemanticalCheck:true,SemanticalParser:Semantical));
                         Semantical.String_semantical_check(String_Translate_Stack.Peek());
                     }
                         return false;
@@ -1123,7 +1217,7 @@ namespace Parsers
                             else
                             {
                                 Comma_counter++;
-                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),true));
+                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),true));
                                 (Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
                                 CastArgsBrackets(Expression_Type.Ariphmetical_expression,true);
                                 return true;
@@ -1137,8 +1231,8 @@ namespace Parsers
                         if ((NewElement as HelpSymbol).SymbolID==Help_SymbolsID.Comma)
                         {
                             Comma_counter++;
-                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
-                            (Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
+                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
+                            (Build_magazine_storage.Last() as AnyFunction).AddArgument(String_Translate_Stack.Peek(), Comma_counter - 1, Semantical.String_semantical_check(String_Translate_Stack.Pop()));
                             Magazine_state = Rules_Statement.ArgsOnCall;
                             return true;
                         }
@@ -1158,16 +1252,15 @@ namespace Parsers
                                 Comma_counter++;
                                 if(Build_magazine_storage.Count==0)
                                 {
-                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
+                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
                                     CastArgsBrackets(Expression_Type.Ariphmetical_expression,false);
                                 }
                                 else if (Comma_counter > (Build_magazine_storage.Last() as AnyFunction).Args.Count)
                                     return false;
                                 else
                                 {
-                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),true));
-                                    (Build_magazine_storage.Last() as AnyFunction).AddArgument(String_Translate_Stack.Peek(), Comma_counter - 1, Typecial.GetTypeGroup(Semantical.String_semantical_check(String_Translate_Stack.Peek())));
-                                    //(Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
+                                    String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),true));
+                                    (Build_magazine_storage.Last() as AnyFunction).AddArgument(String_Translate_Stack.Peek(), Comma_counter - 1, Semantical.String_semantical_check(String_Translate_Stack.Pop()));
                                     CastArgsBrackets(Expression_Type.Ariphmetical_expression,true);
                                 }
                             }
@@ -1182,7 +1275,7 @@ namespace Parsers
                                 return false;
                             else
                             {
-                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, Expression_Type.Ariphmetical_expression, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
+                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
                                 (Build_magazine_storage.Last() as AnyFunction).Args[Comma_counter - 1].RPNValue = String_Translate_Stack.Pop();
                                 Magazine_state = Rules_Statement.ArgsOnCall;
                             }
@@ -1361,7 +1454,7 @@ namespace Parsers
                 Expr_creator.Push(Temp);
                 Temp = String_Translate_Stack.Pop();
             }
-            String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment),false));
+            String_Translate_Stack.Push(new Expression(Expr_creator, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment),false));
 
         }
 
@@ -1408,7 +1501,7 @@ namespace Parsers
                 }
                 else
                 {
-                    String_Translate_Stack.Push(new Expression(Expr_creator, Expression_Type.Ariphmetical_expression, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment), false));
+                    String_Translate_Stack.Push(new Expression(Expr_creator, Inst => (Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter) && (Inst.Peek().Token_Group != Group_of_Tokens.BooleanOperation) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment), false));
                 }
                 InlineBracketCounter--;
                 return true;
@@ -1478,8 +1571,8 @@ namespace Parsers
             Temps2.Add(new Variable());
             Temps2.Add(new Variable());
             Temps.Add(new Variable(ETypeTable.Int));
-            Function_storage.Add("testfunc", new Built_InFunction<int>(TestFunc,Temps));
-            Function_storage.Add("testfuncs", new Built_InFunction<Token>(TestFunc2, Temps2));
+            Function_storage.Add("testfunc", new Built_InFunction<int>(TestFunc,Temps,ETypeTable.Int));
+            Function_storage.Add("testfuncs", new Built_InFunction<Token>(TestFunc2, Temps2, ETypeTable.NULL));
             //Конец тестовых
             int last_list_count = 0;
             int i = 0;
