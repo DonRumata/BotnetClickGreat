@@ -37,59 +37,31 @@ namespace Tokens_Library
 
     //public enum ETypeGroup
     //{
-    //    NULLGROUP=-3,
+    //    NULLGROUP = -3,
     //    AriphmeticalOperandGroup = -2,
-    //    BoolOperandGroup =-1,
-    //    DelimeterGroup=0,
-    //    DigitGroup =1,
-    //    PictureGroup=2,
-    //    StringGroup=3,
-    //    UniversalGroup=4,
+    //    BoolOperandGroup = -1,
+    //    DelimeterGroup = 0,
+    //    DigitGroup = 1,
+    //    PictureGroup = 2,
+    //    StringGroup = 3,
+    //    UniversalGroup = 4,
     //}
+
+
 
     public class Typecial
     {
-        protected string Type_Name { get; }
-        public ETypeTable Type_ID { get; private set; }
-
+        public string Type_Name { get; set; }
+        public ETypeTable Type_ID { get; set; }
         public Typecial(string Type_name)
         {
             Type_Name = Type_name.ToLower();
             Type_ID = GetETypeFromString(Type_Name);
         }
 
-        //private static ETypeGroup GetTypeGroup(ETypeTable InType)
-        //{
-        //    switch(InType)
-        //    {
-        //        case ETypeTable.Short:
-        //        case ETypeTable.Int:
-        //        case ETypeTable.Long:
-        //        case ETypeTable.Float:
-        //        case ETypeTable.Double:
-        //            return ETypeGroup.DigitGroup;
-        //        case ETypeTable.Char:
-        //        case ETypeTable.String:
-        //            return ETypeGroup.StringGroup;
-        //        case ETypeTable.Delimeter:
-        //            return ETypeGroup.DelimeterGroup;
-        //        case ETypeTable.BoolTerminal:
-        //            return ETypeGroup.BoolOperandGroup;
-        //        case ETypeTable.AriphmeticTerminal:
-        //            return ETypeGroup.AriphmeticalOperandGroup;
-        //        case ETypeTable.Byte:
-        //        case ETypeTable.Overflowed:
-        //        case ETypeTable.Point:
-        //            return ETypeGroup.UniversalGroup;
-        //        case ETypeTable.Picture:
-        //            return ETypeGroup.PictureGroup;
-        //        default: return ETypeGroup.NULLGROUP;
-        //    }
-        //}
-
         public static ETypeGroup GetTypeGroup(ETypeTable InType)
         {
-            switch(InType)
+            switch (InType)
             {
                 case ETypeTable.Byte:
                 case ETypeTable.Short:
@@ -119,7 +91,7 @@ namespace Tokens_Library
 
         public Typecial(string ByValue, bool[] AnyBoolFlags)
         {
-            
+
         }
 
         private ETypeTable GetETypeFromString(string Name)
@@ -196,6 +168,27 @@ namespace Tokens_Library
             return Type_Name;
         }
     }
+    
+
+    public class GenericType<T>
+    {
+        public T Value { get; protected set; }
+
+        public GenericType(T t)
+        {
+            Value = t;
+        }
+
+        public virtual void Convert(byte In) { }
+        public virtual void Convert(short In) { }
+        public virtual void Convert(int In) { }
+        public virtual void Convert(long In) { }
+        public virtual void Convert(float In) { }
+        public virtual void Convert (double In) { }
+        public virtual void Convert(char In) { }
+        public virtual void Convert(string In) { }
+        public virtual void Convert(bool In) { }
+    }
 
     public enum Group_of_Tokens
     {
@@ -224,7 +217,302 @@ namespace Tokens_Library
         NaN=0,
     }
 
-    
+    public class Byt:GenericType<byte>
+    {
+        public Byt(byte inV) : base(inV) { }
+
+        public override void Convert(short In)
+        {
+            
+        }
+
+        public override void Convert(int In)
+        {
+
+        }
+
+        public override void Convert(long In)
+        {
+            
+        }
+
+        public override void Convert(float In)
+        {
+            
+        }
+
+        public override void Convert(double In)
+        {
+            
+        }
+
+        public override void Convert(string In)
+        {
+            
+        }
+
+        public override void Convert(byte In)
+        {
+             
+        }
+
+        public override void Convert(bool In)
+        {
+            
+        }
+    }
+
+    public class Shor : GenericType<short>
+    {
+        public Shor(short inV) : base(inV) { }
+
+        public override void Convert(byte In)
+        {
+            
+        }
+
+        public override void Convert(int In)
+        {
+            
+        }
+
+        public override void Convert(long In)
+        {
+            
+        }
+
+        public override void Convert(float In)
+        {
+            
+        }
+
+        public override void Convert(short In)
+        {
+            
+        }
+
+        public override void Convert(double In)
+        {
+            
+        }
+
+        public override void Convert(string In)
+        {
+            
+        }
+
+        public override void Convert(bool In)
+        {
+            
+        }
+
+    }
+
+    public class Integ:GenericType<int>
+    {
+        public Integ(int inV) : base(inV) { }
+
+        public override void Convert(byte In)
+        {
+
+        }
+
+        public override void Convert(short In)
+        {
+
+        }
+
+        public override void Convert(int In)
+        {
+
+        }
+
+        public override void Convert(long In)
+        {
+
+        }
+
+        public override void Convert(double In)
+        {
+
+        }
+
+        public override void Convert(float In)
+        {
+
+        }
+
+        public override void Convert(string In)
+        {
+
+        }
+
+        public override void Convert(bool In)
+        {
+
+        }
+    }
+
+    public class Lon:GenericType<long>
+    {
+        public Lon(long inV) : base(inV) { }
+
+        public override void Convert(byte In)
+        {
+            
+        }
+
+        public override void Convert(short In)
+        {
+            
+        }
+
+        public override void Convert(int In)
+        {
+            
+        }
+
+        public override void Convert(long In)
+        {
+            
+        }
+
+        public override void Convert(bool In)
+        {
+            
+        }
+
+        public override void Convert(float In)
+        {
+            
+        }
+
+        public override void Convert(double In)
+        {
+            
+        }
+
+        public override void Convert(string In)
+        {
+            
+        }
+    }
+
+    public class Floa:GenericType<float>
+    {
+        public Floa(float inV) : base(inV) { }
+
+        public override void Convert(byte In)
+        {
+
+        }
+
+        public override void Convert(short In)
+        {
+
+        }
+
+        public override void Convert(int In)
+        {
+
+        }
+
+        public override void Convert(float In)
+        {
+
+        }
+
+        public override void Convert(long In)
+        {
+
+        }
+
+        public override void Convert(double In)
+        {
+
+        }
+
+        public override void Convert(string In)
+        {
+
+        }
+
+        public override void Convert(bool In)
+        {
+
+        }
+    }
+
+    public class Doubl:GenericType<double>
+    {
+        public Doubl(double inV) : base(inV) { }
+
+        public override void Convert(byte In)
+        {
+
+        }
+
+        public override void Convert(short In)
+        {
+
+        }
+
+        public override void Convert(int In)
+        {
+
+        }
+
+        public override void Convert(float In)
+        {
+
+        }
+
+        public override void Convert(long In)
+        {
+
+        }
+
+        public override void Convert(double In)
+        {
+
+        }
+
+        public override void Convert(string In)
+        {
+
+        }
+
+        public override void Convert(bool In)
+        {
+
+        }
+    }
+
+    public class Cha:GenericType<char>
+    {
+        public Cha(char inV) : base(inV) { }
+    }
+
+    public class Str:GenericType<string>
+    {
+        public Str(string inV) : base(inV) { }
+    }
+
+    //public class Point:GenericType<Point>
+    //{
+    //    public Point
+    //}
+
+    //public class Picture:Typecial
+    //{
+
+    //}
+
+    public class Boole:GenericType<bool>
+    {
+        public Boole(bool inV) : base(inV) { }
+    }
+
 
     public class Token
     {

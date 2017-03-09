@@ -42,6 +42,7 @@ namespace Parsers
         private ETypeTable BaseRPN_SemanticalParse(Queue<Token> InTempStacker, Group_of_Tokens InTempSwitcher)
         {
             Token NowItem;
+            Stack<ETypeTable> ResulterTest = new Stack<ETypeTable>();
             ETypeTable Resulter = ETypeTable.NonStarted;
             Stack<Token> TempSolutionStack = new Stack<Token>();
             while (InTempStacker.Count != 0)
@@ -63,10 +64,15 @@ namespace Parsers
                     case Group_of_Tokens.AriphmeticalExpression:
                         break;
                     case Group_of_Tokens.BooleanOperation:
-                        if (Resulter == ETypeTable.NonStarted)
-                            Resulter = TwoTypeBoolOperation_AbilityCheck(TempSolutionStack.Pop().GetTypeOfToken(), TempSolutionStack.Pop().GetTypeOfToken(), NowItem);
+                        if (TempSolutionStack.Count == 2)
+                            ResulterTest.Push(TwoTypeBoolOperation_AbilityCheck(TempSolutionStack.Pop().GetTypeOfToken(), TempSolutionStack.Pop().GetTypeOfToken(), NowItem));
+                        else if (TempSolutionStack.Count > 0)
+                            ResulterTest.Push(TwoTypeBoolOperation_AbilityCheck(TempSolutionStack.Pop().GetTypeOfToken(), ResulterTest.Pop(), NowItem));
+                        else if (ResulterTest.Count == 2)
+                            ResulterTest.Push(TwoTypeBoolOperation_AbilityCheck(ResulterTest.Pop(), ResulterTest.Pop(), NowItem));
                         else
-                            Resulter = TwoTypeBoolOperation_AbilityCheck(TempSolutionStack.Pop().GetTypeOfToken(), Resulter, NowItem);
+                            ResulterTest.Push(ETypeTable.ERR);
+                        Resulter = ResulterTest.Peek();
                         break;
                         
                 }
@@ -294,7 +300,7 @@ namespace Parsers
         //private Variable VarCallInProgress = null;
         private int BoperationsInProgress = 0;
         private bool VarDefinitionInProgress = false;
-        private User_Function FunctionBodyInProgress = null;
+        private AnyFunction FunctionBodyInProgress = null;
         private bool IFConstructionInProgress = false;
         private int IfBodyProgression = 0;
         private If_Condition_construction NowBodyInProgression = null;
@@ -904,21 +910,21 @@ namespace Parsers
                     if (NewElGroup == Group_of_Tokens.Ariphmetical)
                         goto case Rules_Statement.WhichNextDigit;
                     else if (NewElGroup == Group_of_Tokens.BooleanOperation)
-                        if (BoperationsInProgress > 0)
-                            goto case Rules_Statement.CastBooleanExpression;
-                        else
-                        {
-                            goto case Rules_Statement.WhichNextDigit;
-                        }
+                    {
+                        String_Translate_Stack.Push(NewElement);
+                        BoperationsInProgress++;
+                        Magazine_state = Rules_Statement.AfterBoolOperation;
+                    }
+                        
                     else if (NewElGroup == Group_of_Tokens.Delimeter)
                     {
                         if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.Equality)
                             goto case Rules_Statement.Equality;
                         else if ((NewElement as Delimeter).DelimeterID == Delimeters_ID.RBracket)
                         {
-                            if((InlineBracketCounter == 0)&&(StructureBracketCounter>0))
+                            if ((InlineBracketCounter == 0) && (StructureBracketCounter > 0))
                             {
-                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)),false));
+                                String_Translate_Stack.Push(new Expression(String_Translate_Stack, inst => ((inst.Count > 0) && (inst.Peek().Token_Group != Group_of_Tokens.Delimeter)), false));
                                 CastArgsBrackets(Expression_Type.Ariphmetical_expression, false);
                             }
                             else
@@ -926,10 +932,10 @@ namespace Parsers
                             Magazine_state = Rules_Statement.AfterArifmExpr;
                         }
                     }
-                    else if (NewElGroup==Group_of_Tokens.EndOfString)
+                    else if (NewElGroup == Group_of_Tokens.EndOfString)
                     {
-                        if(!IFConstructionInProgress)
-                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment), true));
+                        if (!IFConstructionInProgress)
+                            String_Translate_Stack.Push(new Expression(String_Translate_Stack, Inst => ((Inst.Count > 0) && (Inst.Peek().Token_Group != Group_of_Tokens.Delimeter)) && (Inst.Peek().Token_Group != Group_of_Tokens.Assignment)&&(Inst.Peek().Token_Group!=Group_of_Tokens.NoN), true));
                         goto case Rules_Statement.EndOfString;
                     }
 
@@ -1116,12 +1122,12 @@ namespace Parsers
                                         return false;
                                     }
                                 }
+                                if (!SemanticalIsChecked)
+                                    Semantical.String_semantical_check(Temp);
                                 FunctionBodyInProgress.AddNewFunctionBodyString(Temp);
                                 TranslateCode.Add(String_Translate_Stack.Peek());
                                 Build_magazine_storage.Clear();
                                 Magazine_state = Rules_Statement.DefaultInStr;
-                                if (!SemanticalIsChecked)
-                                    Semantical.String_semantical_check(String_Translate_Stack.Peek());
                                 return true;
                             }
                             else return false;

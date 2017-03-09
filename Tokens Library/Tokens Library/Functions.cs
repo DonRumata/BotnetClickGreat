@@ -16,6 +16,11 @@ namespace Tokens_Library
         public AnyFunction() { }
         public abstract void ReCreateToken(string NData, bool NSpace, Group_of_Tokens NGroup, int NRow, int NFRange, int NSRange);
         public abstract bool AddArgument(Token InArg, int ArgNumber, ETypeTable InType);
+        public virtual bool AddMethodToArgument(string ArgName, Token InValue, bool whichMethod) { return false; }
+        public virtual bool ChangeMethodOfArgument(string InToken, Token InValue) { return false; }
+        public virtual bool AddLocalArgument(Variable NewArgIn) { return false; }
+        public virtual void AddNewFunctionBodyString(Token NewStringIn) { }
+        public virtual Token IsArgsContains(string Name) { return null; }
     }
 
     public sealed class Built_InFunction<T> : AnyFunction 
@@ -129,7 +134,7 @@ namespace Tokens_Library
             Args.Reverse();
             Data = InStack.Peek().Data;
             Row = InStack.Pop().Row;
-            ReturnTypeCode = new Typecial(InStack.Pop());
+
             Range = new Tuple<int, int>(InStack.Pop().Range.Item1, Range.Item2);
             Function_code = new List<Token>();
         }
@@ -161,7 +166,7 @@ namespace Tokens_Library
             return false;
         }
 
-        public bool AddMethodToArgument(string ArgName, Token InValue, bool whichMethod)
+        public override bool AddMethodToArgument(string ArgName, Token InValue, bool whichMethod)
         {
             int i = -1;
             i=Args.FindIndex(argspred => argspred.Data == ArgName);
@@ -174,7 +179,7 @@ namespace Tokens_Library
                 return false;
         }
 
-        public bool ChangeMethodOfArgument(string InToken, Token InValue)
+        public override bool ChangeMethodOfArgument(string InToken, Token InValue)
         {
             int i = -1;
             i = Args.FindIndex(argspred => argspred.Data == InToken);
